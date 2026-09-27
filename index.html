@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="ms" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Financial Planner</title>
+    
+    <!-- External Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // Enable class-based dark mode
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9',
+                            600: '#0284c7', 900: '#0c4a6e',
+                        },
+                        gold: { 500: '#eab308', 600: '#ca8a04' },
+                        darkbg: '#0f172a',
+                        darkcard: '#1e293b'
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(0,0,0,0.06)',
+                        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none; width: 100%; background: transparent; margin: 10px 0;
+        }
+        input[type=range]:focus { outline: none; }
+        
+        /* Light mode track */
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 6px; cursor: pointer; border-radius: 999px;
+            background: #e2e8f0; transition: all 0.2s ease;
+        }
+        /* Dark mode track */
+        html.dark input[type=range]::-webkit-slider-runnable-track {
+            background: #334155;
+        }
+
+        /* Thumbs */
+        input[type=range].slider-blue::-webkit-slider-thumb {
+            height: 20px; width: 20px; border-radius: 50%;
+            background: #0284c7; cursor: pointer; -webkit-appearance: none;
+            margin-top: -7px; border: 2px solid #ffffff;
+            transition: transform 0.1s;
+        }
+        html.dark input[type=range].slider-blue::-webkit-slider-thumb { border-color: #1e293b; }
+
+        input[type=range].slider-gold::-webkit-slider-thumb {
+            height: 20px; width: 20px; border-radius: 50%;
+            background: #ca8a04; cursor: pointer; -webkit-appearance: none;
+            margin-top: -7px; border: 2px solid #ffffff;
+            transition: transform 0.1s;
+        }
+        html.dark input[type=range].slider-gold::-webkit-slider-thumb { border-color: #1e293b; }
+
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+        
+        /* Hide Number Input Spinners */
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none; margin: 0;
+        }
+        input[type=number] { -moz-appearance: textfield; }
+
+        /* Custom Cards */
+        .glass-card {
+            background: #ffffff;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 1rem;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        html.dark .glass-card {
+            background: #1e293b; /* slate-800 */
+            border-color: #334155; /* slate-700 */
+        }
+
+        /* Tab Transition */
+        .tab-content { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-slate-50 text-slate-800 dark:bg-darkbg dark:text-slate-100">
+
+    <div class="max-w-7xl mx-auto">
+        
+        <!-- Header with Toggles -->
+        <header class="mb-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+            <div>
+                <h1 class="font-display text-3xl md:text-4xl font-extrabold tracking-tight mb-2">
+                    <span data-i18n="title_main">Portal</span> <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-brand-400" data-i18n="title_gradient">Perancangan Kewangan</span>
+                </h1>
+                <p class="text-slate-500 dark:text-slate-400 font-medium" data-i18n="subtitle">Urus aliran tunai hari ini dan rancang kebebasan kewangan masa depan.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <!-- Theme Toggle -->
+                <button id="btnTheme" onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                    <i class="fa-solid fa-moon" id="iconTheme"></i>
+                </button>
+                <!-- Language Toggle -->
+                <button id="btnLang" onclick="toggleLanguage()" class="px-4 h-10 rounded-full font-bold text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                    BM
+                </button>
+            </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <div class="flex flex-col sm:flex-row gap-2 mb-8 bg-white dark:bg-slate-800 p-1.5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 w-full md:w-max">
+            <button onclick="switchTab('tab1')" id="btnTab1" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm">
+                <i class="fa-solid fa-wallet mr-2"></i> <span data-i18n="tab_salary">Agihan Gaji</span>
+            </button>
+            <button onclick="switchTab('tab2')" id="btnTab2" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                <i class="fa-solid fa-umbrella-beach mr-2"></i> <span data-i18n="tab_retire">Kalkulator Persaraan</span>
+            </button>
+        </div>
+
+        <div id="tab1" class="tab-content block">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <div class="lg:col-span-5 flex flex-col gap-6">
+                    <div class="glass-card shadow-soft p-6 md:p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center border border-brand-100 dark:border-brand-800">
+                                <i class="fa-solid fa-sack-dollar text-lg"></i>
+                            </div>
+                            <h2 class="font-display text-xl font-bold text-slate-800 dark:text-slate-100" data-i18n="inc_profile">Profil Pendapatan</h2>
+                        </div>
+
+                        <!-- Gaji Bersih -->
+                        <div class="mb-6">
+                            <label class="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="net_salary">Gaji Bersih Bulanan (RM)</label>
+                            <input type="number" id="inpSalary" value="4500" class="w-full px-4 py-3 text-lg font-display font-bold text-brand-900 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-shadow">
+                        </div>
+
+                        <!-- Dropdown Preset Peratusan -->
+                        <div class="mb-2">
+                            <label class="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="allocation_rule">Peraturan Agihan Gaji</label>
+                            <div class="relative">
+                                <select id="selRule" class="w-full px-4 py-3 text-[15px] font-bold text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none appearance-none cursor-pointer">
+                                    <option value="50,30,20">50 / 30 / 20</option>
+                                    <option value="50,20,30">50 / 20 / 30</option>
+                                    <option value="60,20,20">60 / 20 / 20</option>
+                                    <option value="70,20,10">70 / 20 / 10</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 dark:text-slate-400">
+                                    <i class="fa-solid fa-chevron-down text-sm"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-400 dark:text-slate-500 mt-2" data-i18n="rule_format">*Format: Keperluan / Kehendak / Simpanan (Jumlah sentiasa 100%)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 flex flex-col gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Keperluan -->
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-brand-500 relative overflow-hidden group">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2"><span data-i18n="needs">Keperluan</span> <span id="lblNeedsPct" class="text-brand-600 dark:text-brand-400 ml-1">50%</span></p>
+                            <h3 class="font-display text-2xl font-extrabold text-brand-600 dark:text-brand-400" id="resNeedsRM">RM 0</h3>
+                            <i class="fa-solid fa-house absolute -right-3 -bottom-3 text-6xl text-slate-100 dark:text-slate-700 opacity-60 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <!-- Kehendak -->
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-purple-500 relative overflow-hidden group">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2"><span data-i18n="wants">Kehendak</span> <span id="lblWantsPct" class="text-purple-600 dark:text-purple-400 ml-1">30%</span></p>
+                            <h3 class="font-display text-2xl font-extrabold text-purple-600 dark:text-purple-400" id="resWantsRM">RM 0</h3>
+                            <i class="fa-solid fa-gamepad absolute -right-3 -bottom-3 text-6xl text-slate-100 dark:text-slate-700 opacity-60 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <!-- Simpanan -->
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-emerald-500 relative overflow-hidden group">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2"><span data-i18n="savings">Simpanan</span> <span id="lblSavePct" class="text-emerald-600 dark:text-emerald-400 ml-1">20%</span></p>
+                            <h3 class="font-display text-2xl font-extrabold text-emerald-600 dark:text-emerald-400" id="resSaveRM">RM 0</h3>
+                            <i class="fa-solid fa-piggy-bank absolute -right-3 -bottom-3 text-6xl text-slate-100 dark:text-slate-700 opacity-60 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <div class="glass-card shadow-soft p-6 md:p-8 flex-grow flex flex-col items-center justify-center relative">
+                        <h2 class="font-display text-lg font-bold text-slate-800 dark:text-slate-100 w-full text-left mb-6" data-i18n="vis_alloc">Visualisasi Agihan</h2>
+                        <div class="relative w-full max-w-[320px] aspect-square">
+                            <canvas id="salaryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab2" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <div class="lg:col-span-4 flex flex-col gap-6">
+                    <div class="glass-card shadow-soft p-6 md:p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-lg bg-gold-50 dark:bg-gold-900/30 text-gold-600 dark:text-gold-400 flex items-center justify-center border border-gold-100 dark:border-gold-800">
+                                <i class="fa-solid fa-chart-line text-lg"></i>
+                            </div>
+                            <h2 class="font-display text-xl font-bold text-slate-800 dark:text-slate-100" data-i18n="fin_params">Parameter Kewangan</h2>
+                        </div>
+
+                        <div class="space-y-6">
+                            <!-- Umur -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 block" data-i18n="cur_age">Umur Semasa</label>
+                                    <input type="number" id="inpRetAge" value="27" class="w-full px-3 py-2 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                    <input type="range" id="sldRetAge" min="18" max="70" value="27" class="slider-gold">
+                                </div>
+                                <div>
+                                    <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 block" data-i18n="ret_age">Umur Bersara</label>
+                                    <input type="number" id="inpRetireAge" value="56" class="w-full px-3 py-2 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                    <input type="range" id="sldRetireAge" min="30" max="80" value="56" class="slider-gold">
+                                </div>
+                            </div>
+                            <!-- Jangka Hayat -->
+                            <div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="life_exp">Jangka Hayat (Tahun)</label>
+                                    <input type="number" id="inpDeathAge" value="85" class="w-24 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                </div>
+                                <input type="range" id="sldDeathAge" min="60" max="100" value="85" class="slider-gold">
+                            </div>
+
+                            <hr class="border-slate-100 dark:border-slate-700">
+
+                            <!-- Dana -->
+                            <div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="cur_savings">Simpanan Sedia Ada (RM)</label>
+                                    <input type="number" id="inpRetSavings" value="19000" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                </div>
+                                <input type="range" id="sldRetSavings" min="0" max="500000" step="1000" value="19000" class="slider-gold">
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="mth_savings">Simpanan Bulanan (RM)</label>
+                                    <input type="number" id="inpRetMonthlySave" value="1200" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                </div>
+                                <input type="range" id="sldRetMonthlySave" min="0" max="10000" step="100" value="1200" class="slider-gold">
+                            </div>
+
+                            <hr class="border-slate-100 dark:border-slate-700">
+
+                            <!-- Perbelanjaan Kelak -->
+                            <div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                        <span data-i18n="ret_exp">Belanja Bersara / Bln (RM)</span><br>
+                                        <span class="text-[10px] text-slate-400 dark:text-slate-500 normal-case" data-i18n="today_val">Nilai hari ini</span>
+                                    </label>
+                                    <input type="number" id="inpRetExpense" value="2000" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                </div>
+                                <input type="range" id="sldRetExpense" min="1000" max="20000" step="100" value="2000" class="slider-gold">
+                            </div>
+                            
+                            <!-- Kadar & Inflasi -->
+                            <div class="space-y-4 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <label class="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider" data-i18n="div_rate">Anggaran Dividen (%)</label>
+                                        <input type="number" id="inpRetDividend" value="5.5" step="0.1" class="w-16 px-2 py-1 text-right font-bold text-gold-600 dark:text-gold-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg outline-none">
+                                    </div>
+                                    <input type="range" id="sldRetDividend" min="0" max="12" step="0.1" value="5.5" class="slider-gold">
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <label class="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider" data-i18n="inf_rate">Kadar Inflasi Tahunan (%)</label>
+                                        <input type="number" id="inpRetInflation" value="3.0" step="0.1" class="w-16 px-2 py-1 text-right font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg outline-none">
+                                    </div>
+                                    <input type="range" id="sldRetInflation" min="0" max="8" step="0.1" value="3.0" class="slider-gold">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-8 flex flex-col gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Dana -->
+                        <div class="glass-card p-5 shadow-card relative overflow-hidden group">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="fund_at_retire">Dana Semasa Bersara</p>
+                            <h3 class="font-display text-2xl font-extrabold text-slate-800 dark:text-white" id="resRetTotalFund">RM 0</h3>
+                            <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-2"><span data-i18n="age_label">Umur</span> <span id="lblRetireAgeVal" class="text-gold-600 dark:text-gold-400 font-bold">56</span></p>
+                            <i class="fa-solid fa-vault absolute -right-3 -top-3 text-6xl text-slate-100 dark:text-slate-700 opacity-50 group-hover:opacity-100 transition-opacity"></i>
+                        </div>
+                        <!-- Perbelanjaan Diselaraskan Inflasi -->
+                        <div class="glass-card p-5 shadow-card relative overflow-hidden group">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="exp_at_retire">Belanja Bulanan (Kelak)</p>
+                            <h3 class="font-display text-2xl font-extrabold text-slate-800 dark:text-white" id="resRetInflatedExpense">RM 0</h3>
+                            <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-2" data-i18n="adj_infl">Diselaraskan inflasi</p>
+                            <i class="fa-solid fa-arrow-trend-up absolute -right-3 -top-3 text-6xl text-slate-100 dark:text-slate-700 opacity-50 group-hover:opacity-100 transition-opacity"></i>
+                        </div>
+                        <!-- Status Depletion -->
+                        <div id="cardRetDepletion" class="glass-card p-5 shadow-card border-t-4 border-t-gold-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="fund_lifespan">Jangka Hayat Dana</p>
+                            <h3 class="font-display text-xl font-extrabold text-gold-600 dark:text-gold-400 leading-tight" id="resRetDepletionText">Kira...</h3>
+                            <p class="text-xs font-medium mt-2" id="resRetDepletionSubtext">-</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card shadow-soft p-6 flex-grow flex flex-col relative">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h2 class="font-display text-lg font-bold text-slate-800 dark:text-white" data-i18n="traj_title">Trajektori Kitaran Hayat Dana</h2>
+                                <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="traj_sub">Fasa Pengumpulan (Naik) dan Fasa Pengeluaran (Turun)</p>
+                            </div>
+                        </div>
+                        <div class="relative w-full flex-grow min-h-[350px]">
+                            <canvas id="retirementChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // State
+        let currentLang = 'bm';
+        let isDarkMode = false;
+        
+        let chartSalary = null;
+        let chartRetirement = null;
+
+        // Translation Dictionary
+        const i18n = {
+            bm: {
+                title_main: "Portal",
+                title_gradient: "Perancangan Kewangan",
+                subtitle: "Urus aliran tunai hari ini dan rancang kebebasan kewangan masa depan.",
+                tab_salary: "Agihan Gaji",
+                tab_retire: "Kalkulator Persaraan",
+                inc_profile: "Profil Pendapatan",
+                net_salary: "Gaji Bersih Bulanan (RM)",
+                allocation_rule: "Peraturan Agihan Gaji",
+                rule_format: "*Format: Keperluan / Kehendak / Simpanan (Jumlah sentiasa 100%)",
+                needs: "Keperluan",
+                wants: "Kehendak",
+                savings: "Simpanan",
+                vis_alloc: "Visualisasi Agihan",
+                fin_params: "Parameter Kewangan",
+                cur_age: "Umur Semasa",
+                ret_age: "Umur Bersara",
+                life_exp: "Jangka Hayat (Tahun)",
+                cur_savings: "Simpanan Sedia Ada (RM)",
+                mth_savings: "Simpanan Bulanan (RM)",
+                ret_exp: "Belanja Bersara / Bln (RM)",
+                today_val: "Nilai hari ini",
+                div_rate: "Anggaran Dividen (%)",
+                inf_rate: "Kadar Inflasi Tahunan (%)",
+                fund_at_retire: "Dana Semasa Bersara",
+                age_label: "Umur",
+                exp_at_retire: "Belanja Bulanan (Kelak)",
+                adj_infl: "Diselaraskan inflasi",
+                fund_lifespan: "Jangka Hayat Dana",
+                traj_title: "Trajektori Kitaran Hayat Dana",
+                traj_sub: "Fasa Pengumpulan (Naik) dan Fasa Pengeluaran (Turun)",
+                depleted: "Habis pd umur",
+                risk_high: "Dana tak cukup",
+                lasts: "Bertahan shg",
+                years: "Tahun",
+                safe: "Lebih dari sasaran",
+                chart_needs: "Keperluan",
+                chart_wants: "Kehendak",
+                chart_savings: "Simpanan",
+                chart_fund: "Nilai Terkumpul"
+            },
+            en: {
+                title_main: "Financial",
+                title_gradient: "Planning Portal",
+                subtitle: "Manage cash flow today and plan for financial freedom tomorrow.",
+                tab_salary: "Salary Allocation",
+                tab_retire: "Retirement Calculator",
+                inc_profile: "Income Profile",
+                net_salary: "Monthly Net Salary (RM)",
+                allocation_rule: "Allocation Rule",
+                rule_format: "*Format: Needs / Wants / Savings (Total is always 100%)",
+                needs: "Needs",
+                wants: "Wants",
+                savings: "Savings",
+                vis_alloc: "Allocation Visualization",
+                fin_params: "Financial Parameters",
+                cur_age: "Current Age",
+                ret_age: "Retirement Age",
+                life_exp: "Life Expectancy (Years)",
+                cur_savings: "Current Savings (RM)",
+                mth_savings: "Monthly Savings (RM)",
+                ret_exp: "Retirement Expenses / Mth (RM)",
+                today_val: "Today's value",
+                div_rate: "Est. Dividend Rate (%)",
+                inf_rate: "Annual Inflation Rate (%)",
+                fund_at_retire: "Fund at Retirement",
+                age_label: "Age",
+                exp_at_retire: "Future Monthly Expense",
+                adj_infl: "Adjusted for inflation",
+                fund_lifespan: "Fund Lifespan",
+                traj_title: "Fund Lifecycle Trajectory",
+                traj_sub: "Accumulation Phase (Up) vs Drawdown Phase (Down)",
+                depleted: "Depleted at age",
+                risk_high: "Insufficient funds",
+                lasts: "Lasts until",
+                years: "Years",
+                safe: "Exceeds target",
+                chart_needs: "Needs",
+                chart_wants: "Wants",
+                chart_savings: "Savings",
+                chart_fund: "Accumulated Value"
+            }
+        };
+
+        const t = (key) => i18n[currentLang][key];
+
+        // Format Utilities
+        const formatRM = (val) => new Intl.NumberFormat('ms-MY', { style: 'currency', currency: 'MYR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val);
+
+        // --- STREAMING_CHUNK: Managing Theme and Language Toggles ---
+        function toggleTheme() {
+            const html = document.documentElement;
+            isDarkMode = !isDarkMode;
+            
+            if (isDarkMode) {
+                html.classList.add('dark');
+                document.getElementById('iconTheme').classList.replace('fa-moon', 'fa-sun');
+            } else {
+                html.classList.remove('dark');
+                document.getElementById('iconTheme').classList.replace('fa-sun', 'fa-moon');
+            }
+            // Re-render charts to update grid/text colors based on theme
+            calcSalary();
+            calcRetirement();
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'bm' ? 'en' : 'bm';
+            document.getElementById('btnLang').innerText = currentLang === 'bm' ? 'BM' : 'EN';
+            
+            // Update all data-i18n elements
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if(i18n[currentLang][key]) {
+                    el.innerHTML = i18n[currentLang][key];
+                }
+            });
+
+            // Re-render to update chart labels and dynamic JS text
+            calcSalary();
+            calcRetirement();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            // Unselected style (handles dark mode classes too)
+            const baseClass = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50";
+            document.getElementById('btnTab1').className = baseClass;
+            document.getElementById('btnTab2').className = baseClass;
+            
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            if(tabId === 'tab1') {
+                document.getElementById('btnTab1').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm";
+                calcSalary(); 
+            } else {
+                document.getElementById('btnTab2').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-gold-50 dark:bg-gold-900/40 text-gold-700 dark:text-gold-400 shadow-sm";
+                calcRetirement();
+            }
+        }
+
+        // --- STREAMING_CHUNK: Implementing Salary Tab Logic ---
+        function initSalaryListeners() {
+            document.getElementById('inpSalary').addEventListener('input', calcSalary);
+            document.getElementById('selRule').addEventListener('change', calcSalary);
+        }
+
+        function calcSalary() {
+            const salary = parseFloat(document.getElementById('inpSalary').value) || 0;
+            const ruleValue = document.getElementById('selRule').value;
+            const [pctNeeds, pctWants, pctSave] = ruleValue.split(',').map(Number);
+
+            document.getElementById('lblNeedsPct').innerText = `(${pctNeeds}%)`;
+            document.getElementById('lblWantsPct').innerText = `(${pctWants}%)`;
+            document.getElementById('lblSavePct').innerText = `(${pctSave}%)`;
+
+            const amtNeeds = salary * (pctNeeds / 100);
+            const amtWants = salary * (pctWants / 100);
+            const amtSave = salary * (pctSave / 100);
+
+            document.getElementById('resNeedsRM').innerText = formatRM(amtNeeds);
+            document.getElementById('resWantsRM').innerText = formatRM(amtWants);
+            document.getElementById('resSaveRM').innerText = formatRM(amtSave);
+
+            drawSalaryChart(amtNeeds, amtWants, amtSave);
+        }
+
+        function drawSalaryChart(needs, wants, save) {
+            const ctx = document.getElementById('salaryChart').getContext('2d');
+            if(chartSalary) chartSalary.destroy();
+
+            const textColor = isDarkMode ? '#e2e8f0' : '#475569';
+            const borderColor = isDarkMode ? '#1e293b' : '#ffffff';
+
+            chartSalary = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [t('chart_needs'), t('chart_wants'), t('chart_savings')],
+                    datasets: [{
+                        data: [needs, wants, save],
+                        backgroundColor: ['#0ea5e9', '#a855f7', '#10b981'],
+                        borderWidth: 4,
+                        borderColor: borderColor,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { font: { family: 'Inter', weight: 'bold' }, color: textColor } 
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) { return " " + formatRM(context.parsed); }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- STREAMING_CHUNK: Implementing Retirement Calculator Logic ---
+        const retPairs = [
+            { n: 'inpRetAge', s: 'sldRetAge' },
+            { n: 'inpRetireAge', s: 'sldRetireAge' },
+            { n: 'inpDeathAge', s: 'sldDeathAge' },
+            { n: 'inpRetSavings', s: 'sldRetSavings' },
+            { n: 'inpRetMonthlySave', s: 'sldRetMonthlySave' },
+            { n: 'inpRetExpense', s: 'sldRetExpense' },
+            { n: 'inpRetDividend', s: 'sldRetDividend' },
+            { n: 'inpRetInflation', s: 'sldRetInflation' }
+        ];
+
+        function initRetListeners() {
+            retPairs.forEach(p => {
+                const elNum = document.getElementById(p.n);
+                const elSld = document.getElementById(p.s);
+                
+                elSld.addEventListener('input', (e) => {
+                    elNum.value = e.target.value;
+                    calcRetirement();
+                });
+                elNum.addEventListener('input', (e) => {
+                    elSld.value = e.target.value || 0;
+                    calcRetirement();
+                });
+            });
+        }
+
+        function calcRetirement() {
+            let currentAge = parseInt(document.getElementById('inpRetAge').value) || 0;
+            let retireAge = parseInt(document.getElementById('inpRetireAge').value) || 0;
+            let deathAge = parseInt(document.getElementById('inpDeathAge').value) || 0;
+            
+            if (retireAge <= currentAge) retireAge = currentAge + 1;
+            if (deathAge <= retireAge) deathAge = retireAge + 1;
+
+            const initialSavings = parseFloat(document.getElementById('inpRetSavings').value) || 0;
+            const monthlySave = parseFloat(document.getElementById('inpRetMonthlySave').value) || 0;
+            const expenseToday = parseFloat(document.getElementById('inpRetExpense').value) || 0;
+            
+            const dividendRate = parseFloat(document.getElementById('inpRetDividend').value) / 100 || 0;
+            const inflationRate = parseFloat(document.getElementById('inpRetInflation').value) / 100 || 0;
+
+            let labels = [];
+            let chartData = [];
+            
+            let fund = initialSavings;
+            let fundAtRetire = 0;
+            let inflatedFirstYearExpense = 0;
+            let currentInflatedExpense = 0;
+            let depletionAge = null;
+
+            for (let age = currentAge; age <= deathAge; age++) {
+                labels.push(`${age}`); // Simplified label for better chart display
+                
+                if (age < retireAge) {
+                    fund = fund + (monthlySave * 12);
+                    fund = fund * (1 + dividendRate);
+                    chartData.push(fund);
+                } else if (age === retireAge) {
+                    fund = fund + (monthlySave * 12);
+                    fund = fund * (1 + dividendRate);
+                    chartData.push(fund);
+                    
+                    fundAtRetire = fund;
+                    inflatedFirstYearExpense = expenseToday * Math.pow(1 + inflationRate, retireAge - currentAge);
+                    currentInflatedExpense = inflatedFirstYearExpense * 12;
+                } else {
+                    fund = fund - currentInflatedExpense;
+                    if (fund <= 0) {
+                        fund = 0;
+                        chartData.push(fund);
+                        if (!depletionAge) depletionAge = age;
+                    } else {
+                        fund = fund * (1 + dividendRate);
+                        chartData.push(fund);
+                    }
+                    currentInflatedExpense = currentInflatedExpense * (1 + inflationRate);
+                }
+            }
+
+            document.getElementById('resRetTotalFund').innerText = formatRM(fundAtRetire);
+            document.getElementById('lblRetireAgeVal').innerText = retireAge;
+            document.getElementById('resRetInflatedExpense').innerText = formatRM(inflatedFirstYearExpense);
+            
+            const cardDepletion = document.getElementById('cardRetDepletion');
+            const depText = document.getElementById('resRetDepletionText');
+            const depSub = document.getElementById('resRetDepletionSubtext');
+            
+            if (depletionAge) {
+                const darkCardClass = isDarkMode ? 'bg-rose-900/20 border-t-rose-500' : 'bg-rose-50/30 border-t-rose-500';
+                cardDepletion.className = `glass-card p-5 shadow-card border-t-4 ${darkCardClass}`;
+                depText.innerHTML = `${t('depleted')}<br>${depletionAge}`;
+                depText.className = "font-display text-xl font-extrabold text-rose-600 dark:text-rose-400 leading-tight";
+                depSub.innerHTML = `<span class="text-rose-500 dark:text-rose-400"><i class="fa-solid fa-triangle-exclamation"></i> ${t('risk_high')}</span>`;
+            } else {
+                const darkCardClass = isDarkMode ? 'bg-emerald-900/20 border-t-emerald-500' : 'bg-emerald-50/30 border-t-emerald-500';
+                cardDepletion.className = `glass-card p-5 shadow-card border-t-4 ${darkCardClass}`;
+                depText.innerHTML = `${t('lasts')}<br>${deathAge} ${t('years')}`;
+                depText.className = "font-display text-xl font-extrabold text-emerald-600 dark:text-emerald-400 leading-tight";
+                depSub.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400"><i class="fa-solid fa-shield-check"></i> ${t('safe')}</span>`;
+            }
+
+            drawRetirementChart(labels, chartData, currentAge, retireAge, depletionAge);
+        }
+
+        // --- STREAMING_CHUNK: Rendering Dynamic Retirement Chart ---
+        function drawRetirementChart(labels, data, startAge, retireAge, depletionAge) {
+            const ctx = document.getElementById('retirementChart').getContext('2d');
+            if (chartRetirement) chartRetirement.destroy();
+
+            // Theme adapted colors
+            const gridColor = isDarkMode ? 'rgba(51, 65, 85, 0.8)' : 'rgba(226, 232, 240, 0.6)';
+            const textColor = isDarkMode ? '#94a3b8' : '#64748b';
+            const tooltipBg = isDarkMode ? 'rgba(30, 41, 59, 0.95)' : 'rgba(15, 23, 42, 0.9)';
+
+            let gradientFill = ctx.createLinearGradient(0, 0, 0, 400);
+            gradientFill.addColorStop(0, 'rgba(202, 138, 4, 0.3)');
+            gradientFill.addColorStop(1, 'rgba(202, 138, 4, 0.02)');
+
+            chartRetirement = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: t('chart_fund'),
+                        data: data,
+                        borderColor: '#ca8a04', 
+                        backgroundColor: gradientFill,
+                        borderWidth: 3,
+                        pointBackgroundColor: isDarkMode ? '#1e293b' : '#ffffff',
+                        pointBorderColor: '#ca8a04',
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.3,
+                        segment: {
+                            borderColor: context => {
+                                const ageAtPoint = startAge + context.p0DataIndex;
+                                if (ageAtPoint >= retireAge) {
+                                    if (depletionAge && (depletionAge - ageAtPoint) <= 5) return '#f43f5e'; // Danger
+                                    return isDarkMode ? '#94a3b8' : '#64748b'; // Drawdown slate
+                                }
+                                return '#ca8a04'; // Accumulation gold
+                            }
+                        }
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: tooltipBg,
+                            titleFont: { family: 'Poppins', size: 13 },
+                            bodyFont: { family: 'Inter', size: 14, weight: 'bold' },
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) { return formatRM(context.parsed.y); }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: gridColor, drawBorder: false },
+                            ticks: {
+                                font: { family: 'Inter', size: 11 },
+                                color: textColor,
+                                callback: function(val) {
+                                    if(val >= 1000000) return 'RM' + (val / 1000000).toFixed(1) + 'M';
+                                    if(val >= 1000) return 'RM' + (val / 1000).toFixed(0) + 'K';
+                                    return 'RM' + val;
+                                }
+                            }
+                        },
+                        x: {
+                            grid: { display: false, drawBorder: false },
+                            ticks: {
+                                font: { family: 'Inter', size: 11 },
+                                color: textColor,
+                                maxTicksLimit: 8
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        window.onload = () => {
+            initSalaryListeners();
+            initRetListeners();
+            calcSalary(); 
+            // tab 1 is active by default
+        };
+    </script>
+</body>
+</html>
