@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comprehensive Financial Planner</title>
+    <title>Financial Planner</title>
     
     <!-- External Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -12,7 +12,7 @@
     <!-- Modern Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
@@ -21,17 +21,17 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Poppins', 'sans-serif'],
+                        sans: ['DM Sans', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
                     },
                     colors: {
                         brand: {
-                            50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9',
-                            600: '#0284c7', 900: '#0c4a6e',
+                            50: '#eaf6f3', 100: '#d2ebe4', 400: '#258d81', 500: '#168477',
+                            600: '#0f766e', 900: '#134e4a',
                         },
-                        gold: { 500: '#eab308', 600: '#ca8a04' },
-                        darkbg: '#0f172a',
-                        darkcard: '#1e293b'
+                        gold: { 500: '#e87942', 600: '#c95d2d' },
+                        darkbg: '#242729',
+                        darkcard: '#2d3235'
                     },
                     boxShadow: {
                         'soft': '0 10px 40px -10px rgba(0,0,0,0.06)',
@@ -61,7 +61,7 @@
         }
         /* Dark mode track */
         html.dark input[type=range]::-webkit-slider-runnable-track {
-            background: #334155;
+            background: #4a5054;
         }
 
         /* Thumbs */
@@ -72,6 +72,7 @@
             transition: transform 0.1s;
         }
         html.dark input[type=range].slider-blue::-webkit-slider-thumb { border-color: #1e293b; }
+        html.dark input[type=range].slider-blue::-webkit-slider-thumb { background: #789c95; border-color: #2d3235; }
 
         input[type=range].slider-gold::-webkit-slider-thumb {
             height: 20px; width: 20px; border-radius: 50%;
@@ -80,6 +81,7 @@
             transition: transform 0.1s;
         }
         html.dark input[type=range].slider-gold::-webkit-slider-thumb { border-color: #1e293b; }
+        html.dark input[type=range].slider-gold::-webkit-slider-thumb { background: #b79d79; border-color: #2d3235; }
 
         input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
         
@@ -97,8 +99,8 @@
             transition: background-color 0.3s, border-color 0.3s;
         }
         html.dark .glass-card {
-            background: #1e293b; /* slate-800 */
-            border-color: #334155; /* slate-700 */
+            background: #2d3235;
+            border-color: #454b4f;
         }
 
         /* Tab Transition */
@@ -107,6 +109,177 @@
             from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        :root {
+            color-scheme: light;
+            --page: #f2f6f4;
+            --ink: #172b28;
+            --muted: #64756f;
+            --line: #dce7e2;
+            --teal: #0f766e;
+            --coral: #c95d2d;
+            --surface: #ffffff;
+            --surface-raised: #f7f9f8;
+        }
+
+        html.dark {
+            color-scheme: dark;
+            --page: #202427;
+            --ink: #edf0ef;
+            --muted: #aab3b6;
+            --line: #424b50;
+            --teal: #a3bbb3;
+            --coral: #c2aa87;
+            --surface: #292f33;
+            --surface-raised: #32393d;
+        }
+
+        body {
+            background-color: var(--page);
+            background-image: radial-gradient(#c8d8d1 0.7px, transparent 0.7px);
+            background-size: 18px 18px;
+            color: var(--ink);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        body.bg-slate-50 { background-color: var(--page); }
+        body.text-slate-800 { color: var(--ink); }
+
+        html.dark body {
+            background-color: var(--page);
+            background-image:
+                radial-gradient(ellipse at 12% 0%, rgba(113, 143, 136, 0.09), transparent 38rem),
+                radial-gradient(ellipse at 92% 20%, rgba(150, 132, 107, 0.06), transparent 34rem),
+                linear-gradient(155deg, #202427 0%, #23282b 52%, #202427 100%);
+            background-size: auto, auto, cover;
+            background-repeat: no-repeat;
+            color: var(--ink);
+        }
+
+        html.dark .page-header { border-bottom-color: #394247; }
+
+        html.dark .page-header h1 span[data-i18n="title_gradient"] {
+            background-image: linear-gradient(100deg, #a5c0b8, #c5b08f) !important;
+        }
+
+        .max-w-7xl { max-width: 1280px; }
+
+        .page-header {
+            padding: 8px 0 24px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        .page-header h1 {
+            font-size: clamp(1.65rem, 3vw, 2.3rem);
+            line-height: 1.15;
+            letter-spacing: 0;
+        }
+
+        .page-header p { max-width: 620px; }
+
+        .app-nav {
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(12px);
+        }
+
+        html.dark .app-nav {
+            background: rgba(41, 47, 51, 0.88);
+            border-color: #434c51;
+            box-shadow: 0 12px 28px -20px rgba(0, 0, 0, 0.8);
+        }
+
+        html.dark #btnTheme, html.dark #btnLang {
+            background-color: var(--surface-raised);
+            border-color: #4a5459;
+            color: #d6dcda;
+        }
+
+        html.dark #btnTheme:hover, html.dark #btnLang:hover { background-color: #3b4448; }
+
+        html.dark .bg-slate-800,
+        html.dark [class~="dark:bg-slate-800"] { background-color: var(--surface-raised); }
+
+        html.dark .space-y-4.bg-slate-50,
+        html.dark [class~="dark:bg-slate-900/50"] { background-color: var(--surface) !important; }
+
+        html.dark input:not([type='range']), html.dark select {
+            color: var(--ink);
+            background-color: var(--surface-raised) !important;
+            border-color: #4a5459;
+            box-shadow: inset 0 1px rgba(255, 255, 255, 0.025);
+        }
+
+        html.dark [class~="dark:text-brand-400"] { color: #a5c0b8 !important; }
+        html.dark [class~="dark:text-gold-400"] { color: #c8b18e !important; }
+        html.dark [class~="dark:text-purple-400"] { color: #b6a9bf !important; }
+        html.dark [class~="dark:text-emerald-400"] { color: #a5b9aa !important; }
+        html.dark [class~="dark:text-rose-400"] { color: #c59da1 !important; }
+        html.dark .border-t-rose-500 { border-top-color: #aa7e83; }
+        html.dark .border-t-emerald-500 { border-top-color: #849c8c; }
+        html.dark [class~="dark:text-slate-100"], html.dark [class~="dark:text-white"] { color: #edf0ef !important; }
+        html.dark [class~="dark:text-slate-200"] { color: #d6dcda !important; }
+        html.dark [class~="dark:text-slate-300"] { color: #c2c9c9 !important; }
+        html.dark [class~="dark:text-slate-400"] { color: #aab3b6 !important; }
+        html.dark [class~="dark:text-slate-500"] { color: #8e999d !important; }
+        html.dark [class~="dark:text-slate-700"] { color: #515b60 !important; }
+
+        html.dark #btnTab1.bg-brand-50 {
+            background: linear-gradient(135deg, #3a4946, #34403e);
+            color: #c0d3cd;
+            box-shadow: inset 0 0 0 1px rgba(163, 187, 179, 0.12), 0 4px 12px rgba(0, 0, 0, 0.14);
+        }
+        html.dark #btnTab2.bg-gold-50 {
+            background: linear-gradient(135deg, #49443b, #3e3a34);
+            color: #dbc9aa;
+            box-shadow: inset 0 0 0 1px rgba(194, 170, 135, 0.12), 0 4px 12px rgba(0, 0, 0, 0.14);
+        }
+        html.dark #cardRetDepletion { background-color: var(--surface-raised); }
+
+        .app-nav button:focus-visible, #btnTheme:focus-visible, #btnLang:focus-visible {
+            outline: 3px solid rgba(163, 187, 179, 0.62);
+            outline-offset: 2px;
+        }
+
+        .glass-card {
+            border-radius: 8px;
+            border-color: var(--line);
+            box-shadow: 0 8px 24px -20px rgba(23, 43, 40, 0.5);
+        }
+
+        html.dark .glass-card {
+            background: linear-gradient(145deg, #2c3236, #282e32);
+            border-color: var(--line);
+            box-shadow: 0 14px 32px -24px rgba(0, 0, 0, 0.86), inset 0 1px rgba(255, 255, 255, 0.035);
+        }
+
+        html.dark .glass-card.border-l-brand-500 { border-left-color: #8ea9a0; }
+        html.dark .glass-card.border-l-purple-500 { border-left-color: #9d91a9; }
+        html.dark .glass-card.border-l-emerald-500 { border-left-color: #8fa795; }
+        html.dark input[type=range]::-webkit-slider-runnable-track { background: #485156; }
+        html.dark input[type=range].slider-blue::-webkit-slider-thumb { background: #8ea9a0; border-color: #32393d; }
+        html.dark input[type=range].slider-gold::-webkit-slider-thumb { background: #b9aa8e; border-color: #32393d; }
+
+        input:not([type='range']), select {
+            border-radius: 6px !important;
+            transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+        }
+
+        input:not([type='range']):focus, select:focus {
+            border-color: var(--teal) !important;
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.14);
+        }
+
+        input[type='range'] { accent-color: var(--coral); }
+        html.dark input[type='range'] { accent-color: #b99e7b; }
+
+        .chart-panel { min-height: 390px; }
+
+        @media (max-width: 640px) {
+            body { padding-top: 20px; }
+            .page-header { align-items: flex-start; text-align: left; padding-bottom: 18px; }
+            .chart-panel { min-height: 340px; }
+        }
     </style>
 </head>
 <body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-slate-50 text-slate-800 dark:bg-darkbg dark:text-slate-100">
@@ -114,7 +287,7 @@
     <div class="max-w-7xl mx-auto">
         
         <!-- Header with Toggles -->
-        <header class="mb-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+        <header class="page-header mb-6 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
             <div>
                 <h1 class="font-display text-3xl md:text-4xl font-extrabold tracking-tight mb-2">
                     <span data-i18n="title_main">Portal</span> <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-brand-400" data-i18n="title_gradient">Perancangan Kewangan</span>
@@ -134,7 +307,7 @@
         </header>
 
         <!-- Tab Navigation -->
-        <div class="flex flex-col sm:flex-row gap-2 mb-8 bg-white dark:bg-slate-800 p-1.5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 w-full md:w-max">
+        <div class="app-nav flex flex-col sm:flex-row gap-2 mb-6 bg-white dark:bg-slate-800 p-1.5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 w-full md:w-max">
             <button onclick="switchTab('tab1')" id="btnTab1" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm">
                 <i class="fa-solid fa-wallet mr-2"></i> <span data-i18n="tab_salary">Agihan Gaji</span>
             </button>
@@ -324,7 +497,7 @@
                         </div>
                     </div>
 
-                    <div class="glass-card shadow-soft p-6 flex-grow flex flex-col relative">
+                    <div class="glass-card chart-panel shadow-soft p-6 flex-grow flex flex-col relative">
                         <div class="flex justify-between items-center mb-6">
                             <div>
                                 <h2 class="font-display text-lg font-bold text-slate-800 dark:text-white" data-i18n="traj_title">Trajektori Kitaran Hayat Dana</h2>
@@ -524,7 +697,7 @@
             if(chartSalary) chartSalary.destroy();
 
             const textColor = isDarkMode ? '#e2e8f0' : '#475569';
-            const borderColor = isDarkMode ? '#1e293b' : '#ffffff';
+            const borderColor = isDarkMode ? '#2d3235' : '#ffffff';
 
             chartSalary = new Chart(ctx, {
                 type: 'doughnut',
@@ -532,7 +705,9 @@
                     labels: [t('chart_needs'), t('chart_wants'), t('chart_savings')],
                     datasets: [{
                         data: [needs, wants, save],
-                        backgroundColor: ['#0ea5e9', '#a855f7', '#10b981'],
+                        backgroundColor: isDarkMode
+                            ? ['#82a39b', '#a092aa', '#8ca391']
+                            : ['#0ea5e9', '#a855f7', '#10b981'],
                         borderWidth: 4,
                         borderColor: borderColor,
                         hoverOffset: 8
@@ -545,7 +720,7 @@
                     plugins: {
                         legend: { 
                             position: 'bottom', 
-                            labels: { font: { family: 'Inter', weight: 'bold' }, color: textColor } 
+                            labels: { font: { family: 'DM Sans', weight: 'bold' }, color: textColor } 
                         },
                         tooltip: {
                             callbacks: {
@@ -669,13 +844,15 @@
             if (chartRetirement) chartRetirement.destroy();
 
             // Theme adapted colors
-            const gridColor = isDarkMode ? 'rgba(51, 65, 85, 0.8)' : 'rgba(226, 232, 240, 0.6)';
-            const textColor = isDarkMode ? '#94a3b8' : '#64748b';
-            const tooltipBg = isDarkMode ? 'rgba(30, 41, 59, 0.95)' : 'rgba(15, 23, 42, 0.9)';
+            const gridColor = isDarkMode ? 'rgba(103, 111, 115, 0.45)' : 'rgba(226, 232, 240, 0.6)';
+            const textColor = isDarkMode ? '#b0b5b6' : '#64748b';
+            const tooltipBg = isDarkMode ? 'rgba(55, 60, 64, 0.97)' : 'rgba(15, 23, 42, 0.9)';
+            const accentColor = isDarkMode ? '#b99e7b' : '#ca8a04';
+            const dangerColor = isDarkMode ? '#b98289' : '#f43f5e';
 
             let gradientFill = ctx.createLinearGradient(0, 0, 0, 400);
-            gradientFill.addColorStop(0, 'rgba(202, 138, 4, 0.3)');
-            gradientFill.addColorStop(1, 'rgba(202, 138, 4, 0.02)');
+            gradientFill.addColorStop(0, isDarkMode ? 'rgba(185, 158, 123, 0.24)' : 'rgba(202, 138, 4, 0.3)');
+            gradientFill.addColorStop(1, isDarkMode ? 'rgba(185, 158, 123, 0.015)' : 'rgba(202, 138, 4, 0.02)');
 
             chartRetirement = new Chart(ctx, {
                 type: 'line',
@@ -684,11 +861,11 @@
                     datasets: [{
                         label: t('chart_fund'),
                         data: data,
-                        borderColor: '#ca8a04', 
+                        borderColor: accentColor,
                         backgroundColor: gradientFill,
                         borderWidth: 3,
-                        pointBackgroundColor: isDarkMode ? '#1e293b' : '#ffffff',
-                        pointBorderColor: '#ca8a04',
+                        pointBackgroundColor: isDarkMode ? '#2d3235' : '#ffffff',
+                        pointBorderColor: accentColor,
                         pointRadius: 0,
                         pointHoverRadius: 6,
                         fill: true,
@@ -697,10 +874,10 @@
                             borderColor: context => {
                                 const ageAtPoint = startAge + context.p0DataIndex;
                                 if (ageAtPoint >= retireAge) {
-                                    if (depletionAge && (depletionAge - ageAtPoint) <= 5) return '#f43f5e'; // Danger
-                                    return isDarkMode ? '#94a3b8' : '#64748b'; // Drawdown slate
+                                    if (depletionAge && (depletionAge - ageAtPoint) <= 5) return dangerColor;
+                                    return isDarkMode ? '#a6adaf' : '#64748b';
                                 }
-                                return '#ca8a04'; // Accumulation gold
+                                return accentColor;
                             }
                         }
                     }]
@@ -713,8 +890,8 @@
                         legend: { display: false },
                         tooltip: {
                             backgroundColor: tooltipBg,
-                            titleFont: { family: 'Poppins', size: 13 },
-                            bodyFont: { family: 'Inter', size: 14, weight: 'bold' },
+                            titleFont: { family: 'Space Grotesk', size: 13 },
+                            bodyFont: { family: 'DM Sans', size: 14, weight: 'bold' },
                             padding: 12,
                             displayColors: false,
                             callbacks: {
@@ -727,7 +904,7 @@
                             beginAtZero: true,
                             grid: { color: gridColor, drawBorder: false },
                             ticks: {
-                                font: { family: 'Inter', size: 11 },
+                                font: { family: 'DM Sans', size: 11 },
                                 color: textColor,
                                 callback: function(val) {
                                     if(val >= 1000000) return 'RM' + (val / 1000000).toFixed(1) + 'M';
@@ -739,7 +916,7 @@
                         x: {
                             grid: { display: false, drawBorder: false },
                             ticks: {
-                                font: { family: 'Inter', size: 11 },
+                                font: { family: 'DM Sans', size: 11 },
                                 color: textColor,
                                 maxTicksLimit: 8
                             }
