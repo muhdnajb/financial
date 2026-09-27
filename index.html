@@ -187,21 +187,29 @@
             margin: 0;
             padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
             border-top: 1px solid #c5d3cd;
-            background: rgba(226, 235, 231, 0.97);
+            background: #e2ebe7;
             color: #40564f;
             text-align: center;
             font-size: 12px;
             font-weight: 500;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 -8px 24px rgba(32, 55, 47, 0.08);
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(100%);
+            pointer-events: none;
+            transition: opacity 180ms ease, transform 180ms ease, visibility 180ms;
+        }
+
+        body.at-page-bottom .app-footer {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
         }
 
         html.dark .app-footer {
             border-top-color: #566166;
-            background: rgba(48, 56, 60, 0.97);
+            background: #30383c;
             color: #d2dad8;
-            box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.24);
         }
 
         .app-nav {
@@ -969,6 +977,14 @@
             renderLanguage();
             calcSalary(); 
             calcRetirement();
+            const updateFooterVisibility = () => {
+                const atPageBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 1;
+                document.body.classList.toggle('at-page-bottom', atPageBottom);
+            };
+            window.addEventListener('scroll', updateFooterVisibility, { passive: true });
+            window.addEventListener('resize', updateFooterVisibility);
+            new ResizeObserver(updateFooterVisibility).observe(document.querySelector('.max-w-7xl'));
+            updateFooterVisibility();
             // tab 1 is active by default
         };
     </script>
