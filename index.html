@@ -366,7 +366,7 @@
                         <!-- Gaji Bersih -->
                         <div class="mb-6">
                             <label class="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="net_salary">Gaji Bersih Bulanan (RM)</label>
-                            <input type="number" id="inpSalary" value="4500" class="w-full px-4 py-3 text-lg font-display font-bold text-brand-900 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-shadow">
+                            <input type="number" id="inpSalary" value="3000" class="w-full px-4 py-3 text-lg font-display font-bold text-brand-900 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-shadow">
                         </div>
 
                         <!-- Dropdown Preset Peratusan -->
@@ -378,6 +378,7 @@
                                     <option value="50,20,30">50 / 20 / 30</option>
                                     <option value="60,20,20">60 / 20 / 20</option>
                                     <option value="70,20,10">70 / 20 / 10</option>
+                                    <option value="40,30,30">40 / 30 / 30</option>
                                 </select>
                                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 dark:text-slate-400">
                                     <i class="fa-solid fa-chevron-down text-sm"></i>
@@ -437,7 +438,7 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 block" data-i18n="cur_age">Umur Semasa</label>
-                                    <input type="number" id="inpRetAge" value="27" class="w-full px-3 py-2 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                    <input type="number" id="inpRetAge" value="18" class="w-full px-3 py-2 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
                                     <input type="range" id="sldRetAge" min="18" max="70" value="27" class="slider-gold">
                                 </div>
                                 <div>
@@ -460,10 +461,18 @@
                             <!-- Dana -->
                             <div>
                                 <div class="flex justify-between items-end mb-1">
-                                    <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="cur_savings">Simpanan Sedia Ada (RM)</label>
-                                    <input type="number" id="inpRetSavings" value="19000" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                    <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="cur_savings">Current EPF balance (RM)</label>
+                                    <input type="number" id="inpRetSavings" value="10000" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
                                 </div>
-                                <input type="range" id="sldRetSavings" min="0" max="500000" step="1000" value="19000" class="slider-gold">
+                                <input type="range" id="sldRetSavings" min="0" max="500000" step="1000" value="10000" class="slider-gold">
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-end mb-1">
+                                    <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="other_assets">Other assets (RM)</label>
+                                    <input type="number" id="inpRetOtherAssets" value="0" min="0" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                </div>
+                                <input type="range" id="sldRetOtherAssets" min="0" max="2000000" step="5000" value="0" class="slider-gold">
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1" data-i18n="other_assets_note">Cash, investments, etc. Assumes the same return rate.</p>
                             </div>
                             <div>
                                 <div class="flex justify-between items-end mb-1">
@@ -499,9 +508,9 @@
                                 <div>
                                     <div class="flex justify-between items-center mb-1">
                                         <label class="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider" data-i18n="inf_rate">Kadar Inflasi Tahunan (%)</label>
-                                        <input type="number" id="inpRetInflation" value="3.0" step="0.1" class="w-16 px-2 py-1 text-right font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg outline-none">
+                                        <input type="number" id="inpRetInflation" value="2.0" step="0.1" class="w-16 px-2 py-1 text-right font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg outline-none">
                                     </div>
-                                    <input type="range" id="sldRetInflation" min="0" max="8" step="0.1" value="3.0" class="slider-gold">
+                                    <input type="range" id="sldRetInflation" min="0" max="8" step="0.1" value="2.0" class="slider-gold">
                                 </div>
                             </div>
                         </div>
@@ -580,7 +589,9 @@
                 cur_age: "Umur Semasa",
                 ret_age: "Umur Bersara",
                 life_exp: "Jangka Hayat (Tahun)",
-                cur_savings: "Simpanan Sedia Ada (RM)",
+                cur_savings: "Baki EPF Semasa (RM)",
+                other_assets: "Aset persaraan lain (RM)",
+                other_assets_note: "Tunai, pelaburan dan lain-lain. Andaian kadar pulangan sama.",
                 mth_savings: "Simpanan Bulanan (RM)",
                 ret_exp: "Belanja Bersara / Bln (RM)",
                 today_val: "Nilai hari ini",
@@ -595,7 +606,7 @@
                 traj_sub: "Fasa Pengumpulan (Naik) dan Fasa Pengeluaran (Turun)",
                 depleted: "Habis pada umur",
                 risk_high: "Dana tidak cukup",
-                lasts: "Bertahan shg",
+                lasts: "Bertahan sehingga",
                 years: "Tahun",
                 safe: "Lebih dari sasaran",
                 chart_needs: "Keperluan",
@@ -622,7 +633,9 @@
                 cur_age: "Current Age",
                 ret_age: "Retirement Age",
                 life_exp: "Life Expectancy (Years)",
-                cur_savings: "Current Savings (RM)",
+                cur_savings: "Current EPF balance (RM)",
+                other_assets: "Other retirement assets (RM)",
+                other_assets_note: "Cash, investments, etc. Assumes the same return rate.",
                 mth_savings: "Monthly Savings (RM)",
                 ret_exp: "Retirement Expenses / Mth (RM)",
                 today_val: "Today's value",
@@ -783,6 +796,7 @@
             { n: 'inpRetireAge', s: 'sldRetireAge' },
             { n: 'inpDeathAge', s: 'sldDeathAge' },
             { n: 'inpRetSavings', s: 'sldRetSavings' },
+            { n: 'inpRetOtherAssets', s: 'sldRetOtherAssets' },
             { n: 'inpRetMonthlySave', s: 'sldRetMonthlySave' },
             { n: 'inpRetExpense', s: 'sldRetExpense' },
             { n: 'inpRetDividend', s: 'sldRetDividend' },
@@ -813,7 +827,9 @@
             if (retireAge <= currentAge) retireAge = currentAge + 1;
             if (deathAge <= retireAge) deathAge = retireAge + 1;
 
-            const initialSavings = parseFloat(document.getElementById('inpRetSavings').value) || 0;
+            const epfSavings = parseFloat(document.getElementById('inpRetSavings').value) || 0;
+            const otherAssets = parseFloat(document.getElementById('inpRetOtherAssets').value) || 0;
+            const initialSavings = epfSavings + otherAssets;
             const monthlySave = parseFloat(document.getElementById('inpRetMonthlySave').value) || 0;
             const expenseToday = parseFloat(document.getElementById('inpRetExpense').value) || 0;
             
