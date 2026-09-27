@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ms" class="light">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -301,7 +301,7 @@
                 </button>
                 <!-- Language Toggle -->
                 <button id="btnLang" onclick="toggleLanguage()" class="px-4 h-10 rounded-full font-bold text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                    BM
+                    EN
                 </button>
             </div>
         </header>
@@ -516,7 +516,7 @@
 
     <script>
         // State
-        let currentLang = 'bm';
+        let currentLang = 'en';
         let isDarkMode = false;
         
         let chartSalary = null;
@@ -555,8 +555,8 @@
                 fund_lifespan: "Jangka Hayat Dana",
                 traj_title: "Trajektori Kitaran Hayat Dana",
                 traj_sub: "Fasa Pengumpulan (Naik) dan Fasa Pengeluaran (Turun)",
-                depleted: "Habis pd umur",
-                risk_high: "Dana tak cukup",
+                depleted: "Habis pada umur",
+                risk_high: "Dana tidak cukup",
                 lasts: "Bertahan shg",
                 years: "Tahun",
                 safe: "Lebih dari sasaran",
@@ -632,8 +632,17 @@
 
         function toggleLanguage() {
             currentLang = currentLang === 'bm' ? 'en' : 'bm';
+            renderLanguage();
+
+            // Re-render to update chart labels and dynamic JS text
+            calcSalary();
+            calcRetirement();
+        }
+
+        function renderLanguage() {
+            document.documentElement.lang = currentLang === 'bm' ? 'ms' : 'en';
             document.getElementById('btnLang').innerText = currentLang === 'bm' ? 'BM' : 'EN';
-            
+
             // Update all data-i18n elements
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
@@ -641,10 +650,6 @@
                     el.innerHTML = i18n[currentLang][key];
                 }
             });
-
-            // Re-render to update chart labels and dynamic JS text
-            calcSalary();
-            calcRetirement();
         }
 
         function switchTab(tabId) {
@@ -929,7 +934,9 @@
         window.onload = () => {
             initSalaryListeners();
             initRetListeners();
+            renderLanguage();
             calcSalary(); 
+            calcRetirement();
             // tab 1 is active by default
         };
     </script>
