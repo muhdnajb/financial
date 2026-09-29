@@ -351,6 +351,9 @@
             <button onclick="switchTab('tab3')" id="btnTab3" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
                 <i class="fa-solid fa-chart-column mr-2"></i> <span data-i18n="tab_dividend">Kalkulator Dividen</span>
             </button>
+            <button onclick="switchTab('tab4')" id="btnTab4" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                <i class="fa-solid fa-arrow-trend-down mr-2"></i> <span data-i18n="tab_withdrawal">Withdrawal Loss</span>
+            </button>
         </div>
 
         <div id="tab1" class="tab-content block">
@@ -618,6 +621,62 @@
             </div>
         </div>
 
+        <div id="tab4" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-4 flex flex-col gap-6">
+                    <div class="glass-card shadow-soft p-6 md:p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100">
+                                <i class="fa-solid fa-hand-holding-dollar text-lg"></i>
+                            </div>
+                            <h2 class="font-display text-xl font-bold text-slate-800 dark:text-slate-100" data-i18n="withdrawal_params">Withdrawal Parameters</h2>
+                        </div>
+                        <div class="space-y-5">
+                            <div>
+                                <label for="inpWithdrawalBalance" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="withdrawal_balance">Current savings (RM)</label>
+                                <input type="number" id="inpWithdrawalBalance" value="10000" min="0" step="100" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                            </div>
+                            <div>
+                                <label for="inpWithdrawalAmount" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="withdrawal_amount">Withdrawal amount (RM)</label>
+                                <input type="number" id="inpWithdrawalAmount" value="1000" min="0" step="100" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label for="inpWithdrawalRate" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="withdrawal_rate">Annual dividend (%)</label>
+                                    <input type="number" id="inpWithdrawalRate" value="5.5" min="0" max="100" step="0.1" class="w-full px-3 py-3 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                </div>
+                                <div>
+                                    <label for="inpWithdrawalYears" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="withdrawal_years">Years remaining</label>
+                                    <input type="number" id="inpWithdrawalYears" value="1" min="1" max="100" step="1" class="w-full px-3 py-3 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="withdrawal_note">Assumes the withdrawal happens now and the remaining balance earns dividends monthly. This is an estimate, not an actual ASB/EPF dividend calculation.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-8 flex flex-col gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-brand-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="withdrawal_no_take">Balance without withdrawal</p>
+                            <h3 class="font-display text-2xl font-extrabold text-brand-600 dark:text-brand-400" id="resWithdrawalNoTake">RM 0</h3>
+                        </div>
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-gold-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="withdrawal_after">Balance after withdrawal</p>
+                            <h3 class="font-display text-2xl font-extrabold text-gold-600 dark:text-gold-400" id="resWithdrawalAfter">RM 0</h3>
+                        </div>
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-rose-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="withdrawal_loss">Dividend opportunity cost</p>
+                            <h3 class="font-display text-2xl font-extrabold text-rose-600 dark:text-rose-400" id="resWithdrawalLoss">RM 0</h3>
+                        </div>
+                    </div>
+                    <div class="glass-card chart-panel shadow-soft p-6 flex-grow flex flex-col relative">
+                        <h2 class="font-display text-lg font-bold text-slate-800 dark:text-white mb-6" data-i18n="withdrawal_chart_title">Balance comparison after withdrawal</h2>
+                        <div class="relative w-full flex-grow min-h-[350px]"><canvas id="withdrawalChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <footer class="app-footer">
             <p data-i18n="footer_credit">© 2026 · Designed and developed by @muhdnajb</p>
         </footer>
@@ -631,6 +690,7 @@
         let chartSalary = null;
         let chartRetirement = null;
         let chartDividend = null;
+        let chartWithdrawal = null;
 
         // Translation Dictionary
         const i18n = {
@@ -641,6 +701,19 @@
                 tab_salary: "Agihan Gaji",
                 tab_retire: "Kalkulator Persaraan",
                 tab_dividend: "Kalkulator Dividen",
+                tab_withdrawal: "Kerugian Dividen",
+                withdrawal_params: "Parameter Pengeluaran",
+                withdrawal_balance: "Simpanan semasa (RM)",
+                withdrawal_amount: "Jumlah pengeluaran (RM)",
+                withdrawal_rate: "Dividen tahunan (%)",
+                withdrawal_years: "Baki tahun",
+                withdrawal_note: "Andaian pengeluaran dibuat sekarang dan baki selebihnya menerima dividen bulanan. Ini anggaran, bukan pengiraan dividen ASB/EPF sebenar.",
+                withdrawal_no_take: "Baki tanpa pengeluaran",
+                withdrawal_after: "Baki selepas pengeluaran",
+                withdrawal_loss: "Kos peluang dividen",
+                withdrawal_chart_title: "Perbandingan baki selepas pengeluaran",
+                chart_withdrawal_no_take: "Tanpa pengeluaran",
+                chart_withdrawal_after: "Selepas pengeluaran",
                 dividend_params: "Parameter Dividen",
                 div_balance: "Baki semasa (RM)",
                 div_monthly: "Simpanan bulanan (RM)",
@@ -703,6 +776,19 @@
                 tab_salary: "Salary Allocation",
                 tab_retire: "Retirement Calculator",
                 tab_dividend: "Dividend Calculator",
+                tab_withdrawal: "Margin Loss",
+                withdrawal_params: "Withdrawal Parameters",
+                withdrawal_balance: "Current savings (RM)",
+                withdrawal_amount: "Withdrawal amount (RM)",
+                withdrawal_rate: "Annual dividend (%)",
+                withdrawal_years: "Years remaining",
+                withdrawal_note: "Assumes the withdrawal happens now and the remaining balance earns dividends monthly. This is an estimate, not an actual ASB/EPF dividend calculation.",
+                withdrawal_no_take: "Balance without withdrawal",
+                withdrawal_after: "Balance after withdrawal",
+                withdrawal_loss: "Dividend opportunity cost",
+                withdrawal_chart_title: "Balance comparison after withdrawal",
+                chart_withdrawal_no_take: "Without withdrawal",
+                chart_withdrawal_after: "After withdrawal",
                 dividend_params: "Dividend Parameters",
                 div_balance: "Current balance (RM)",
                 div_monthly: "Monthly contribution (RM)",
@@ -781,6 +867,7 @@
             calcSalary();
             calcRetirement();
             if (document.getElementById('tab3').classList.contains('block')) calcDividend();
+            if (document.getElementById('tab4').classList.contains('block')) calcWithdrawalLoss();
         }
 
         function toggleLanguage() {
@@ -791,6 +878,7 @@
             calcSalary();
             calcRetirement();
             if (document.getElementById('tab3').classList.contains('block')) calcDividend();
+            if (document.getElementById('tab4').classList.contains('block')) calcWithdrawalLoss();
         }
 
         function renderLanguage() {
@@ -814,6 +902,7 @@
             document.getElementById('btnTab1').className = baseClass;
             document.getElementById('btnTab2').className = baseClass;
             document.getElementById('btnTab3').className = baseClass;
+            document.getElementById('btnTab4').className = baseClass;
             
             document.getElementById(tabId).classList.remove('hidden');
             
@@ -823,10 +912,73 @@
             } else if (tabId === 'tab2') {
                 document.getElementById('btnTab2').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm";
                 calcRetirement();
-            } else {
+            } else if (tabId === 'tab3') {
                 document.getElementById('btnTab3').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm";
                 calcDividend();
+            } else {
+                document.getElementById('btnTab4').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm";
+                calcWithdrawalLoss();
             }
+        }
+
+        function calcWithdrawalLoss() {
+            const currentSavings = Math.max(0, parseFloat(document.getElementById('inpWithdrawalBalance').value) || 0);
+            const requestedWithdrawal = Math.max(0, parseFloat(document.getElementById('inpWithdrawalAmount').value) || 0);
+            const withdrawal = Math.min(currentSavings, requestedWithdrawal);
+            const annualRate = Math.max(0, parseFloat(document.getElementById('inpWithdrawalRate').value) || 0) / 100;
+            const years = Math.min(100, Math.max(1, parseInt(document.getElementById('inpWithdrawalYears').value, 10) || 1));
+            const monthlyRate = Math.pow(1 + annualRate, 1 / 12) - 1;
+            const labels = ['0'];
+            const withoutWithdrawal = [currentSavings];
+            const afterWithdrawal = [currentSavings - withdrawal];
+            let balanceWithoutWithdrawal = currentSavings;
+            let balanceAfterWithdrawal = currentSavings - withdrawal;
+
+            for (let month = 1; month <= years * 12; month++) {
+                balanceWithoutWithdrawal *= 1 + monthlyRate;
+                balanceAfterWithdrawal *= 1 + monthlyRate;
+                labels.push(String(month));
+                withoutWithdrawal.push(balanceWithoutWithdrawal);
+                afterWithdrawal.push(balanceAfterWithdrawal);
+            }
+
+            document.getElementById('resWithdrawalNoTake').innerText = formatRM(balanceWithoutWithdrawal);
+            document.getElementById('resWithdrawalAfter').innerText = formatRM(balanceAfterWithdrawal);
+            document.getElementById('resWithdrawalLoss').innerText = formatRM(balanceWithoutWithdrawal - balanceAfterWithdrawal - withdrawal);
+            drawWithdrawalChart(labels, withoutWithdrawal, afterWithdrawal);
+        }
+
+        function drawWithdrawalChart(labels, withoutWithdrawal, afterWithdrawal) {
+            const ctx = document.getElementById('withdrawalChart').getContext('2d');
+            if (chartWithdrawal) chartWithdrawal.destroy();
+            const textColor = isDarkMode ? '#b0b5b6' : '#64748b';
+            const gridColor = isDarkMode ? 'rgba(103, 111, 115, 0.45)' : 'rgba(226, 232, 240, 0.6)';
+            chartWithdrawal = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets: [
+                    { label: t('chart_withdrawal_no_take'), data: withoutWithdrawal, borderColor: isDarkMode ? '#a5b9aa' : '#0f766e', backgroundColor: isDarkMode ? 'rgba(165, 185, 170, 0.12)' : 'rgba(15, 118, 110, 0.1)', fill: true, tension: 0.2, pointRadius: 0 },
+                    { label: t('chart_withdrawal_after'), data: afterWithdrawal, borderColor: isDarkMode ? '#c59da1' : '#e11d48', borderDash: [5, 4], fill: false, tension: 0.2, pointRadius: 0 }
+                ] },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: textColor, font: { family: 'DM Sans', weight: 'bold' } } },
+                        tooltip: { callbacks: { label: context => `${context.dataset.label}: ${formatRM(context.parsed.y)}` } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, callback: value => formatRM(value) } },
+                        x: { title: { display: true, text: currentLang === 'bm' ? 'Tempoh Tahun' : 'Year', color: textColor }, grid: { display: false }, ticks: { color: textColor, maxTicksLimit: 10 } }
+                    }
+                }
+            });
+        }
+
+        function initWithdrawalListeners() {
+            ['inpWithdrawalBalance', 'inpWithdrawalAmount', 'inpWithdrawalRate', 'inpWithdrawalYears'].forEach(id => {
+                document.getElementById(id).addEventListener('input', calcWithdrawalLoss);
+            });
         }
 
         function calcDividend() {
@@ -1168,6 +1320,7 @@
             initSalaryListeners();
             initRetListeners();
             initDividendListeners();
+            initWithdrawalListeners();
             renderLanguage();
             calcSalary(); 
             calcRetirement();
