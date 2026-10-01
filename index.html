@@ -221,6 +221,8 @@
             backdrop-filter: blur(12px);
         }
 
+        .app-nav select { display: none; }
+
         html.dark .app-nav {
             background: rgba(41, 47, 51, 0.88);
             border-color: #434c51;
@@ -312,6 +314,19 @@
             body { padding-top: 20px; }
             .page-header { align-items: flex-start; text-align: left; padding-bottom: 18px; }
             .chart-panel { min-height: 340px; }
+            .app-nav button { display: none; }
+            .app-nav select {
+                display: block;
+                width: 100%;
+                min-height: 44px;
+                padding: 0.625rem 2.5rem 0.625rem 0.875rem;
+                border: 1px solid var(--line);
+                border-radius: 0.5rem !important;
+                background-color: var(--surface-raised);
+                color: var(--ink);
+                font-size: 0.875rem;
+                font-weight: 600;
+            }
         }
     </style>
 </head>
@@ -342,6 +357,14 @@
 
         <!-- Tab Navigation -->
         <div class="app-nav flex flex-col sm:flex-row gap-2 mb-6 bg-white dark:bg-slate-800 p-1.5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 w-full md:w-max">
+            <label for="moduleSelector" class="sr-only" data-i18n="module_selector">Select module</label>
+            <select id="moduleSelector" onchange="switchTab(this.value)">
+                <option value="tab1" data-i18n="tab_salary">Salary Allocation</option>
+                <option value="tab2" data-i18n="tab_retire">Retirement Calculator</option>
+                <option value="tab3" data-i18n="tab_dividend">Dividend Calculator</option>
+                <option value="tab4" data-i18n="tab_withdrawal">Margin Loss</option>
+                <option value="tab5" data-i18n="tab_emergency">Emergency Fund</option>
+            </select>
             <button onclick="switchTab('tab1')" id="btnTab1" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm">
                 <i class="fa-solid fa-wallet mr-2"></i> <span data-i18n="tab_salary">Agihan Gaji</span>
             </button>
@@ -799,6 +822,7 @@
                 title_main: "Portal",
                 title_gradient: "Perancangan Kewangan",
                 subtitle: "Urus aliran tunai hari ini dan rancang kebebasan kewangan masa depan.",
+                module_selector: "Pilih modul",
                 tab_salary: "Agihan Gaji",
                 tab_retire: "Kalkulator Persaraan",
                 tab_dividend: "Kalkulator Dividen",
@@ -907,6 +931,7 @@
                 title_main: "Financial",
                 title_gradient: "Planning Portal",
                 subtitle: "Manage cash flow today and plan for financial freedom tomorrow.",
+                module_selector: "Select module",
                 tab_salary: "Salary Allocation",
                 tab_retire: "Retirement Calculator",
                 tab_dividend: "Dividend Calculator",
@@ -1065,6 +1090,7 @@
 
         const switchTab = (tabId) => {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('moduleSelector').value = tabId;
             
             // Unselected style (handles dark mode classes too)
             const baseClass = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50";
