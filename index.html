@@ -1019,7 +1019,7 @@
         const formatRM = (val) => new Intl.NumberFormat('ms-MY', { style: 'currency', currency: 'MYR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val);
 
         // --- STREAMING_CHUNK: Managing Theme and Language Toggles ---
-        function toggleTheme() {
+        const toggleTheme = () => {
             const html = document.documentElement;
             isDarkMode = !isDarkMode;
             
@@ -1036,9 +1036,9 @@
             if (document.getElementById('tab3').classList.contains('block')) calcDividend();
             if (document.getElementById('tab4').classList.contains('block')) calcWithdrawalLoss();
             if (document.getElementById('tab5').classList.contains('block')) calcEmergencyFund();
-        }
+        };
 
-        function toggleLanguage() {
+        const toggleLanguage = () => {
             currentLang = currentLang === 'bm' ? 'en' : 'bm';
             renderLanguage();
 
@@ -1048,9 +1048,9 @@
             if (document.getElementById('tab3').classList.contains('block')) calcDividend();
             if (document.getElementById('tab4').classList.contains('block')) calcWithdrawalLoss();
             if (document.getElementById('tab5').classList.contains('block')) calcEmergencyFund();
-        }
+        };
 
-        function renderLanguage() {
+        const renderLanguage = () => {
             document.documentElement.lang = currentLang === 'bm' ? 'ms' : 'en';
             document.getElementById('btnLang').innerText = currentLang === 'bm' ? 'BM' : 'EN';
 
@@ -1061,9 +1061,9 @@
                     el.innerHTML = i18n[currentLang][key];
                 }
             });
-        }
+        };
 
-        function switchTab(tabId) {
+        const switchTab = (tabId) => {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             
             // Unselected style (handles dark mode classes too)
@@ -1092,9 +1092,9 @@
                 document.getElementById('btnTab5').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm";
                 calcEmergencyFund();
             }
-        }
+        };
 
-        function calcEmergencyFund() {
+        const calcEmergencyFund = () => {
             const expenseInputIds = ['inpEfHousing', 'inpEfTransport', 'inpEfFood', 'inpEfUtilities', 'inpEfDebt', 'inpEfHealth', 'inpEfDependents'];
             const monthlyExpenses = expenseInputIds.reduce((total, id) => {
                 return total + Math.max(0, parseFloat(document.getElementById(id).value) || 0);
@@ -1123,9 +1123,9 @@
             }
 
             drawEmergencyChart(currentSavings, monthlyContribution, target, monthsToTarget);
-        }
+        };
 
-        function drawEmergencyChart(currentSavings, monthlyContribution, target, monthsToTarget) {
+        const drawEmergencyChart = (currentSavings, monthlyContribution, target, monthsToTarget) => {
             const ctx = document.getElementById('emergencyChart').getContext('2d');
             if (chartEmergency) chartEmergency.destroy();
             const textColor = isDarkMode ? '#b0b5b6' : '#64748b';
@@ -1161,16 +1161,16 @@
                     }
                 }
             });
-        }
+        };
 
-        function initEmergencyFundListeners() {
+        const initEmergencyFundListeners = () => {
             ['inpEfHousing', 'inpEfTransport', 'inpEfFood', 'inpEfUtilities', 'inpEfDebt', 'inpEfHealth', 'inpEfDependents', 'inpEfCurrent', 'inpEfMonthlySave'].forEach(id => {
                 document.getElementById(id).addEventListener('input', calcEmergencyFund);
             });
             document.getElementById('selEfTargetMonths').addEventListener('change', calcEmergencyFund);
-        }
+        };
 
-        function calcWithdrawalLoss() {
+        const calcWithdrawalLoss = () => {
             const currentSavings = Math.max(0, parseFloat(document.getElementById('inpWithdrawalBalance').value) || 0);
             const requestedWithdrawal = Math.max(0, parseFloat(document.getElementById('inpWithdrawalAmount').value) || 0);
             const withdrawal = Math.min(currentSavings, requestedWithdrawal);
@@ -1195,9 +1195,9 @@
             document.getElementById('resWithdrawalAfter').innerText = formatRM(balanceAfterWithdrawal);
             document.getElementById('resWithdrawalLoss').innerText = formatRM(balanceWithoutWithdrawal - balanceAfterWithdrawal - withdrawal);
             drawWithdrawalChart(labels, withoutWithdrawal, afterWithdrawal);
-        }
+        };
 
-        function drawWithdrawalChart(labels, withoutWithdrawal, afterWithdrawal) {
+        const drawWithdrawalChart = (labels, withoutWithdrawal, afterWithdrawal) => {
             const ctx = document.getElementById('withdrawalChart').getContext('2d');
             if (chartWithdrawal) chartWithdrawal.destroy();
             const textColor = isDarkMode ? '#b0b5b6' : '#64748b';
@@ -1222,15 +1222,15 @@
                     }
                 }
             });
-        }
+        };
 
-        function initWithdrawalListeners() {
+        const initWithdrawalListeners = () => {
             ['inpWithdrawalBalance', 'inpWithdrawalAmount', 'inpWithdrawalRate', 'inpWithdrawalYears'].forEach(id => {
                 document.getElementById(id).addEventListener('input', calcWithdrawalLoss);
             });
-        }
+        };
 
-        function calcDividend() {
+        const calcDividend = () => {
             const startingBalance = Math.max(0, parseFloat(document.getElementById('inpDivBalance').value) || 0);
             const monthlyContribution = Math.max(0, parseFloat(document.getElementById('inpDivMonthly').value) || 0);
             const annualRate = Math.max(0, parseFloat(document.getElementById('inpDivRate').value) || 0) / 100;
@@ -1260,9 +1260,9 @@
             document.getElementById('resDivContributions').innerText = formatRM(totalContributions);
             document.getElementById('resDivEarned').innerText = formatRM(balance - totalContributions);
             drawDividendChart(labels, balances, contributions);
-        }
+        };
 
-        function drawDividendChart(labels, balances, contributions) {
+        const drawDividendChart = (labels, balances, contributions) => {
             const ctx = document.getElementById('dividendChart').getContext('2d');
             if (chartDividend) chartDividend.destroy();
             const textColor = isDarkMode ? '#b0b5b6' : '#64748b';
@@ -1287,21 +1287,21 @@
                     }
                 }
             });
-        }
+        };
 
-        function initDividendListeners() {
+        const initDividendListeners = () => {
             ['inpDivBalance', 'inpDivMonthly', 'inpDivStartMonth', 'inpDivRate', 'inpDivYears'].forEach(id => {
                 document.getElementById(id).addEventListener('input', calcDividend);
             });
-        }
+        };
 
         // --- STREAMING_CHUNK: Implementing Salary Tab Logic ---
-        function initSalaryListeners() {
+        const initSalaryListeners = () => {
             document.getElementById('inpSalary').addEventListener('input', calcSalary);
             document.getElementById('selRule').addEventListener('change', calcSalary);
-        }
+        };
 
-        function calcSalary() {
+        const calcSalary = () => {
             const salary = parseFloat(document.getElementById('inpSalary').value) || 0;
             const ruleValue = document.getElementById('selRule').value;
             const [pctNeeds, pctWants, pctSave] = ruleValue.split(',').map(Number);
@@ -1319,9 +1319,9 @@
             document.getElementById('resSaveRM').innerText = formatRM(amtSave);
 
             drawSalaryChart(amtNeeds, amtWants, amtSave);
-        }
+        };
 
-        function drawSalaryChart(needs, wants, save) {
+        const drawSalaryChart = (needs, wants, save) => {
             const ctx = document.getElementById('salaryChart').getContext('2d');
             if(chartSalary) chartSalary.destroy();
 
@@ -1353,13 +1353,13 @@
                         },
                         tooltip: {
                             callbacks: {
-                                label: function(context) { return " " + formatRM(context.parsed); }
+                                label: context => " " + formatRM(context.parsed)
                             }
                         }
                     }
                 }
             });
-        }
+        };
 
         // --- STREAMING_CHUNK: Implementing Retirement Calculator Logic ---
         const retPairs = [
@@ -1374,7 +1374,7 @@
             { n: 'inpRetInflation', s: 'sldRetInflation' }
         ];
 
-        function initRetListeners() {
+        const initRetListeners = () => {
             retPairs.forEach(p => {
                 const elNum = document.getElementById(p.n);
                 const elSld = document.getElementById(p.s);
@@ -1388,9 +1388,9 @@
                     calcRetirement();
                 });
             });
-        }
+        };
 
-        function calcRetirement() {
+        const calcRetirement = () => {
             let currentAge = parseInt(document.getElementById('inpRetAge').value) || 0;
             let retireAge = parseInt(document.getElementById('inpRetireAge').value) || 0;
             let deathAge = parseInt(document.getElementById('inpDeathAge').value) || 0;
@@ -1472,10 +1472,10 @@
             }
 
             drawRetirementChart(labels, chartData, currentAge, retireAge, depletionAge);
-        }
+        };
 
         // --- STREAMING_CHUNK: Rendering Dynamic Retirement Chart ---
-        function drawRetirementChart(labels, data, startAge, retireAge, depletionAge) {
+        const drawRetirementChart = (labels, data, startAge, retireAge, depletionAge) => {
             const ctx = document.getElementById('retirementChart').getContext('2d');
             if (chartRetirement) chartRetirement.destroy();
 
@@ -1531,7 +1531,7 @@
                             padding: 12,
                             displayColors: false,
                             callbacks: {
-                                label: function(context) { return formatRM(context.parsed.y); }
+                                label: context => formatRM(context.parsed.y)
                             }
                         }
                     },
@@ -1542,7 +1542,7 @@
                             ticks: {
                                 font: { family: 'DM Sans', size: 11 },
                                 color: textColor,
-                                callback: function(val) {
+                                callback: val => {
                                     if(val >= 1000000) return 'RM' + (val / 1000000).toFixed(1) + 'M';
                                     if(val >= 1000) return 'RM' + (val / 1000).toFixed(0) + 'K';
                                     return 'RM' + val;
@@ -1560,7 +1560,7 @@
                     }
                 }
             });
-        }
+        };
 
         window.onload = () => {
             const startMonthInput = document.getElementById('inpDivStartMonth');
