@@ -356,7 +356,7 @@
         </header>
 
         <!-- Tab Navigation -->
-        <div class="app-nav flex flex-col sm:flex-row gap-2 mb-6 bg-white dark:bg-slate-800 p-1.5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 w-full md:w-max">
+        <div class="app-nav flex flex-col sm:flex-row sm:flex-wrap gap-2 mb-6 bg-white dark:bg-slate-800 p-1.5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 w-full md:w-fit">
             <label for="moduleSelector" class="sr-only" data-i18n="module_selector">Select module</label>
             <select id="moduleSelector" onchange="switchTab(this.value)">
                 <option value="tab1" data-i18n="tab_salary">Salary Allocation</option>
@@ -364,6 +364,7 @@
                 <option value="tab3" data-i18n="tab_dividend">Dividend Calculator</option>
                 <option value="tab4" data-i18n="tab_withdrawal">Margin Loss</option>
                 <option value="tab5" data-i18n="tab_emergency">Emergency Fund</option>
+                <option value="tab6" data-i18n="tab_wedding">Wedding Savings</option>
             </select>
             <button onclick="switchTab('tab1')" id="btnTab1" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm">
                 <i class="fa-solid fa-wallet mr-2"></i> <span data-i18n="tab_salary">Agihan Gaji</span>
@@ -379,6 +380,9 @@
             </button>
             <button onclick="switchTab('tab5')" id="btnTab5" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
                 <i class="fa-solid fa-shield-heart mr-2"></i> <span data-i18n="tab_emergency">Emergency Fund</span>
+            </button>
+            <button onclick="switchTab('tab6')" id="btnTab6" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                <i class="fa-solid fa-ring mr-2"></i> <span data-i18n="tab_wedding">Wedding Savings</span>
             </button>
         </div>
 
@@ -800,6 +804,94 @@
             </div>
         </div>
 
+        <div id="tab6" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-4 flex flex-col gap-6">
+                    <div class="glass-card shadow-soft p-6 md:p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center border border-brand-100 dark:border-brand-800">
+                                <i class="fa-solid fa-ring text-lg"></i>
+                            </div>
+                            <h2 class="font-display text-xl font-bold text-slate-800 dark:text-slate-100" data-i18n="wedding_params">Wedding Savings Plan</h2>
+                        </div>
+                        <div class="space-y-5">
+                            <div>
+                                <label for="selWeddingMode" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="wedding_mode">Savings contribution mode</label>
+                                <select id="selWeddingMode" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                    <option value="percentage" data-i18n="wedding_mode_percentage">Percentage of net salary</option>
+                                    <option value="manual" data-i18n="wedding_mode_manual">Manual monthly amount</option>
+                                </select>
+                            </div>
+                            <div id="weddingPercentageFields" class="space-y-5">
+                                <label for="inpWeddingSalary" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="net_salary">Monthly Net Salary (RM)</label>
+                                <input type="number" id="inpWeddingSalary" value="3000" min="0" step="100" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                <div>
+                                    <label for="selWeddingRule" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="allocation_rule">Allocation Rule</label>
+                                    <select id="selWeddingRule" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                        <option value="50,30,20" data-i18n="rule_standard">50 / 30 / 20 - Standard</option>
+                                        <option value="50,20,30" data-i18n="rule_savings">50 / 20 / 30 - Savings Focused</option>
+                                        <option value="60,20,20" data-i18n="rule_balanced">60 / 20 / 20 - Moderate</option>
+                                        <option value="70,20,10" data-i18n="rule_high_cost">70 / 20 / 10 - High Cost of Living</option>
+                                        <option value="40,30,30" data-i18n="rule_aggressive">40 / 30 / 30 - Aggressive</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="selWeddingPercent" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="wedding_percent">Wedding savings allocation (%)</label>
+                                    <select id="selWeddingPercent" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                        <option value="20">20%</option>
+                                        <option value="40">40%</option>
+                                        <option value="50">50%</option>
+                                        <option value="60">60%</option>
+                                        <option value="80">80%</option>
+                                        <option value="100">100%</option>
+                                    </select>
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="wedding_percentage_help">This percentage is applied to the savings amount from the selected allocation rule.</p>
+                            </div>
+                            <div id="weddingManualFields" class="hidden">
+                                <label for="inpWeddingManualMonthly" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="wedding_manual_amount">Monthly wedding savings (RM)</label>
+                                <input type="number" id="inpWeddingManualMonthly" value="180" min="0" step="50" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2" data-i18n="wedding_manual_help">Enter the amount you can save this month and adjust it whenever your contribution changes.</p>
+                            </div>
+                            <div>
+                                <label for="inpWeddingTarget" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="wedding_target">Wedding budget target (RM)</label>
+                                <input type="number" id="inpWeddingTarget" value="30000" min="0" step="500" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                            </div>
+                            <div>
+                                <label for="inpWeddingCurrent" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="wedding_current">Current wedding savings (RM)</label>
+                                <input type="number" id="inpWeddingCurrent" value="0" min="0" step="100" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                            </div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="wedding_note">Choose a percentage of net salary based on your allocation rule, or enter a flexible monthly amount. The projection assumes the current monthly contribution stays constant, with no returns or withdrawals.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-8 flex flex-col gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div id="weddingSavingsPoolCard" class="glass-card p-5 shadow-card border-l-4 border-l-brand-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="wedding_savings_pool">Monthly savings allocation</p>
+                            <h3 class="font-display text-2xl font-extrabold text-brand-600 dark:text-brand-400" id="resWeddingSavingsPool">RM 0</h3>
+                        </div>
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-emerald-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="wedding_monthly">Wedding fund contribution (30%)</p>
+                            <h3 class="font-display text-2xl font-extrabold text-emerald-600 dark:text-emerald-400" id="resWeddingMonthly">RM 0</h3>
+                        </div>
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-gold-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="wedding_remaining">Amount still needed</p>
+                            <h3 class="font-display text-2xl font-extrabold text-gold-600 dark:text-gold-400" id="resWeddingRemaining">RM 0</h3>
+                        </div>
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-purple-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="wedding_time">Estimated time to target</p>
+                            <h3 class="font-display text-xl font-extrabold text-purple-600 dark:text-purple-400 leading-tight" id="resWeddingTime">-</h3>
+                        </div>
+                    </div>
+                    <div class="glass-card chart-panel shadow-soft p-6 flex-grow flex flex-col relative">
+                        <h2 class="font-display text-lg font-bold text-slate-800 dark:text-white mb-6" data-i18n="wedding_chart_title">Wedding savings progress</h2>
+                        <div class="relative w-full flex-grow min-h-[350px]"><canvas id="weddingChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <footer class="app-footer">
             <p data-i18n="footer_credit">© 2026 · Designed and developed by @muhdnajb</p>
         </footer>
@@ -815,6 +907,7 @@
         let chartDividend = null;
         let chartWithdrawal = null;
         let chartEmergency = null;
+        let chartWedding = null;
 
         // Translation Dictionary
         const i18n = {
@@ -828,6 +921,30 @@
                 tab_dividend: "Kalkulator Dividen",
                 tab_withdrawal: "Kerugian Dividen",
                 tab_emergency: "Dana Kecemasan",
+                tab_wedding: "Simpanan Perkahwinan",
+                wedding_params: "Simpanan Perkahwinan",
+                wedding_mode: "Mod caruman simpanan",
+                wedding_mode_percentage: "Peratusan gaji bersih",
+                wedding_mode_manual: "Amaun bulanan manual",
+                wedding_percent: "Peraturan Agihan Simpanan Kahwin (%)",
+                wedding_percentage_help: "Peratus ini dikira daripada amaun Simpanan berdasarkan aturan agihan yang dipilih.",
+                wedding_manual_amount: "Simpanan perkahwinan bulanan (RM)",
+                wedding_manual_help: "Masukkan amaun yang mampu disimpan bulan ini dan ubah amaun itu apabila caruman berubah.",
+                wedding_manual_result: "Caruman bulanan tabung kahwin",
+                wedding_no_manual_contribution: "Masukkan amaun bulanan untuk anggaran masa",
+                wedding_target: "Sasaran bajet perkahwinan (RM)",
+                wedding_current: "Simpanan perkahwinan semasa (RM)",
+                wedding_note: "Pilih peratusan gaji bersih berdasarkan aturan agihan atau masukkan amaun bulanan yang fleksibel. Unjuran mengandaikan caruman bulanan semasa kekal tetap tanpa pulangan atau pengeluaran.",
+                wedding_savings_pool: "Jumlah simpanan bulanan",
+                wedding_monthly: "Caruman tabung kahwin",
+                wedding_remaining: "Baki diperlukan",
+                wedding_time: "Anggaran masa untuk capai sasaran",
+                wedding_reached: "Sasaran telah dicapai",
+                wedding_no_contribution: "Masukkan peratusan melebihi 0 untuk anggaran masa",
+                wedding_months: "bulan",
+                wedding_chart_title: "Unjuran simpanan perkahwinan",
+                chart_wedding_savings: "Baki tabung kahwin",
+                chart_wedding_target: "Sasaran",
                 ef_params: "Pelan Dana Kecemasan",
                 ef_expenses_group: "Jumlah perbelanjaan asas bulanan (RM)",
                 ef_housing: "Perumahan",
@@ -937,6 +1054,30 @@
                 tab_dividend: "Dividend Calculator",
                 tab_withdrawal: "Margin Loss",
                 tab_emergency: "Emergency Fund",
+                tab_wedding: "Wedding Savings",
+                wedding_params: "Wedding Savings Plan",
+                wedding_mode: "Savings contribution mode",
+                wedding_mode_percentage: "Percentage of net salary",
+                wedding_mode_manual: "Manual monthly amount",
+                wedding_percent: "Wedding savings allocation (%)",
+                wedding_percentage_help: "This percentage is applied to the savings amount from the selected allocation rule.",
+                wedding_manual_amount: "Monthly wedding savings (RM)",
+                wedding_manual_help: "Enter the amount you can save this month and adjust it whenever your contribution changes.",
+                wedding_manual_result: "Monthly wedding fund contribution",
+                wedding_no_manual_contribution: "Enter a monthly amount to estimate time",
+                wedding_target: "Wedding budget target (RM)",
+                wedding_current: "Current wedding savings (RM)",
+                wedding_note: "Choose a percentage of net salary based on your allocation rule, or enter a flexible monthly amount. The projection assumes the current monthly contribution stays constant, with no returns or withdrawals.",
+                wedding_savings_pool: "Monthly savings allocation",
+                wedding_monthly: "Wedding fund contribution",
+                wedding_remaining: "Amount still needed",
+                wedding_time: "Estimated time to target",
+                wedding_reached: "Target already reached",
+                wedding_no_contribution: "Enter a percentage above 0 to estimate time",
+                wedding_months: "months",
+                wedding_chart_title: "Wedding savings projection",
+                chart_wedding_savings: "Wedding fund balance",
+                chart_wedding_target: "Target",
                 ef_params: "Emergency Fund Plan",
                 ef_expenses_group: "Total basic monthly expenses (RM)",
                 ef_housing: "Housing",
@@ -1061,6 +1202,7 @@
             if (document.getElementById('tab3').classList.contains('block')) calcDividend();
             if (document.getElementById('tab4').classList.contains('block')) calcWithdrawalLoss();
             if (document.getElementById('tab5').classList.contains('block')) calcEmergencyFund();
+            if (!document.getElementById('tab6').classList.contains('hidden')) calcWeddingSavings();
         };
 
         const toggleLanguage = () => {
@@ -1073,6 +1215,7 @@
             if (document.getElementById('tab3').classList.contains('block')) calcDividend();
             if (document.getElementById('tab4').classList.contains('block')) calcWithdrawalLoss();
             if (document.getElementById('tab5').classList.contains('block')) calcEmergencyFund();
+            if (!document.getElementById('tab6').classList.contains('hidden')) calcWeddingSavings();
         };
 
         const renderLanguage = () => {
@@ -1099,6 +1242,7 @@
             document.getElementById('btnTab3').className = baseClass;
             document.getElementById('btnTab4').className = baseClass;
             document.getElementById('btnTab5').className = baseClass;
+            document.getElementById('btnTab6').className = baseClass;
             
             document.getElementById(tabId).classList.remove('hidden');
             
@@ -1117,6 +1261,9 @@
             } else if (tabId === 'tab5') {
                 document.getElementById('btnTab5').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm";
                 calcEmergencyFund();
+            } else if (tabId === 'tab6') {
+                document.getElementById('btnTab6').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm";
+                calcWeddingSavings();
             }
         };
 
@@ -1194,6 +1341,99 @@
                 document.getElementById(id).addEventListener('input', calcEmergencyFund);
             });
             document.getElementById('selEfTargetMonths').addEventListener('change', calcEmergencyFund);
+        };
+
+        const initWeddingSavingsListeners = () => {
+            document.getElementById('selWeddingMode').addEventListener('change', updateWeddingSavingsMode);
+            document.getElementById('inpWeddingSalary').addEventListener('input', calcWeddingSavings);
+            document.getElementById('selWeddingRule').addEventListener('change', () => {
+                calcWeddingSavings();
+            });
+            document.getElementById('selWeddingPercent').addEventListener('change', calcWeddingSavings);
+            document.getElementById('inpWeddingManualMonthly').addEventListener('input', calcWeddingSavings);
+            ['inpWeddingTarget', 'inpWeddingCurrent'].forEach(id => {
+                document.getElementById(id).addEventListener('input', calcWeddingSavings);
+            });
+            updateWeddingSavingsMode();
+        };
+
+        const updateWeddingSavingsMode = () => {
+            const isManual = document.getElementById('selWeddingMode').value === 'manual';
+            document.getElementById('weddingPercentageFields').classList.toggle('hidden', isManual);
+            document.getElementById('weddingManualFields').classList.toggle('hidden', !isManual);
+            document.getElementById('weddingSavingsPoolCard').classList.toggle('hidden', isManual);
+            document.querySelector('[data-i18n="wedding_monthly"]').innerText = t(isManual ? 'wedding_manual_result' : 'wedding_monthly');
+            calcWeddingSavings();
+        };
+
+        const calcWeddingSavings = () => {
+            const salary = Math.max(0, parseFloat(document.getElementById('inpWeddingSalary').value) || 0);
+            const [, , savingsPercent] = document.getElementById('selWeddingRule').value.split(',').map(Number);
+            const savings = salary * (savingsPercent / 100);
+            const isManual = document.getElementById('selWeddingMode').value === 'manual';
+            const monthlyContribution = isManual
+                ? Math.max(0, parseFloat(document.getElementById('inpWeddingManualMonthly').value) || 0)
+                : savings * (Number(document.getElementById('selWeddingPercent').value) / 100);
+            const target = Math.max(0, parseFloat(document.getElementById('inpWeddingTarget').value) || 0);
+            const currentSavings = Math.max(0, parseFloat(document.getElementById('inpWeddingCurrent').value) || 0);
+            const remaining = Math.max(0, target - currentSavings);
+            const monthsToTarget = remaining === 0 ? 0 : monthlyContribution > 0 ? Math.ceil(remaining / monthlyContribution) : null;
+
+            document.getElementById('resWeddingSavingsPool').innerText = formatRM(savings);
+            document.getElementById('resWeddingMonthly').innerText = formatRM(monthlyContribution);
+            document.getElementById('resWeddingRemaining').innerText = formatRM(remaining);
+            if (monthsToTarget === 0) {
+                document.getElementById('resWeddingTime').innerText = t('wedding_reached');
+            } else if (monthsToTarget === null) {
+                document.getElementById('resWeddingTime').innerText = t(isManual ? 'wedding_no_manual_contribution' : 'wedding_no_contribution');
+            } else {
+                const targetDate = new Date();
+                targetDate.setDate(1);
+                targetDate.setMonth(targetDate.getMonth() + monthsToTarget);
+                const dateLocale = currentLang === 'bm' ? 'ms-MY' : 'en-MY';
+                const formattedDate = new Intl.DateTimeFormat(dateLocale, { month: 'short', year: 'numeric' }).format(targetDate);
+                document.getElementById('resWeddingTime').innerText = `${monthsToTarget} ${t('wedding_months')} · ${formattedDate}`;
+            }
+
+            drawWeddingChart(currentSavings, monthlyContribution, target, monthsToTarget);
+        };
+
+        const drawWeddingChart = (currentSavings, monthlyContribution, target, monthsToTarget) => {
+            const ctx = document.getElementById('weddingChart').getContext('2d');
+            if (chartWedding) chartWedding.destroy();
+            const textColor = isDarkMode ? '#b0b5b6' : '#64748b';
+            const gridColor = isDarkMode ? 'rgba(103, 111, 115, 0.45)' : 'rgba(226, 232, 240, 0.6)';
+            const chartMonths = Math.min(600, Math.max(12, monthsToTarget || 12));
+            const labels = ['0'];
+            const savingsData = [currentSavings];
+            const targetData = [target];
+
+            for (let month = 1; month <= chartMonths; month++) {
+                labels.push(String(month));
+                savingsData.push(currentSavings + monthlyContribution * month);
+                targetData.push(target);
+            }
+
+            chartWedding = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets: [
+                    { label: t('chart_wedding_savings'), data: savingsData, borderColor: isDarkMode ? '#a5b9aa' : '#0f766e', backgroundColor: isDarkMode ? 'rgba(165, 185, 170, 0.12)' : 'rgba(15, 118, 110, 0.1)', fill: true, tension: 0.15, pointRadius: 0 },
+                    { label: t('chart_wedding_target'), data: targetData, borderColor: isDarkMode ? '#c8b18e' : '#c95d2d', borderDash: [5, 4], fill: false, pointRadius: 0 }
+                ] },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: textColor, font: { family: 'DM Sans', weight: 'bold' } } },
+                        tooltip: { callbacks: { label: context => `${context.dataset.label}: ${formatRM(context.parsed.y)}` } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, callback: value => formatRM(value) } },
+                        x: { title: { display: true, text: currentLang === 'bm' ? 'Bulan' : 'Months', color: textColor }, grid: { display: false }, ticks: { color: textColor, maxTicksLimit: 10 } }
+                    }
+                }
+            });
         };
 
         const calcWithdrawalLoss = () => {
@@ -1597,6 +1837,7 @@
             initDividendListeners();
             initWithdrawalListeners();
             initEmergencyFundListeners();
+            initWeddingSavingsListeners();
             renderLanguage();
             calcSalary(); 
             calcRetirement();
