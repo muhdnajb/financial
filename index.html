@@ -46,6 +46,10 @@
     </script>
     
     <style>
+        html {
+            scrollbar-gutter: stable both-edges;
+        }
+
         body {
             -webkit-font-smoothing: antialiased;
             transition: background-color 0.3s ease, color 0.3s ease;
@@ -161,8 +165,6 @@
             color: var(--ink);
         }
 
-        html.dark .page-header { border-bottom-color: #394247; }
-
         html.dark .page-header h1 span[data-i18n="title_gradient"] {
             background-image: linear-gradient(100deg, #a5c0b8, #c5b08f) !important;
         }
@@ -171,7 +173,6 @@
 
         .page-header {
             padding: 8px 0 24px;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.3);
         }
 
         .page-header h1 {
@@ -215,19 +216,202 @@
             color: #d2dad8;
         }
 
+        .app-nav-shell {
+            box-sizing: border-box;
+            display: block;
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+            margin-bottom: 1.5rem;
+        }
+
         .app-nav {
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.78);
-            backdrop-filter: blur(12px);
+            box-sizing: border-box;
+            display: flex;
+            flex: 1 1 auto;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0.45rem;
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            flex-wrap: nowrap;
+            padding: 0.45rem 0.65rem;
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            border-radius: 1.1rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(241, 247, 244, 0.8));
+            box-shadow: 0 12px 32px -24px rgba(15, 23, 42, 0.48), inset 0 1px rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            scroll-behavior: smooth;
+            scroll-snap-type: x proximity;
+            scroll-padding-inline: 0.65rem;
+            scrollbar-width: none;
+            touch-action: pan-x;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .app-nav.is-dragging {
+            cursor: grabbing;
+            scroll-behavior: auto;
+            scroll-snap-type: none;
+        }
+
+        .app-nav.is-centered { justify-content: center; }
+
+        .app-nav::-webkit-scrollbar { display: none; }
+        .app-nav button[hidden] { display: none !important; }
+        .app-nav button {
+            display: inline-flex;
+            flex: 0 0 auto;
+            align-items: center;
+            justify-content: center;
+            min-height: 2.75rem;
+            padding: 0 1rem;
+            border: 1px solid transparent;
+            border-radius: 0.65rem;
+            background: transparent;
+            color: #64748b;
+            font-size: 0.86rem;
+            font-weight: 650;
+            letter-spacing: -0.01em;
+            white-space: nowrap;
+            scroll-snap-align: start;
+            transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+        }
+
+        .app-nav button:hover {
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.64);
+            color: #334155;
+        }
+
+        .app-nav button i {
+            margin-right: 0.55rem;
+            color: #82948e;
+            font-size: 0.9rem;
+            transition: color 160ms ease, transform 160ms ease;
+        }
+
+        .app-nav button.bg-brand-50 {
+            background: linear-gradient(135deg, #eaf6f3, #dcefe9);
+            color: #0f766e;
+            box-shadow: none;
+        }
+
+        .app-nav button.bg-brand-50 i {
+            color: #168477;
+            transform: scale(1.04);
         }
 
         .app-nav select { display: none; }
 
-        html.dark .app-nav {
-            background: rgba(41, 47, 51, 0.88);
-            border-color: #434c51;
-            box-shadow: 0 12px 28px -20px rgba(0, 0, 0, 0.8);
+        .tab-visibility-toggle {
+            display: inline-flex;
+            flex: 0 0 2.5rem;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            min-height: 2.5rem;
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.82);
+            color: #71817c;
+            cursor: pointer;
+            transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
         }
+
+        .tab-visibility-toggle:hover,
+        .tab-visibility-toggle[aria-expanded="true"] {
+            background: #eaf6f3;
+            color: #0f766e;
+        }
+
+        .tab-visibility-toggle:focus-visible,
+        .tab-visibility-menu input:focus-visible {
+            outline: 3px solid rgba(22, 132, 119, 0.32);
+            outline-offset: 2px;
+        }
+
+        .tab-visibility-menu {
+            position: absolute;
+            z-index: 30;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            width: min(19rem, calc(100vw - 2rem));
+            padding: 1rem;
+            border: 1px solid var(--line);
+            border-radius: 0.9rem;
+            background: var(--surface-raised);
+            color: var(--ink);
+            box-shadow: 0 16px 40px -20px rgba(15, 23, 42, 0.45);
+        }
+
+        .tab-visibility-menu[hidden] { display: none; }
+
+        .tab-visibility-menu-heading {
+            margin: 0 0 0.25rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .tab-visibility-menu-help {
+            margin: 0 0 0.75rem;
+            color: #64748b;
+            font-size: 0.78rem;
+        }
+
+        .tab-visibility-option {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            min-height: 2.35rem;
+            padding: 0.25rem 0.35rem;
+            border-radius: 0.45rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .tab-visibility-option:hover { background: rgba(148, 163, 184, 0.1); }
+        .tab-visibility-option input { accent-color: #168477; }
+        .tab-visibility-option input:disabled { cursor: not-allowed; }
+        .app-nav button[hidden] { display: none !important; }
+
+        .header-actions {
+            position: relative;
+        }
+
+        html.dark .app-nav {
+            border-color: rgba(148, 163, 184, 0.16);
+            background: linear-gradient(135deg, rgba(47, 55, 59, 0.96), rgba(39, 46, 50, 0.94));
+            box-shadow: 0 14px 32px -24px rgba(0, 0, 0, 0.8), inset 0 1px rgba(255, 255, 255, 0.035);
+        }
+
+        html.dark .app-nav button { color: #aab3b6; }
+        html.dark .app-nav button:hover {
+            background: rgba(255, 255, 255, 0.045);
+            color: #edf0ef;
+        }
+
+        html.dark .app-nav button i { color: #879894; }
+
+        html.dark .tab-visibility-toggle {
+            border-color: rgba(148, 163, 184, 0.16);
+            background: var(--surface-raised);
+            color: #bdc7c5;
+        }
+
+        html.dark .tab-visibility-toggle:hover,
+        html.dark .tab-visibility-toggle[aria-expanded="true"] {
+            background: #3b4846;
+            color: #c0d3cd;
+        }
+
+        html.dark .tab-visibility-menu-help { color: #aab3b6; }
+        html.dark .tab-visibility-option:hover { background: rgba(255, 255, 255, 0.045); }
 
         html.dark #btnTheme, html.dark #btnLang {
             background-color: var(--surface-raised);
@@ -265,10 +449,12 @@
         html.dark [class~="dark:text-slate-700"] { color: #515b60 !important; }
 
         html.dark .app-nav button.bg-brand-50 {
-            background: linear-gradient(135deg, #3a4946, #34403e);
-            color: #c0d3cd;
-            box-shadow: inset 0 0 0 1px rgba(163, 187, 179, 0.12), 0 4px 12px rgba(0, 0, 0, 0.14);
+            background: linear-gradient(135deg, #3a514b, #34423f);
+            color: #d0e0da;
+            box-shadow: none;
         }
+
+        html.dark .app-nav button.bg-brand-50 i { color: #b5d0c6; }
         html.dark #cardRetDepletion { background-color: var(--surface-raised); }
 
         .app-nav button:focus-visible, #btnTheme:focus-visible, #btnLang:focus-visible {
@@ -327,6 +513,7 @@
                 font-size: 0.875rem;
                 font-weight: 600;
             }
+            .app-nav { border-radius: 0.85rem; }
         }
     </style>
 </head>
@@ -343,7 +530,22 @@
                 </h1>
                 <p class="text-slate-500 dark:text-slate-400 font-medium" data-i18n="subtitle">Urus aliran tunai hari ini dan rancang kebebasan kewangan masa depan.</p>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="header-actions flex items-center gap-3">
+                <button id="btnTabVisibility" type="button" class="tab-visibility-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="tabVisibilityMenu" onclick="toggleTabVisibilityMenu()">
+                    <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+                    <span class="sr-only" data-i18n="tab_visibility_button">Customize visible tabs</span>
+                </button>
+                <div id="tabVisibilityMenu" class="tab-visibility-menu" role="group" aria-labelledby="tabVisibilityHeading" hidden>
+                    <h2 id="tabVisibilityHeading" class="tab-visibility-menu-heading" data-i18n="tab_visibility_title">Visible modules</h2>
+                    <p class="tab-visibility-menu-help" data-i18n="tab_visibility_help">Choose which tabs appear in navigation.</p>
+                    <label class="tab-visibility-option" for="showTab1"><input id="showTab1" type="checkbox" data-tab-id="tab1" checked><span data-i18n="tab_salary">Salary Allocation</span></label>
+                    <label class="tab-visibility-option" for="showTab2"><input id="showTab2" type="checkbox" data-tab-id="tab2" checked><span data-i18n="tab_retire">Retirement Calculator</span></label>
+                    <label class="tab-visibility-option" for="showTab3"><input id="showTab3" type="checkbox" data-tab-id="tab3" checked><span data-i18n="tab_dividend">Dividend Calculator</span></label>
+                    <label class="tab-visibility-option" for="showTab4"><input id="showTab4" type="checkbox" data-tab-id="tab4" checked><span data-i18n="tab_withdrawal">Margin Loss</span></label>
+                    <label class="tab-visibility-option" for="showTab5"><input id="showTab5" type="checkbox" data-tab-id="tab5" checked><span data-i18n="tab_emergency">Emergency Fund</span></label>
+                    <label class="tab-visibility-option" for="showTab6"><input id="showTab6" type="checkbox" data-tab-id="tab6" checked><span data-i18n="tab_wedding">Wedding Savings</span></label>
+                    <label class="tab-visibility-option" for="showTab7"><input id="showTab7" type="checkbox" data-tab-id="tab7" checked><span data-i18n="tab_daily_dividend">Daily Dividend</span></label>
+                </div>
                 <!-- Theme Toggle -->
                 <button id="btnTheme" onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
                     <i class="fa-solid fa-moon" id="iconTheme"></i>
@@ -356,34 +558,40 @@
         </header>
 
         <!-- Tab Navigation -->
-        <div class="app-nav flex flex-col sm:flex-row sm:flex-wrap gap-2 mb-6 bg-white dark:bg-slate-800 p-1.5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 w-full md:w-fit">
-            <label for="moduleSelector" class="sr-only" data-i18n="module_selector">Select module</label>
-            <select id="moduleSelector" onchange="switchTab(this.value)">
-                <option value="tab1" data-i18n="tab_salary">Salary Allocation</option>
-                <option value="tab2" data-i18n="tab_retire">Retirement Calculator</option>
-                <option value="tab3" data-i18n="tab_dividend">Dividend Calculator</option>
-                <option value="tab4" data-i18n="tab_withdrawal">Margin Loss</option>
-                <option value="tab5" data-i18n="tab_emergency">Emergency Fund</option>
-                <option value="tab6" data-i18n="tab_wedding">Wedding Savings</option>
-            </select>
-            <button onclick="switchTab('tab1')" id="btnTab1" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm">
-                <i class="fa-solid fa-wallet mr-2"></i> <span data-i18n="tab_salary">Agihan Gaji</span>
-            </button>
-            <button onclick="switchTab('tab2')" id="btnTab2" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                <i class="fa-solid fa-umbrella-beach mr-2"></i> <span data-i18n="tab_retire">Kalkulator Persaraan</span>
-            </button>
-            <button onclick="switchTab('tab3')" id="btnTab3" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                <i class="fa-solid fa-chart-column mr-2"></i> <span data-i18n="tab_dividend">Kalkulator Dividen</span>
-            </button>
-            <button onclick="switchTab('tab4')" id="btnTab4" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                <i class="fa-solid fa-arrow-trend-down mr-2"></i> <span data-i18n="tab_withdrawal">Withdrawal Loss</span>
-            </button>
-            <button onclick="switchTab('tab5')" id="btnTab5" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                <i class="fa-solid fa-shield-heart mr-2"></i> <span data-i18n="tab_emergency">Emergency Fund</span>
-            </button>
-            <button onclick="switchTab('tab6')" id="btnTab6" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                <i class="fa-solid fa-ring mr-2"></i> <span data-i18n="tab_wedding">Wedding Savings</span>
-            </button>
+        <div class="app-nav-shell">
+            <div id="tabScroller" class="app-nav">
+                <label for="moduleSelector" class="sr-only" data-i18n="module_selector">Select module</label>
+                <select id="moduleSelector" onchange="switchTab(this.value)">
+                    <option value="tab1" data-i18n="tab_salary">Salary Allocation</option>
+                    <option value="tab2" data-i18n="tab_retire">Retirement Calculator</option>
+                    <option value="tab3" data-i18n="tab_dividend">Dividend Calculator</option>
+                    <option value="tab4" data-i18n="tab_withdrawal">Margin Loss</option>
+                    <option value="tab5" data-i18n="tab_emergency">Emergency Fund</option>
+                    <option value="tab6" data-i18n="tab_wedding">Wedding Savings</option>
+                    <option value="tab7" data-i18n="tab_daily_dividend">Daily Dividend</option>
+                </select>
+                <button onclick="switchTab('tab1')" id="btnTab1" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm">
+                    <i class="fa-solid fa-wallet mr-2"></i> <span data-i18n="tab_salary">Agihan Gaji</span>
+                </button>
+                <button onclick="switchTab('tab2')" id="btnTab2" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                    <i class="fa-solid fa-umbrella-beach mr-2"></i> <span data-i18n="tab_retire">Kalkulator Persaraan</span>
+                </button>
+                <button onclick="switchTab('tab3')" id="btnTab3" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                    <i class="fa-solid fa-chart-column mr-2"></i> <span data-i18n="tab_dividend">Kalkulator Dividen</span>
+                </button>
+                <button onclick="switchTab('tab4')" id="btnTab4" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                    <i class="fa-solid fa-arrow-trend-down mr-2"></i> <span data-i18n="tab_withdrawal">Withdrawal Loss</span>
+                </button>
+                <button onclick="switchTab('tab5')" id="btnTab5" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                    <i class="fa-solid fa-shield-heart mr-2"></i> <span data-i18n="tab_emergency">Emergency Fund</span>
+                </button>
+                <button onclick="switchTab('tab6')" id="btnTab6" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                    <i class="fa-solid fa-ring mr-2"></i> <span data-i18n="tab_wedding">Wedding Savings</span>
+                </button>
+                <button onclick="switchTab('tab7')" id="btnTab7" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                    <i class="fa-solid fa-calendar-day mr-2"></i> <span data-i18n="tab_daily_dividend">Daily Dividend</span>
+                </button>
+            </div>
         </div>
 
         <div id="tab1" class="tab-content block">
@@ -892,6 +1100,58 @@
             </div>
         </div>
 
+        <div id="tab7" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-4 flex flex-col gap-6">
+                    <div class="glass-card shadow-soft p-6 md:p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-100 dark:border-emerald-800">
+                                <i class="fa-solid fa-calendar-day text-lg"></i>
+                            </div>
+                            <h2 class="font-display text-xl font-bold text-slate-800 dark:text-slate-100" data-i18n="daily_dividend_params">Daily Dividend Parameters</h2>
+                        </div>
+                        <div class="space-y-5">
+                            <div>
+                                <label for="inpDailyDividendBalance" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="daily_dividend_balance">Balance (RM)</label>
+                                <input type="number" id="inpDailyDividendBalance" value="10000" min="0" step="100" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label for="inpDailyDividendAnnualRate" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="daily_dividend_rate">Annual return (% p.a.)</label>
+                                    <input type="number" id="inpDailyDividendAnnualRate" value="5.5" min="0" max="100" step="0.01" class="w-full px-3 py-3 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                </div>
+                                <div>
+                                    <label for="inpDailyDividendDays" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="daily_dividend_days">Number of days</label>
+                                    <input type="number" id="inpDailyDividendDays" value="30" min="0" max="3650" step="1" class="w-full px-3 py-3 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="daily_dividend_note">Estimate = balance × annual return ÷ 365 × number of days. Assumes a constant principal with no compounding or deposits; actual product calculations may differ.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-8 flex flex-col gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-brand-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="daily_dividend_per_day">Estimated dividend per day</p>
+                            <h3 class="font-display text-2xl font-extrabold text-brand-600 dark:text-brand-400" id="resDailyDividendPerDay">RM 0</h3>
+                        </div>
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-emerald-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="daily_dividend_total">Estimated dividend total</p>
+                            <h3 class="font-display text-2xl font-extrabold text-emerald-600 dark:text-emerald-400" id="resDailyDividendTotal">RM 0</h3>
+                        </div>
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-gold-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="daily_dividend_final_balance">Balance plus dividend</p>
+                            <h3 class="font-display text-2xl font-extrabold text-gold-600 dark:text-gold-400" id="resDailyDividendFinalBalance">RM 0</h3>
+                        </div>
+                    </div>
+                    <div class="glass-card chart-panel shadow-soft p-6 flex-grow flex flex-col relative">
+                        <h2 class="font-display text-lg font-bold text-slate-800 dark:text-white mb-6" data-i18n="daily_dividend_chart_title">Daily dividend accrual</h2>
+                        <div class="relative w-full flex-grow min-h-[350px]"><canvas id="dailyDividendChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <footer class="app-footer">
             <p data-i18n="footer_credit">© 2026 · Designed and developed by @muhdnajb</p>
         </footer>
@@ -908,6 +1168,7 @@
         let chartWithdrawal = null;
         let chartEmergency = null;
         let chartWedding = null;
+        let chartDailyDividend = null;
 
         // Translation Dictionary
         const i18n = {
@@ -916,12 +1177,27 @@
                 title_gradient: "Perancangan Kewangan",
                 subtitle: "Urus aliran tunai hari ini dan rancang kebebasan kewangan masa depan.",
                 module_selector: "Pilih modul",
+                tab_visibility_button: "Sesuaikan tab yang dipaparkan",
+                tab_visibility_title: "Tab yang dipaparkan",
+                tab_visibility_help: "Pilih tab yang ingin dipaparkan dalam navigasi.",
                 tab_salary: "Agihan Gaji",
                 tab_retire: "Kalkulator Persaraan",
                 tab_dividend: "Kalkulator Dividen",
                 tab_withdrawal: "Kerugian Dividen",
                 tab_emergency: "Dana Kecemasan",
                 tab_wedding: "Simpanan Perkahwinan",
+                tab_daily_dividend: "Dividen Harian",
+                daily_dividend_params: "Parameter Dividen Harian",
+                daily_dividend_balance: "Baki simpanan (RM)",
+                daily_dividend_rate: "Pulangan tahunan (%)",
+                daily_dividend_days: "Bilangan hari",
+                daily_dividend_note: "Anggaran = baki × pulangan tahunan ÷ 365 × bilangan hari. Mengandaikan pokok simpanan tetap tanpa pengkompaunan atau deposit; pengiraan sebenar produk mungkin berbeza.",
+                daily_dividend_per_day: "Anggaran dividen sehari",
+                daily_dividend_total: "Jumlah anggaran dividen",
+                daily_dividend_final_balance: "Baki termasuk dividen",
+                daily_dividend_chart_title: "Unjuran dividen harian",
+                daily_dividend_chart_label: "Jumlah dividen terkumpul",
+                daily_dividend_days_axis: "Hari",
                 wedding_params: "Simpanan Perkahwinan",
                 wedding_mode: "Mod caruman simpanan",
                 wedding_mode_percentage: "Peratusan gaji bersih",
@@ -1049,12 +1325,27 @@
                 title_gradient: "Planning Portal",
                 subtitle: "Manage cash flow today and plan for financial freedom tomorrow.",
                 module_selector: "Select module",
+                tab_visibility_button: "Customize visible tabs",
+                tab_visibility_title: "Visible tabs",
+                tab_visibility_help: "Choose which tabs appear in navigation.",
                 tab_salary: "Salary Allocation",
                 tab_retire: "Retirement Calculator",
                 tab_dividend: "Dividend Calculator",
                 tab_withdrawal: "Margin Loss",
                 tab_emergency: "Emergency Fund",
                 tab_wedding: "Wedding Savings",
+                tab_daily_dividend: "Daily Dividend",
+                daily_dividend_params: "Daily Dividend Parameters",
+                daily_dividend_balance: "Savings balance (RM)",
+                daily_dividend_rate: "Annual return (% p.a.)",
+                daily_dividend_days: "Number of days",
+                daily_dividend_note: "Estimate = balance × annual return ÷ 365 × number of days. Assumes a constant principal with no compounding or deposits; actual product calculations may differ.",
+                daily_dividend_per_day: "Estimated dividend per day",
+                daily_dividend_total: "Estimated dividend total",
+                daily_dividend_final_balance: "Balance plus dividend",
+                daily_dividend_chart_title: "Daily dividend projection",
+                daily_dividend_chart_label: "Cumulative dividend",
+                daily_dividend_days_axis: "Days",
                 wedding_params: "Wedding Savings Plan",
                 wedding_mode: "Savings contribution mode",
                 wedding_mode_percentage: "Percentage of net salary",
@@ -1181,6 +1472,67 @@
 
         const t = (key) => i18n[currentLang][key];
 
+        const updateTabAlignment = () => {
+            const tabScroller = document.getElementById('tabScroller');
+            const visibilityInputs = [...document.querySelectorAll('[data-tab-id]')];
+            const allTabsVisible = visibilityInputs.every(input => input.checked);
+            const tabsFit = tabScroller.scrollWidth <= tabScroller.clientWidth + 1;
+            tabScroller.classList.toggle('is-centered', allTabsVisible && tabsFit);
+        };
+
+        const applyTabVisibility = (tabId, isVisible) => {
+            const checkbox = document.querySelector(`[data-tab-id="${tabId}"]`);
+            checkbox.checked = isVisible;
+
+            const visibleTabIds = [...document.querySelectorAll('[data-tab-id]')]
+                .filter(input => input.checked)
+                .map(input => input.dataset.tabId);
+
+            if (visibleTabIds.length === 0) {
+                checkbox.checked = true;
+                return;
+            }
+
+            const tabNumber = tabId.slice(3);
+            document.getElementById(`btnTab${tabNumber}`).hidden = !isVisible;
+            document.querySelector(`#moduleSelector option[value="${tabId}"]`).hidden = !isVisible;
+
+            document.querySelectorAll('[data-tab-id]').forEach(input => {
+                input.disabled = input.checked && visibleTabIds.length === 1;
+            });
+
+            if (!isVisible && document.getElementById('moduleSelector').value === tabId) {
+                switchTab(visibleTabIds[0]);
+            }
+            updateTabAlignment();
+        };
+
+        const toggleTabVisibilityMenu = (forceOpen) => {
+            const menu = document.getElementById('tabVisibilityMenu');
+            const button = document.getElementById('btnTabVisibility');
+            const isOpen = forceOpen === undefined ? menu.hidden : forceOpen;
+            menu.hidden = !isOpen;
+            button.setAttribute('aria-expanded', String(isOpen));
+        };
+
+        const initTabVisibilityControls = () => {
+            document.querySelectorAll('[data-tab-id]').forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    applyTabVisibility(checkbox.dataset.tabId, checkbox.checked);
+                });
+            });
+
+            document.addEventListener('click', event => {
+                if (event.target instanceof Element && event.target.closest('#tabVisibilityMenu, #btnTabVisibility')) return;
+                toggleTabVisibilityMenu(false);
+            });
+            document.addEventListener('keydown', event => {
+                if (event.key !== 'Escape' || document.getElementById('tabVisibilityMenu').hidden) return;
+                toggleTabVisibilityMenu(false);
+                document.getElementById('btnTabVisibility').focus();
+            });
+        };
+
         // Format Utilities
         const formatRM = (val) => new Intl.NumberFormat('ms-MY', { style: 'currency', currency: 'MYR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val);
 
@@ -1203,6 +1555,7 @@
             if (document.getElementById('tab4').classList.contains('block')) calcWithdrawalLoss();
             if (document.getElementById('tab5').classList.contains('block')) calcEmergencyFund();
             if (!document.getElementById('tab6').classList.contains('hidden')) calcWeddingSavings();
+            if (!document.getElementById('tab7').classList.contains('hidden')) calcDailyDividend();
         };
 
         const toggleLanguage = () => {
@@ -1216,11 +1569,13 @@
             if (document.getElementById('tab4').classList.contains('block')) calcWithdrawalLoss();
             if (document.getElementById('tab5').classList.contains('block')) calcEmergencyFund();
             if (!document.getElementById('tab6').classList.contains('hidden')) calcWeddingSavings();
+            if (!document.getElementById('tab7').classList.contains('hidden')) calcDailyDividend();
         };
 
         const renderLanguage = () => {
             document.documentElement.lang = currentLang === 'bm' ? 'ms' : 'en';
             document.getElementById('btnLang').innerText = currentLang === 'bm' ? 'BM' : 'EN';
+            document.getElementById('btnTabVisibility').title = t('tab_visibility_button');
 
             // Update all data-i18n elements
             document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -1229,11 +1584,21 @@
                     el.innerHTML = i18n[currentLang][key];
                 }
             });
+            updateTabAlignment();
         };
 
         const switchTab = (tabId) => {
+            const targetTab = document.getElementById(tabId);
+            if (!targetTab || !targetTab.classList.contains('tab-content')) return;
+            const visibilityInput = document.querySelector(`[data-tab-id="${tabId}"]`);
+            if (visibilityInput && !visibilityInput.checked) {
+                const firstVisibleTab = [...document.querySelectorAll('[data-tab-id]')].find(input => input.checked);
+                if (!firstVisibleTab) return;
+                tabId = firstVisibleTab.dataset.tabId;
+            }
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById('moduleSelector').value = tabId;
+            const activeTabButton = document.getElementById(`btn${tabId.charAt(0).toUpperCase()}${tabId.slice(1)}`);
             
             // Unselected style (handles dark mode classes too)
             const baseClass = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50";
@@ -1243,8 +1608,9 @@
             document.getElementById('btnTab4').className = baseClass;
             document.getElementById('btnTab5').className = baseClass;
             document.getElementById('btnTab6').className = baseClass;
+            document.getElementById('btnTab7').className = baseClass;
             
-            document.getElementById(tabId).classList.remove('hidden');
+            targetTab.classList.remove('hidden');
             
             if (tabId === 'tab1') {
                 document.getElementById('btnTab1').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm";
@@ -1264,6 +1630,13 @@
             } else if (tabId === 'tab6') {
                 document.getElementById('btnTab6').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm";
                 calcWeddingSavings();
+            } else if (tabId === 'tab7') {
+                document.getElementById('btnTab7').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm";
+                calcDailyDividend();
+            }
+
+            if (window.matchMedia('(min-width: 641px)').matches && !activeTabButton.hidden) {
+                activeTabButton.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
             }
         };
 
@@ -1828,16 +2201,130 @@
             });
         };
 
+        const formatDailyDividendRM = value => new Intl.NumberFormat('ms-MY', {
+            style: 'currency',
+            currency: 'MYR',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(value);
+
+        const initTabScroller = () => {
+            const tabScroller = document.getElementById('tabScroller');
+            let pointerStartX = 0;
+            let scrollStartLeft = 0;
+            let isDragging = false;
+            let suppressNextClick = false;
+
+            tabScroller.addEventListener('pointerdown', event => {
+                if (event.pointerType !== 'mouse' || event.button !== 0) return;
+                isDragging = true;
+                pointerStartX = event.clientX;
+                scrollStartLeft = tabScroller.scrollLeft;
+                tabScroller.classList.add('is-dragging');
+            });
+
+            window.addEventListener('pointermove', event => {
+                if (!isDragging) return;
+                const distance = event.clientX - pointerStartX;
+                if (Math.abs(distance) > 4) suppressNextClick = true;
+                if (suppressNextClick) tabScroller.scrollLeft = scrollStartLeft - distance;
+            });
+
+            const endDragging = () => {
+                if (!isDragging) return;
+                isDragging = false;
+                tabScroller.classList.remove('is-dragging');
+                if (suppressNextClick) {
+                    window.setTimeout(() => {
+                        suppressNextClick = false;
+                    }, 0);
+                }
+            };
+
+            window.addEventListener('pointerup', endDragging);
+            window.addEventListener('pointercancel', endDragging);
+            tabScroller.addEventListener('click', event => {
+                if (!suppressNextClick) return;
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                suppressNextClick = false;
+            }, true);
+
+            new ResizeObserver(updateTabAlignment).observe(tabScroller);
+            updateTabAlignment();
+        };
+
+        const initDailyDividendListeners = () => {
+            ['inpDailyDividendBalance', 'inpDailyDividendAnnualRate', 'inpDailyDividendDays'].forEach(id => {
+                document.getElementById(id).addEventListener('input', calcDailyDividend);
+            });
+        };
+
+        const calcDailyDividend = () => {
+            const balance = Math.max(0, parseFloat(document.getElementById('inpDailyDividendBalance').value) || 0);
+            const annualRate = Math.min(100, Math.max(0, parseFloat(document.getElementById('inpDailyDividendAnnualRate').value) || 0)) / 100;
+            const days = Math.min(3650, Math.max(0, parseInt(document.getElementById('inpDailyDividendDays').value, 10) || 0));
+            const dailyRate = annualRate / 365;
+            const dividendPerDay = balance * dailyRate;
+            const totalDividend = dividendPerDay * days;
+
+            document.getElementById('resDailyDividendPerDay').innerText = formatDailyDividendRM(dividendPerDay);
+            document.getElementById('resDailyDividendTotal').innerText = formatDailyDividendRM(totalDividend);
+            document.getElementById('resDailyDividendFinalBalance').innerText = formatDailyDividendRM(balance + totalDividend);
+            drawDailyDividendChart(dividendPerDay, days);
+        };
+
+        const drawDailyDividendChart = (dividendPerDay, days) => {
+            const ctx = document.getElementById('dailyDividendChart').getContext('2d');
+            if (chartDailyDividend) chartDailyDividend.destroy();
+            const textColor = isDarkMode ? '#b0b5b6' : '#64748b';
+            const gridColor = isDarkMode ? 'rgba(103, 111, 115, 0.45)' : 'rgba(226, 232, 240, 0.6)';
+            const labels = Array.from({ length: days + 1 }, (_, day) => String(day));
+            const dividendData = labels.map((_, day) => dividendPerDay * day);
+
+            chartDailyDividend = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: t('daily_dividend_chart_label'),
+                        data: dividendData,
+                        borderColor: isDarkMode ? '#a5b9aa' : '#0f766e',
+                        backgroundColor: isDarkMode ? 'rgba(165, 185, 170, 0.12)' : 'rgba(15, 118, 110, 0.1)',
+                        fill: true,
+                        tension: 0.1,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: textColor, font: { family: 'DM Sans', weight: 'bold' } } },
+                        tooltip: { callbacks: { label: context => `${context.dataset.label}: ${formatDailyDividendRM(context.parsed.y)}` } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, callback: value => formatDailyDividendRM(value) } },
+                        x: { title: { display: true, text: t('daily_dividend_days_axis'), color: textColor }, grid: { display: false }, ticks: { color: textColor, maxTicksLimit: 10 } }
+                    }
+                }
+            });
+        };
+
         window.onload = () => {
             const startMonthInput = document.getElementById('inpDivStartMonth');
             const now = new Date();
             startMonthInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            initTabVisibilityControls();
+            initTabScroller();
             initSalaryListeners();
             initRetListeners();
             initDividendListeners();
             initWithdrawalListeners();
             initEmergencyFundListeners();
             initWeddingSavingsListeners();
+            initDailyDividendListeners();
             renderLanguage();
             calcSalary(); 
             calcRetirement();
