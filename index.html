@@ -15,523 +15,716 @@
     <!-- Modern Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
         tailwind.config = {
-            darkMode: 'class', // Enable class-based dark mode
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['DM Sans', 'sans-serif'],
-                        display: ['Space Grotesk', 'sans-serif'],
+                        sans: ['Geist', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+                        display: ['Geist', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
                     },
                     colors: {
                         brand: {
-                            50: '#eaf6f3', 100: '#d2ebe4', 400: '#258d81', 500: '#168477',
-                            600: '#0f766e', 900: '#134e4a',
+                            50: '#e7f3f1', 100: '#cfe7e3', 400: '#2a9d8f', 500: '#14857a',
+                            600: '#0f766e', 700: '#0d655e', 800: '#11524d', 900: '#134e4a',
                         },
-                        gold: { 500: '#e87942', 600: '#c95d2d' },
-                        darkbg: '#242729',
-                        darkcard: '#2d3235'
+                        gold: { 400: '#f0a64a', 500: '#e08a1e', 600: '#c47512' },
                     },
                     boxShadow: {
-                        'soft': '0 10px 40px -10px rgba(0,0,0,0.06)',
-                        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+                        'soft': 'none',
+                        'card': 'none',
                     }
                 }
             }
         }
     </script>
-    
+
     <style>
-        html {
-            scrollbar-gutter: stable both-edges;
-        }
-
-        body {
-            -webkit-font-smoothing: antialiased;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        /* Range Slider Styling */
-        input[type=range] {
-            -webkit-appearance: none; width: 100%; background: transparent; margin: 10px 0;
-        }
-        input[type=range]:focus { outline: none; }
-        
-        /* Light mode track */
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 6px; cursor: pointer; border-radius: 999px;
-            background: #e2e8f0; transition: all 0.2s ease;
-        }
-        /* Dark mode track */
-        html.dark input[type=range]::-webkit-slider-runnable-track {
-            background: #4a5054;
-        }
-
-        /* Thumbs */
-        input[type=range].slider-blue::-webkit-slider-thumb {
-            height: 20px; width: 20px; border-radius: 50%;
-            background: #0284c7; cursor: pointer; -webkit-appearance: none;
-            margin-top: -7px; border: 2px solid #ffffff;
-            transition: transform 0.1s;
-        }
-        html.dark input[type=range].slider-blue::-webkit-slider-thumb { border-color: #1e293b; }
-        html.dark input[type=range].slider-blue::-webkit-slider-thumb { background: #789c95; border-color: #2d3235; }
-
-        input[type=range].slider-gold::-webkit-slider-thumb {
-            height: 20px; width: 20px; border-radius: 50%;
-            background: #ca8a04; cursor: pointer; -webkit-appearance: none;
-            margin-top: -7px; border: 2px solid #ffffff;
-            transition: transform 0.1s;
-        }
-        html.dark input[type=range].slider-gold::-webkit-slider-thumb { border-color: #1e293b; }
-        html.dark input[type=range].slider-gold::-webkit-slider-thumb { background: #b79d79; border-color: #2d3235; }
-
-        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
-        
-        /* Hide Number Input Spinners */
-        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
-            -webkit-appearance: none; margin: 0;
-        }
-        input[type=number] { -moz-appearance: textfield; }
-
-        /* Custom Cards */
-        .glass-card {
-            background: #ffffff;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            border-radius: 1rem;
-            transition: background-color 0.3s, border-color 0.3s;
-        }
-        html.dark .glass-card {
-            background: #2d3235;
-            border-color: #454b4f;
-        }
-
-        /* Tab Transition */
-        .tab-content { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        /* ---------- Design tokens ---------- */
         :root {
             color-scheme: light;
-            --page: #f2f6f4;
-            --ink: #172b28;
-            --muted: #64756f;
-            --line: #dce7e2;
-            --teal: #0f766e;
-            --coral: #c95d2d;
+            --page: #f7f7f5;
             --surface: #ffffff;
-            --surface-raised: #f7f9f8;
+            --surface-2: #f3f3f1;
+            --surface-3: #ebebe8;
+            --ink: #18181b;
+            --ink-2: #3f3f46;
+            --muted: #6b6b73;
+            --muted-2: #8e8e96;
+            --line: #e8e8e4;
+            --line-strong: #d4d4cf;
+            --accent: #0f766e;
+            --accent-hover: #0d655e;
+            --accent-soft: #e7f3f1;
+            --accent-ring: rgba(15, 118, 110, 0.16);
+            --on-accent: #ffffff;
+            --c-brand: #0f766e;
+            --c-violet: #8b5cf6;
+            --c-green: #22a35a;
+            --c-amber: #e08a1e;
+            --c-rose: #e5484d;
+            --rose-soft: rgba(229, 72, 77, 0.06);
+            --green-soft: rgba(34, 163, 90, 0.06);
+            --track: #e4e4e0;
+            --shadow-sm: 0 1px 2px rgba(24, 24, 27, 0.04);
+            --shadow-md: 0 1px 2px rgba(24, 24, 27, 0.04), 0 10px 28px -14px rgba(24, 24, 27, 0.14);
+            --shadow-pop: 0 2px 6px rgba(24, 24, 27, 0.05), 0 18px 40px -12px rgba(24, 24, 27, 0.2);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+            --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%238e8e96' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
         }
 
         html.dark {
             color-scheme: dark;
-            --page: #202427;
-            --ink: #edf0ef;
-            --muted: #aab3b6;
-            --line: #424b50;
-            --teal: #a3bbb3;
-            --coral: #c2aa87;
-            --surface: #292f33;
-            --surface-raised: #32393d;
+            --page: #0e0f10;
+            --surface: #161819;
+            --surface-2: #1d2022;
+            --surface-3: #262a2c;
+            --ink: #ececec;
+            --ink-2: #c9cbcc;
+            --muted: #9a9ea1;
+            --muted-2: #73787b;
+            --line: #24282a;
+            --line-strong: #353a3d;
+            --accent: #5ec4b6;
+            --accent-hover: #7fd3c8;
+            --accent-soft: rgba(94, 196, 182, 0.12);
+            --accent-ring: rgba(94, 196, 182, 0.24);
+            --on-accent: #06201d;
+            --c-brand: #5ec4b6;
+            --c-violet: #a594f9;
+            --c-green: #5fcf8a;
+            --c-amber: #f0a64a;
+            --c-rose: #f2777b;
+            --rose-soft: rgba(242, 119, 123, 0.07);
+            --green-soft: rgba(95, 207, 138, 0.06);
+            --track: #2c3133;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 30px -14px rgba(0, 0, 0, 0.6);
+            --shadow-pop: 0 2px 6px rgba(0, 0, 0, 0.35), 0 20px 44px -12px rgba(0, 0, 0, 0.7);
         }
+
+        /* ---------- Base ---------- */
+        html { scrollbar-gutter: stable both-edges; }
 
         body {
-            background-color: var(--page);
-            background-image: radial-gradient(#c8d8d1 0.7px, transparent 0.7px);
-            background-size: 18px 18px;
-            color: var(--ink);
-            font-family: 'DM Sans', sans-serif;
-        }
-
-        body.py-8 { padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
-
-        body.bg-slate-50 { background-color: var(--page); }
-        body.text-slate-800 { color: var(--ink); }
-
-        html.dark body {
-            background-color: var(--page);
-            background-image:
-                radial-gradient(ellipse at 12% 0%, rgba(113, 143, 136, 0.09), transparent 38rem),
-                radial-gradient(ellipse at 92% 20%, rgba(150, 132, 107, 0.06), transparent 34rem),
-                linear-gradient(155deg, #202427 0%, #23282b 52%, #202427 100%);
-            background-size: auto, auto, cover;
-            background-repeat: no-repeat;
-            color: var(--ink);
-        }
-
-        html.dark .page-header h1 span[data-i18n="title_gradient"] {
-            background-image: linear-gradient(100deg, #a5c0b8, #c5b08f) !important;
-        }
-
-        .max-w-7xl { max-width: 1280px; }
-
-        .page-header {
-            padding: 8px 0 24px;
-        }
-
-        .page-header h1 {
-            font-size: clamp(1.65rem, 3vw, 2.3rem);
-            line-height: 1.15;
-            letter-spacing: 0;
-        }
-
-        .page-header p { max-width: 620px; }
-
-        .app-footer {
-            position: fixed;
-            z-index: 50;
-            inset: auto 0 0;
-            width: 100%;
             margin: 0;
-            padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
-            border-top: 1px solid #c5d3cd;
-            background: #e2ebe7;
-            color: #40564f;
-            text-align: center;
-            font-size: 12px;
-            font-weight: 500;
-            visibility: hidden;
-            opacity: 0;
-            transform: translateY(100%);
-            pointer-events: none;
-            transition: opacity 180ms ease, transform 180ms ease, visibility 180ms;
+            min-height: 100vh;
+            padding: 2.5rem 1.25rem calc(5rem + env(safe-area-inset-bottom));
+            background: var(--page);
+            color: var(--ink);
+            font-family: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            font-size: 15px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-feature-settings: 'ss01', 'cv11';
+            transition: background-color 240ms ease, color 240ms ease;
         }
 
-        body.at-page-bottom .app-footer {
-            visibility: visible;
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
+        ::selection { background: var(--accent-ring); }
+
+        .app-shell { max-width: 1200px; margin: 0 auto; }
+
+        /* ---------- Header ---------- */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.25rem;
+            margin-bottom: 2rem;
         }
 
-        html.dark .app-footer {
-            border-top-color: #566166;
-            background: #30383c;
-            color: #d2dad8;
+        .brand { display: flex; align-items: center; gap: 0.875rem; min-width: 0; }
+
+        .brand-mark {
+            display: inline-grid;
+            place-items: center;
+            flex: 0 0 auto;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 12px;
+            background: var(--ink);
+            color: var(--page);
+            font-size: 1rem;
+            transition: transform 300ms var(--ease);
         }
 
-        .app-nav-shell {
-            box-sizing: border-box;
-            display: block;
-            width: 100%;
-            min-width: 0;
-            max-width: 100%;
-            margin-bottom: 1.5rem;
+        .brand:hover .brand-mark { transform: rotate(-6deg) scale(1.04); }
+
+        .brand-title {
+            margin: 0;
+            font-size: clamp(1.15rem, 2.2vw, 1.375rem);
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: -0.025em;
+            color: var(--ink);
         }
+
+        .brand-title [data-i18n="title_main"] { color: var(--muted-2); font-weight: 500; }
+        .brand-title [data-i18n="title_main"]:empty { display: none; }
+
+        .brand-subtitle {
+            margin: 0.15rem 0 0;
+            color: var(--muted);
+            font-size: 0.875rem;
+        }
+
+        .header-actions { position: relative; display: flex; align-items: center; gap: 0.375rem; }
+
+        .icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 2.375rem;
+            height: 2.375rem;
+            padding: 0 0.75rem;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: var(--surface);
+            color: var(--muted);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, transform 160ms var(--ease);
+        }
+
+        .icon-btn:hover,
+        .icon-btn[aria-expanded="true"] { color: var(--ink); border-color: var(--line-strong); background: var(--surface-2); }
+        .icon-btn:active { transform: scale(0.94); }
+        .icon-btn.is-square { width: 2.375rem; padding: 0; }
+
+        #iconTheme.fa-sun { animation: icon-swap-a 420ms var(--ease); }
+        #iconTheme.fa-moon { animation: icon-swap-b 420ms var(--ease); }
+        @keyframes icon-swap-a { from { transform: rotate(-90deg) scale(0.5); opacity: 0; } to { transform: none; opacity: 1; } }
+        @keyframes icon-swap-b { from { transform: rotate(90deg) scale(0.5); opacity: 0; } to { transform: none; opacity: 1; } }
+
+        :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+        /* Tab visibility popover */
+        .tab-visibility-menu {
+            position: absolute;
+            z-index: 30;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            width: min(18rem, calc(100vw - 2rem));
+            padding: 0.875rem;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: var(--surface);
+            color: var(--ink);
+            box-shadow: var(--shadow-pop);
+            transform-origin: top right;
+            animation: pop-in 180ms var(--ease);
+        }
+
+        .tab-visibility-menu[hidden] { display: none; }
+
+        @keyframes pop-in {
+            from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+            to { opacity: 1; transform: none; }
+        }
+
+        .tab-visibility-menu-heading { margin: 0 0 0.125rem; padding: 0 0.375rem; font-size: 0.875rem; font-weight: 600; }
+        .tab-visibility-menu-help { margin: 0 0 0.625rem; padding: 0 0.375rem; color: var(--muted); font-size: 0.78rem; }
+
+        .tab-visibility-option {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            min-height: 2.25rem;
+            padding: 0.25rem 0.375rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background-color 140ms ease;
+        }
+
+        .tab-visibility-option:hover { background: var(--surface-2); }
+        .tab-visibility-option input { width: 1rem; height: 1rem; accent-color: var(--accent); cursor: pointer; }
+        .tab-visibility-option input:disabled { cursor: not-allowed; }
+
+        /* ---------- Navigation (segmented control) ---------- */
+        .app-nav-shell { min-width: 0; margin-bottom: 1.75rem; }
 
         .app-nav {
-            box-sizing: border-box;
+            position: relative;
             display: flex;
-            flex: 1 1 auto;
             align-items: center;
             justify-content: flex-start;
-            gap: 0.45rem;
-            min-width: 0;
-            width: 100%;
+            gap: 0.125rem;
+            width: fit-content;
             max-width: 100%;
+            padding: 0.25rem;
+            border-radius: 12px;
+            background: var(--surface-3);
             overflow-x: auto;
             overflow-y: hidden;
-            flex-wrap: nowrap;
-            padding: 0.45rem 0.65rem;
-            border: 1px solid rgba(148, 163, 184, 0.28);
-            border-radius: 1.1rem;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(241, 247, 244, 0.8));
-            box-shadow: 0 12px 32px -24px rgba(15, 23, 42, 0.48), inset 0 1px rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(16px);
             scroll-behavior: smooth;
-            scroll-snap-type: x proximity;
-            scroll-padding-inline: 0.65rem;
+            scroll-padding-inline: 0.25rem;
             scrollbar-width: none;
             touch-action: pan-x;
             cursor: grab;
             user-select: none;
         }
 
-        .app-nav.is-dragging {
-            cursor: grabbing;
-            scroll-behavior: auto;
-            scroll-snap-type: none;
+        .app-nav::-webkit-scrollbar { display: none; }
+        .app-nav.is-dragging { cursor: grabbing; scroll-behavior: auto; }
+        .app-nav button[hidden] { display: none !important; }
+        .app-nav select { display: none; }
+
+        .nav-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            border-radius: 9px;
+            background: var(--surface);
+            box-shadow: var(--shadow-sm), 0 0 0 1px var(--line);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 380ms var(--ease), width 380ms var(--ease), opacity 200ms ease;
         }
 
-        .app-nav.is-centered { justify-content: center; }
+        .nav-indicator.no-anim { transition: none; }
 
-        .app-nav::-webkit-scrollbar { display: none; }
-        .app-nav button[hidden] { display: none !important; }
-        .app-nav button {
+        .nav-tab {
+            position: relative;
+            z-index: 1;
             display: inline-flex;
             flex: 0 0 auto;
             align-items: center;
-            justify-content: center;
-            min-height: 2.75rem;
-            padding: 0 1rem;
-            border: 1px solid transparent;
-            border-radius: 0.65rem;
+            gap: 0.5rem;
+            height: 2.25rem;
+            padding: 0 0.875rem;
+            border: 0;
+            border-radius: 9px;
             background: transparent;
-            color: #64748b;
-            font-size: 0.86rem;
-            font-weight: 650;
-            letter-spacing: -0.01em;
+            color: var(--muted);
+            font-size: 0.84rem;
+            font-weight: 500;
+            letter-spacing: -0.005em;
             white-space: nowrap;
-            scroll-snap-align: start;
-            transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
-        }
-
-        .app-nav button:hover {
-            transform: translateY(-1px);
-            background: rgba(255, 255, 255, 0.64);
-            color: #334155;
-        }
-
-        .app-nav button i {
-            margin-right: 0.55rem;
-            color: #82948e;
-            font-size: 0.9rem;
-            transition: color 160ms ease, transform 160ms ease;
-        }
-
-        .app-nav button.bg-brand-50 {
-            background: linear-gradient(135deg, #eaf6f3, #dcefe9);
-            color: #0f766e;
-            box-shadow: none;
-        }
-
-        .app-nav button.bg-brand-50 i {
-            color: #168477;
-            transform: scale(1.04);
-        }
-
-        .app-nav select { display: none; }
-
-        .tab-visibility-toggle {
-            display: inline-flex;
-            flex: 0 0 2.5rem;
-            align-items: center;
-            justify-content: center;
-            width: 2.5rem;
-            height: 2.5rem;
-            min-height: 2.5rem;
-            border: 1px solid rgba(148, 163, 184, 0.28);
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.82);
-            color: #71817c;
             cursor: pointer;
-            transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+            transition: color 200ms ease;
         }
 
-        .tab-visibility-toggle:hover,
-        .tab-visibility-toggle[aria-expanded="true"] {
-            background: #eaf6f3;
-            color: #0f766e;
+        .nav-tab i { font-size: 0.8rem; color: var(--muted-2); transition: color 200ms ease, transform 300ms var(--ease); }
+        .nav-tab:hover { color: var(--ink); }
+        .nav-tab:hover i { transform: translateY(-1px); }
+        .nav-tab.is-active { color: var(--ink); }
+        .nav-tab.is-active i { color: var(--accent); }
+        .nav-tab:focus-visible { outline-offset: -2px; }
+
+        /* ---------- Tab panels ---------- */
+        .tab-content { animation: panel-in 320ms var(--ease) both; }
+        .tab-content > .grid > :nth-child(2) { animation: panel-in 420ms var(--ease) 50ms both; }
+
+        @keyframes panel-in {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: none; }
         }
 
-        .tab-visibility-toggle:focus-visible,
-        .tab-visibility-menu input:focus-visible {
-            outline: 3px solid rgba(22, 132, 119, 0.32);
-            outline-offset: 2px;
-        }
+        .app-shell .tab-content > .grid { gap: 1.25rem; }
+        .app-shell .tab-content .flex-col.gap-6 { gap: 1.25rem; }
+        .app-shell .tab-content .grid.gap-4 { gap: 0.875rem; }
 
-        .tab-visibility-menu {
-            position: absolute;
-            z-index: 30;
-            top: calc(100% + 0.5rem);
-            right: 0;
-            width: min(19rem, calc(100vw - 2rem));
-            padding: 1rem;
+        /* ---------- Cards ---------- */
+        .app-shell .glass-card {
+            position: relative;
             border: 1px solid var(--line);
-            border-radius: 0.9rem;
-            background: var(--surface-raised);
+            border-radius: var(--radius);
+            background: var(--surface);
+            box-shadow: var(--shadow-sm);
+            transition: background-color 240ms ease, border-color 240ms ease, box-shadow 240ms ease, transform 240ms var(--ease);
+        }
+
+        .app-shell .glass-card.shadow-soft { padding: 1.5rem; }
+        @media (min-width: 768px) { .app-shell .glass-card.shadow-soft { padding: 1.75rem; } }
+
+        /* Card heading row */
+        .app-shell .glass-card > .flex.items-center.gap-3:first-child { gap: 0.75rem; margin-bottom: 1.5rem; }
+
+        .app-shell .glass-card .w-10.h-10 {
+            width: 2rem;
+            height: 2rem;
+            border: 0;
+            border-radius: 9px;
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .app-shell .glass-card .w-10.h-10 i { font-size: 0.85rem; }
+
+        .app-shell .glass-card h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: -0.015em;
             color: var(--ink);
-            box-shadow: 0 16px 40px -20px rgba(15, 23, 42, 0.45);
         }
 
-        .tab-visibility-menu[hidden] { display: none; }
+        .app-shell .glass-card h2 + p { color: var(--muted); font-size: 0.8125rem; }
 
-        .tab-visibility-menu-heading {
-            margin: 0 0 0.25rem;
-            font-size: 0.95rem;
-            font-weight: 700;
+        /* KPI cards */
+        .app-shell .glass-card.shadow-card {
+            padding: 1.125rem 1.25rem 1.25rem;
+            border-left-width: 1px;
+            border-top-width: 1px;
+            border-color: var(--line);
+            overflow: hidden;
         }
 
-        .tab-visibility-menu-help {
-            margin: 0 0 0.75rem;
-            color: #64748b;
-            font-size: 0.78rem;
+        .app-shell .glass-card.shadow-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--line-strong);
+            box-shadow: var(--shadow-md);
         }
 
-        .tab-visibility-option {
+        .app-shell .glass-card.shadow-card > i.absolute { display: none; }
+
+        .app-shell .glass-card.shadow-card > p:first-child {
             display: flex;
             align-items: center;
-            gap: 0.65rem;
-            min-height: 2.35rem;
-            padding: 0.25rem 0.35rem;
-            border-radius: 0.45rem;
-            font-size: 0.85rem;
-            cursor: pointer;
+            gap: 0.5rem;
+            margin-bottom: 0.625rem;
+            color: var(--muted);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            letter-spacing: 0;
+            text-transform: none;
         }
 
-        .tab-visibility-option:hover { background: rgba(148, 163, 184, 0.1); }
-        .tab-visibility-option input { accent-color: #168477; }
-        .tab-visibility-option input:disabled { cursor: not-allowed; }
-        .app-nav button[hidden] { display: none !important; }
-
-        .header-actions {
-            position: relative;
+        .app-shell .glass-card.shadow-card > p:first-child::before {
+            content: '';
+            flex: 0 0 auto;
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 999px;
+            background: var(--line-strong);
+            transition: transform 240ms var(--ease);
         }
 
-        html.dark .app-nav {
-            border-color: rgba(148, 163, 184, 0.16);
-            background: linear-gradient(135deg, rgba(47, 55, 59, 0.96), rgba(39, 46, 50, 0.94));
-            box-shadow: 0 14px 32px -24px rgba(0, 0, 0, 0.8), inset 0 1px rgba(255, 255, 255, 0.035);
+        .app-shell .glass-card.shadow-card:hover > p:first-child::before { transform: scale(1.35); }
+        .app-shell .glass-card.border-l-brand-500 > p:first-child::before { background: var(--c-brand); }
+        .app-shell .glass-card.border-l-purple-500 > p:first-child::before { background: var(--c-violet); }
+        .app-shell .glass-card.border-l-emerald-500 > p:first-child::before { background: var(--c-green); }
+        .app-shell .glass-card.border-l-gold-500 > p:first-child::before { background: var(--c-amber); }
+        .app-shell .glass-card.border-l-rose-500 > p:first-child::before { background: var(--c-rose); }
+        .app-shell #cardRetDepletion.is-danger > p:first-child::before { background: var(--c-rose); }
+        .app-shell #cardRetDepletion.is-safe > p:first-child::before { background: var(--c-green); }
+        .app-shell #cardRetDepletion.is-danger { background: linear-gradient(var(--rose-soft), var(--rose-soft)), var(--surface); }
+        .app-shell #cardRetDepletion.is-safe { background: linear-gradient(var(--green-soft), var(--green-soft)), var(--surface); }
+
+        /* Numeric values in summary cards use the display face */
+        .app-shell .glass-card.shadow-card h3,
+        #lblNeedsPct, #lblWantsPct, #lblSavePct, #lblRetireAgeVal {
+            font-family: 'Space Grotesk', sans-serif;
         }
 
-        html.dark .app-nav button { color: #aab3b6; }
-        html.dark .app-nav button:hover {
-            background: rgba(255, 255, 255, 0.045);
-            color: #edf0ef;
-        }
+        #lblNeedsPct, #lblWantsPct, #lblSavePct { margin-left: 0; color: var(--muted-2); font-variant-numeric: tabular-nums; }
 
-        html.dark .app-nav button i { color: #879894; }
-
-        html.dark .tab-visibility-toggle {
-            border-color: rgba(148, 163, 184, 0.16);
-            background: var(--surface-raised);
-            color: #bdc7c5;
-        }
-
-        html.dark .tab-visibility-toggle:hover,
-        html.dark .tab-visibility-toggle[aria-expanded="true"] {
-            background: #3b4846;
-            color: #c0d3cd;
-        }
-
-        html.dark .tab-visibility-menu-help { color: #aab3b6; }
-        html.dark .tab-visibility-option:hover { background: rgba(255, 255, 255, 0.045); }
-
-        html.dark #btnTheme, html.dark #btnLang {
-            background-color: var(--surface-raised);
-            border-color: #4a5459;
-            color: #d6dcda;
-        }
-
-        html.dark #btnTheme:hover, html.dark #btnLang:hover { background-color: #3b4448; }
-
-        html.dark .bg-slate-800,
-        html.dark [class~="dark:bg-slate-800"] { background-color: var(--surface-raised); }
-
-        html.dark .space-y-4.bg-slate-50,
-        html.dark [class~="dark:bg-slate-900/50"] { background-color: var(--surface) !important; }
-
-        html.dark input:not([type='range']), html.dark select {
+        .app-shell .glass-card.shadow-card h3 {
             color: var(--ink);
-            background-color: var(--surface-raised) !important;
-            border-color: #4a5459;
-            box-shadow: inset 0 1px rgba(255, 255, 255, 0.025);
+            font-size: 1.375rem;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            font-variant-numeric: tabular-nums;
+            text-wrap: balance;
         }
 
-        html.dark [class~="dark:text-brand-400"] { color: #a5c0b8 !important; }
-        html.dark [class~="dark:text-gold-400"] { color: #c8b18e !important; }
-        html.dark [class~="dark:text-purple-400"] { color: #b6a9bf !important; }
-        html.dark [class~="dark:text-emerald-400"] { color: #a5b9aa !important; }
-        html.dark [class~="dark:text-rose-400"] { color: #c59da1 !important; }
-        html.dark .border-t-rose-500 { border-top-color: #aa7e83; }
-        html.dark .border-t-emerald-500 { border-top-color: #849c8c; }
-        html.dark [class~="dark:text-slate-100"], html.dark [class~="dark:text-white"] { color: #edf0ef !important; }
-        html.dark [class~="dark:text-slate-200"] { color: #d6dcda !important; }
-        html.dark [class~="dark:text-slate-300"] { color: #c2c9c9 !important; }
-        html.dark [class~="dark:text-slate-400"] { color: #aab3b6 !important; }
-        html.dark [class~="dark:text-slate-500"] { color: #8e999d !important; }
-        html.dark [class~="dark:text-slate-700"] { color: #515b60 !important; }
+        .app-shell #resRetDepletionText.text-rose-600 { color: var(--c-rose); }
+        .app-shell #resRetDepletionText.text-emerald-600 { color: var(--c-green); }
 
-        html.dark .app-nav button.bg-brand-50 {
-            background: linear-gradient(135deg, #3a514b, #34423f);
-            color: #d0e0da;
+        /* Status-style values (time to target, fund lifespan): figure + friendly note */
+        .app-shell .glass-card.shadow-card h3.kpi-compact {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .kpi-compact .kpi-note {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            color: var(--muted);
+            font-family: inherit;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            letter-spacing: 0;
+        }
+
+        .kpi-compact .kpi-note i { font-size: 0.75rem; opacity: 0.8; }
+
+        .kpi-compact .kpi-message {
+            color: var(--ink-2);
+            font-size: 0.95rem;
+            font-weight: 500;
+            line-height: 1.4;
+            letter-spacing: 0;
+        }
+
+        .app-shell .glass-card.shadow-card h3 + p,
+        .app-shell #resRetDepletionSubtext { color: var(--muted); font-size: 0.78rem; margin-top: 0.5rem; }
+        #lblRetireAgeVal { color: var(--ink); font-weight: 600; }
+        #resRetDepletionSubtext .text-rose-500 { color: var(--c-rose); }
+        #resRetDepletionSubtext .text-emerald-600 { color: var(--c-green); }
+
+        .is-updating { animation: value-tick 260ms var(--ease); }
+        @keyframes value-tick {
+            from { opacity: 0.45; transform: translateY(3px); }
+            to { opacity: 1; transform: none; }
+        }
+
+        /* ---------- Forms ---------- */
+        .app-shell .glass-card label {
+            color: var(--ink-2);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        .app-shell .glass-card label .text-\[10px\] { color: var(--muted-2); font-size: 0.72rem; font-weight: 400; }
+
+        .app-shell .glass-card p.text-xs,
+        .app-shell .glass-card p.text-\[11px\],
+        .app-shell .glass-card p.text-sm { color: var(--muted); line-height: 1.55; }
+        .app-shell .glass-card p.text-xs,
+        .app-shell .glass-card p.text-\[11px\] { font-size: 0.75rem; }
+
+        .app-shell .glass-card p.uppercase {
+            color: var(--ink-2);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+        #resEfBaseMonthly { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+        .app-shell .glass-card input:not([type='range']):not([type='checkbox']),
+        .app-shell .glass-card select {
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+            background-color: var(--surface-2);
+            color: var(--ink);
+            font-weight: 500;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.01em;
+            outline: none;
             box-shadow: none;
-        }
-
-        html.dark .app-nav button.bg-brand-50 i { color: #b5d0c6; }
-        html.dark #cardRetDepletion { background-color: var(--surface-raised); }
-
-        .app-nav button:focus-visible, #btnTheme:focus-visible, #btnLang:focus-visible {
-            outline: 3px solid rgba(163, 187, 179, 0.62);
-            outline-offset: 2px;
-        }
-
-        .glass-card {
-            border-radius: 8px;
-            border-color: var(--line);
-            box-shadow: 0 8px 24px -20px rgba(23, 43, 40, 0.5);
-        }
-
-        html.dark .glass-card {
-            background: linear-gradient(145deg, #2c3236, #282e32);
-            border-color: var(--line);
-            box-shadow: 0 14px 32px -24px rgba(0, 0, 0, 0.86), inset 0 1px rgba(255, 255, 255, 0.035);
-        }
-
-        html.dark .glass-card.border-l-brand-500 { border-left-color: #8ea9a0; }
-        html.dark .glass-card.border-l-purple-500 { border-left-color: #9d91a9; }
-        html.dark .glass-card.border-l-emerald-500 { border-left-color: #8fa795; }
-        html.dark input[type=range]::-webkit-slider-runnable-track { background: #485156; }
-        html.dark input[type=range].slider-blue::-webkit-slider-thumb { background: #8ea9a0; border-color: #32393d; }
-        html.dark input[type=range].slider-gold::-webkit-slider-thumb { background: #b9aa8e; border-color: #32393d; }
-
-        input:not([type='range']), select {
-            border-radius: 6px !important;
             transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
         }
 
-        input:not([type='range']):focus, select:focus {
-            border-color: var(--teal) !important;
-            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.14);
+        .app-shell .glass-card input.w-full:not([type='range']),
+        .app-shell .glass-card select.w-full { padding: 0.625rem 0.875rem; font-size: 0.95rem; }
+        .app-shell .glass-card input.text-lg { padding: 0.75rem 0.875rem; font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; }
+        .app-shell .glass-card input.py-1 { padding-block: 0.3rem; font-size: 0.875rem; }
+
+        .app-shell .glass-card select {
+            -webkit-appearance: none;
+            appearance: none;
+            padding-right: 2.5rem !important;
+            background-image: var(--chevron);
+            background-repeat: no-repeat;
+            background-position: right 0.875rem center;
+            background-size: 1rem;
+            cursor: pointer;
         }
 
-        input[type='range'] { accent-color: var(--coral); }
-        html.dark input[type='range'] { accent-color: #b99e7b; }
+        .app-shell .glass-card select + .pointer-events-none { display: none; }
 
+        .app-shell .glass-card input:not([type='range']):not([type='checkbox']):hover,
+        .app-shell .glass-card select:hover { border-color: var(--line-strong); }
+
+        .app-shell .glass-card input:not([type='range']):not([type='checkbox']):focus,
+        .app-shell .glass-card select:focus {
+            border-color: var(--accent);
+            background-color: var(--surface);
+            box-shadow: 0 0 0 4px var(--accent-ring);
+        }
+
+        .app-shell .glass-card input[readonly] { color: var(--ink-2); cursor: default; }
+
+        .app-shell .glass-card hr { border-color: var(--line); }
+
+        .app-shell .glass-card div.bg-slate-50 {
+            border: 0;
+            border-radius: 12px;
+            background: var(--surface-2);
+        }
+
+        .app-shell .glass-card div.bg-slate-50 input:not([type='range']) { background-color: var(--surface); }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        /* Range slider with filled track */
+        input[type=range] {
+            --fill: 50%;
+            -webkit-appearance: none;
+            appearance: none;
+            display: block;
+            width: 100%;
+            height: 1.25rem;
+            margin: 0.375rem 0 0;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        input[type=range]:focus { outline: none; }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            height: 4px;
+            border-radius: 999px;
+            background: linear-gradient(to right, var(--accent) var(--fill), var(--track) var(--fill));
+        }
+
+        input[type=range]::-moz-range-track { height: 4px; border-radius: 999px; background: var(--track); }
+        input[type=range]::-moz-range-progress { height: 4px; border-radius: 999px; background: var(--accent); }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            margin-top: -6px;
+            border: 0;
+            border-radius: 50%;
+            background: var(--surface);
+            box-shadow: 0 0 0 1.5px var(--accent), 0 1px 3px rgba(0, 0, 0, 0.15);
+            transition: transform 160ms var(--ease), box-shadow 160ms ease;
+        }
+
+        input[type=range]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border: 0;
+            border-radius: 50%;
+            background: var(--surface);
+            box-shadow: 0 0 0 1.5px var(--accent), 0 1px 3px rgba(0, 0, 0, 0.15);
+            transition: transform 160ms var(--ease), box-shadow 160ms ease;
+        }
+
+        input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.12); }
+        input[type=range]:active::-webkit-slider-thumb { transform: scale(1.2); box-shadow: 0 0 0 1.5px var(--accent), 0 0 0 7px var(--accent-ring); }
+        input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 1.5px var(--accent), 0 0 0 6px var(--accent-ring); }
+        input[type=range]:hover::-moz-range-thumb { transform: scale(1.12); }
+        input[type=range]:active::-moz-range-thumb { transform: scale(1.2); box-shadow: 0 0 0 1.5px var(--accent), 0 0 0 7px var(--accent-ring); }
+
+        /* Buttons */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            height: 2.5rem;
+            padding: 0 1.125rem;
+            border: 0;
+            border-radius: var(--radius-sm);
+            background: var(--accent);
+            color: var(--on-accent);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 160ms ease, transform 160ms var(--ease), box-shadow 160ms ease;
+        }
+
+        .btn-primary:hover { background: var(--accent-hover); box-shadow: var(--shadow-md); }
+        .btn-primary:active { transform: scale(0.97); }
+
+        #dashTextCopyStatus:not(:empty) { animation: panel-in 240ms var(--ease); }
+
+        /* Charts */
         .chart-panel { min-height: 390px; }
+        .app-shell .chart-panel h2 { margin-bottom: 0.25rem; }
+        .app-shell .chart-panel > h2.mb-6,
+        .app-shell .chart-panel > .flex.mb-6 { margin-bottom: 1.25rem; }
 
+        /* ---------- Footer ---------- */
+        .app-footer {
+            position: fixed;
+            z-index: 50;
+            inset: auto 0 0;
+            margin: 0;
+            padding: 0.875rem 1rem calc(0.875rem + env(safe-area-inset-bottom));
+            border-top: 1px solid var(--line);
+            background: color-mix(in srgb, var(--page) 82%, transparent);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            color: var(--muted);
+            text-align: center;
+            font-size: 0.75rem;
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(100%);
+            pointer-events: none;
+            transition: opacity 240ms ease, transform 320ms var(--ease), visibility 240ms;
+        }
+
+        body.at-page-bottom .app-footer {
+            visibility: visible;
+            opacity: 1;
+            transform: none;
+            pointer-events: auto;
+        }
+
+        /* ---------- Responsive ---------- */
         @media (max-width: 640px) {
-            body { padding-top: 20px; }
-            .page-header { align-items: flex-start; text-align: left; padding-bottom: 18px; }
+            body { padding-top: 1.25rem; padding-inline: 1rem; }
+            .page-header { margin-bottom: 1.25rem; }
+            .brand-subtitle { display: none; }
             .chart-panel { min-height: 340px; }
-            .app-nav button { display: none; }
+            .app-nav { width: 100%; padding: 0; background: transparent; }
+            .app-nav .nav-tab, .nav-indicator { display: none; }
             .app-nav select {
                 display: block;
                 width: 100%;
-                min-height: 44px;
-                padding: 0.625rem 2.5rem 0.625rem 0.875rem;
+                height: 2.75rem;
+                padding: 0 2.5rem 0 0.875rem;
                 border: 1px solid var(--line);
-                border-radius: 0.5rem !important;
-                background-color: var(--surface-raised);
+                border-radius: var(--radius-sm);
+                -webkit-appearance: none;
+                appearance: none;
+                background: var(--surface) var(--chevron) no-repeat right 0.875rem center / 1rem;
                 color: var(--ink);
-                font-size: 0.875rem;
-                font-weight: 600;
+                font-size: 0.9rem;
+                font-weight: 500;
             }
-            .app-nav { border-radius: 0.85rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 1ms !important;
+                transition-duration: 1ms !important;
+                scroll-behavior: auto !important;
+            }
         }
     </style>
 </head>
-<body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-slate-50 text-slate-800 dark:bg-darkbg dark:text-slate-100">
+<body>
 
-    <div class="max-w-7xl mx-auto">
-        
-        <!-- Header with Toggles -->
-        <header class="page-header mb-6 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
-            <div>
-                <h1 class="font-display tracking-tight mb-2">
-                    <span data-i18n="title_main" class="text-3xl md:text-5xl font-extrabold"></span>
-                    <span class="text-transparent text-3xl md:text-5xl font-extrabold bg-clip-text bg-gradient-to-r from-brand-600 to-brand-400" data-i18n="title_gradient">Perancangan Kewangan</span>
-                </h1>
-                <p class="text-slate-500 dark:text-slate-400 font-medium" data-i18n="subtitle">Urus aliran tunai hari ini dan rancang kebebasan kewangan masa depan.</p>
+    <div class="app-shell">
+
+        <!-- Header -->
+        <header class="page-header">
+            <div class="brand">
+                <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-chart-simple"></i></span>
+                <div class="min-w-0">
+                    <h1 class="brand-title">
+                        <span data-i18n="title_main"></span>
+                        <span data-i18n="title_gradient">Perancangan Kewangan</span>
+                    </h1>
+                    <p class="brand-subtitle" data-i18n="subtitle">Urus aliran tunai hari ini dan rancang kebebasan kewangan masa depan.</p>
+                </div>
             </div>
-            <div class="header-actions flex items-center gap-3">
-                <button id="btnTabVisibility" type="button" class="tab-visibility-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="tabVisibilityMenu" onclick="toggleTabVisibilityMenu()">
+            <div class="header-actions">
+                <button id="btnTabVisibility" type="button" class="icon-btn is-square" aria-haspopup="true" aria-expanded="false" aria-controls="tabVisibilityMenu" onclick="toggleTabVisibilityMenu()">
                     <i class="fa-solid fa-sliders" aria-hidden="true"></i>
                     <span class="sr-only" data-i18n="tab_visibility_button">Customize visible tabs</span>
                 </button>
@@ -545,21 +738,19 @@
                     <label class="tab-visibility-option" for="showTab5"><input id="showTab5" type="checkbox" data-tab-id="tab5" checked><span data-i18n="tab_emergency">Emergency Fund</span></label>
                     <label class="tab-visibility-option" for="showTab6"><input id="showTab6" type="checkbox" data-tab-id="tab6" checked><span data-i18n="tab_wedding">Wedding Savings</span></label>
                     <label class="tab-visibility-option" for="showTab7"><input id="showTab7" type="checkbox" data-tab-id="tab7"><span data-i18n="tab_daily_dividend">Daily Dividend</span></label>
+                    <label class="tab-visibility-option" for="showTab8"><input id="showTab8" type="checkbox" data-tab-id="tab8"><span data-i18n="tab_dash_text">Hypen Text</span></label>
                 </div>
-                <!-- Theme Toggle -->
-                <button id="btnTheme" onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                    <i class="fa-solid fa-moon" id="iconTheme"></i>
+                <button id="btnTheme" type="button" onclick="toggleTheme()" class="icon-btn is-square" aria-label="Toggle theme">
+                    <i class="fa-solid fa-moon" id="iconTheme" aria-hidden="true"></i>
                 </button>
-                <!-- Language Toggle -->
-                <button id="btnLang" onclick="toggleLanguage()" class="px-4 h-10 rounded-full font-bold text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                    EN
-                </button>
+                <button id="btnLang" type="button" onclick="toggleLanguage()" class="icon-btn">EN</button>
             </div>
         </header>
 
         <!-- Tab Navigation -->
-        <div class="app-nav-shell">
+        <nav class="app-nav-shell">
             <div id="tabScroller" class="app-nav">
+                <span id="navIndicator" class="nav-indicator" aria-hidden="true"></span>
                 <label for="moduleSelector" class="sr-only" data-i18n="module_selector">Select module</label>
                 <select id="moduleSelector">
                     <option value="tab1" data-i18n="tab_salary">Salary Allocation</option>
@@ -569,30 +760,34 @@
                     <option value="tab5" data-i18n="tab_emergency">Emergency Fund</option>
                     <option value="tab6" data-i18n="tab_wedding">Wedding Savings</option>
                     <option value="tab7" data-i18n="tab_daily_dividend" hidden>Daily Dividend</option>
+                    <option value="tab8" data-i18n="tab_dash_text" hidden>Hypen Text</option>
                 </select>
-                <button onclick="switchTab('tab1')" id="btnTab1" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm">
-                    <i class="fa-solid fa-wallet mr-2"></i> <span data-i18n="tab_salary">Agihan Gaji</span>
+                <button type="button" onclick="switchTab('tab1')" id="btnTab1" class="nav-tab is-active" aria-current="page">
+                    <i class="fa-solid fa-wallet" aria-hidden="true"></i><span data-i18n="tab_salary">Agihan Gaji</span>
                 </button>
-                <button onclick="switchTab('tab2')" id="btnTab2" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                    <i class="fa-solid fa-umbrella-beach mr-2"></i> <span data-i18n="tab_retire">Kalkulator Persaraan</span>
+                <button type="button" onclick="switchTab('tab2')" id="btnTab2" class="nav-tab">
+                    <i class="fa-solid fa-umbrella-beach" aria-hidden="true"></i><span data-i18n="tab_retire">Kalkulator Persaraan</span>
                 </button>
-                <button onclick="switchTab('tab3')" id="btnTab3" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                    <i class="fa-solid fa-chart-column mr-2"></i> <span data-i18n="tab_dividend">Kalkulator Dividen</span>
+                <button type="button" onclick="switchTab('tab3')" id="btnTab3" class="nav-tab">
+                    <i class="fa-solid fa-chart-column" aria-hidden="true"></i><span data-i18n="tab_dividend">Kalkulator Dividen</span>
                 </button>
-                <button onclick="switchTab('tab4')" id="btnTab4" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50" hidden>
-                    <i class="fa-solid fa-arrow-trend-down mr-2"></i> <span data-i18n="tab_withdrawal">Withdrawal Loss</span>
+                <button type="button" onclick="switchTab('tab4')" id="btnTab4" class="nav-tab" hidden>
+                    <i class="fa-solid fa-arrow-trend-down" aria-hidden="true"></i><span data-i18n="tab_withdrawal">Withdrawal Loss</span>
                 </button>
-                <button onclick="switchTab('tab5')" id="btnTab5" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                    <i class="fa-solid fa-shield-heart mr-2"></i> <span data-i18n="tab_emergency">Emergency Fund</span>
+                <button type="button" onclick="switchTab('tab5')" id="btnTab5" class="nav-tab">
+                    <i class="fa-solid fa-shield-heart" aria-hidden="true"></i><span data-i18n="tab_emergency">Emergency Fund</span>
                 </button>
-                <button onclick="switchTab('tab6')" id="btnTab6" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                    <i class="fa-solid fa-ring mr-2"></i> <span data-i18n="tab_wedding">Wedding Savings</span>
+                <button type="button" onclick="switchTab('tab6')" id="btnTab6" class="nav-tab">
+                    <i class="fa-solid fa-ring" aria-hidden="true"></i><span data-i18n="tab_wedding">Wedding Savings</span>
                 </button>
-                <button onclick="switchTab('tab7')" id="btnTab7" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50" hidden>
-                    <i class="fa-solid fa-calendar-day mr-2"></i> <span data-i18n="tab_daily_dividend">Daily Dividend</span>
+                <button type="button" onclick="switchTab('tab7')" id="btnTab7" class="nav-tab" hidden>
+                    <i class="fa-solid fa-calendar-day" aria-hidden="true"></i><span data-i18n="tab_daily_dividend">Daily Dividend</span>
+                </button>
+                <button type="button" onclick="switchTab('tab8')" id="btnTab8" class="nav-tab" hidden>
+                    <i class="fa-solid fa-text-width" aria-hidden="true"></i><span data-i18n="tab_dash_text">Hypen Text</span>
                 </button>
             </div>
-        </div>
+        </nav>
 
         <div id="tab1" class="tab-content block">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -681,7 +876,7 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 block" data-i18n="cur_age">Umur Semasa</label>
-                                    <input type="number" id="inpRetAge" value="18" class="w-full px-3 py-2 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                    <input type="number" id="inpRetAge" value="28" class="w-full px-3 py-2 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
                                     <input type="range" id="sldRetAge" min="18" max="70" value="27" class="slider-gold">
                                 </div>
                                 <div>
@@ -705,9 +900,9 @@
                             <div>
                                 <div class="flex justify-between items-end mb-1">
                                     <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="cur_savings">Current EPF/ASB balance (RM)</label>
-                                    <input type="number" id="inpRetSavings" value="10000" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                    <input type="number" id="inpRetSavings" value="15000" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
                                 </div>
-                                <input type="range" id="sldRetSavings" min="0" max="500000" step="1000" value="10000" class="slider-gold">
+                                <input type="range" id="sldRetSavings" min="0" max="500000" step="1000" value="15000" class="slider-gold">
                             </div>
                             <div>
                                 <div class="flex justify-between items-end mb-1">
@@ -720,9 +915,9 @@
                             <div>
                                 <div class="flex justify-between items-end mb-1">
                                     <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="mth_savings">Simpanan Bulanan (RM)</label>
-                                    <input type="number" id="inpRetMonthlySave" value="1200" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                    <input type="number" id="inpRetMonthlySave" value="1000" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
                                 </div>
-                                <input type="range" id="sldRetMonthlySave" min="0" max="10000" step="100" value="1200" class="slider-gold">
+                                <input type="range" id="sldRetMonthlySave" min="0" max="10000" step="100" value="1000" class="slider-gold">
                             </div>
 
                             <hr class="border-slate-100 dark:border-slate-700">
@@ -751,7 +946,7 @@
                                 <div>
                                     <div class="flex justify-between items-center mb-1">
                                         <label class="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider" data-i18n="inf_rate">Kadar Inflasi Tahunan (%)</label>
-                                        <input type="number" id="inpRetInflation" value="2.0" step="0.1" class="w-16 px-2 py-1 text-right font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg outline-none">
+                                        <input type="number" id="inpRetInflation" value="1.9" step="0.1" class="w-16 px-2 py-1 text-right font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg outline-none">
                                     </div>
                                     <input type="range" id="sldRetInflation" min="0" max="8" step="0.1" value="2.0" class="slider-gold">
                                 </div>
@@ -779,7 +974,7 @@
                         <!-- Status Depletion -->
                         <div id="cardRetDepletion" class="glass-card p-5 shadow-card border-t-4 border-t-gold-500">
                             <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="fund_lifespan">Jangka Hayat Dana</p>
-                            <h3 class="font-display text-xl font-extrabold text-gold-600 dark:text-gold-400 leading-tight" id="resRetDepletionText">Kira...</h3>
+                            <h3 class="kpi-compact font-display font-extrabold text-gold-600 dark:text-gold-400 leading-tight" id="resRetDepletionText">Kira...</h3>
                             <p class="text-xs font-medium mt-2" id="resRetDepletionSubtext">-</p>
                         </div>
                     </div>
@@ -1001,7 +1196,7 @@
                         </div>
                         <div class="glass-card p-5 shadow-card border-l-4 border-l-emerald-500">
                             <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="ef_time">Estimated time to target</p>
-                            <h3 class="font-display text-xl font-extrabold text-emerald-600 dark:text-emerald-400 leading-tight" id="resEfTime">-</h3>
+                            <h3 class="kpi-compact font-display font-extrabold text-emerald-600 dark:text-emerald-400 leading-tight" id="resEfTime">-</h3>
                         </div>
                     </div>
                     <div class="glass-card chart-panel shadow-soft p-6 flex-grow flex flex-col relative">
@@ -1063,11 +1258,11 @@
                             </div>
                             <div>
                                 <label for="inpWeddingTarget" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="wedding_target">Wedding budget target (RM)</label>
-                                <input type="number" id="inpWeddingTarget" value="30000" min="0" step="500" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                <input type="number" id="inpWeddingTarget" value="20000" min="0" step="500" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
                             </div>
                             <div>
                                 <label for="inpWeddingCurrent" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="wedding_current">Current wedding savings (RM)</label>
-                                <input type="number" id="inpWeddingCurrent" value="0" min="0" step="100" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                <input type="number" id="inpWeddingCurrent" value="5000" min="0" step="100" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
                             </div>
                             <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="wedding_note">Choose a percentage of net salary based on your allocation rule, or enter a flexible monthly amount. The projection assumes the current monthly contribution stays constant, with no returns or withdrawals.</p>
                         </div>
@@ -1089,7 +1284,7 @@
                         </div>
                         <div class="glass-card p-5 shadow-card border-l-4 border-l-purple-500">
                             <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="wedding_time">Estimated time to target</p>
-                            <h3 class="font-display text-xl font-extrabold text-purple-600 dark:text-purple-400 leading-tight" id="resWeddingTime">-</h3>
+                            <h3 class="kpi-compact font-display font-extrabold text-purple-600 dark:text-purple-400 leading-tight" id="resWeddingTime">-</h3>
                         </div>
                     </div>
                     <div class="glass-card chart-panel shadow-soft p-6 flex-grow flex flex-col relative">
@@ -1152,6 +1347,34 @@
             </div>
         </div>
 
+        <div id="tab8" class="tab-content hidden">
+            <div class="mx-auto max-w-3xl">
+                <div class="glass-card shadow-soft p-6 md:p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center border border-brand-100 dark:border-brand-800">
+                            <i class="fa-solid fa-text-width text-lg"></i>
+                        </div>
+                        <h2 class="font-display text-xl font-bold text-slate-800 dark:text-slate-100" data-i18n="dash_text_title">Remove dashes from text</h2>
+                    </div>
+                    <div class="space-y-5">
+                        <p class="text-sm text-slate-500 dark:text-slate-400" data-i18n="dash_text_help">Dashes are removed automatically as you type; other characters are preserved.</p>
+                        <div>
+                            <label for="inpDashedText" class="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-2 block" data-i18n="dash_text_input">Enter dashed numbers</label>
+                            <input id="inpDashedText" type="text" spellcheck="false" autocomplete="off" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                        </div>
+                        <div>
+                            <label for="outDashFreeText" class="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-2 block" data-i18n="dash_text_output">Hypen format</label>
+                            <input id="outDashFreeText" type="text" readonly spellcheck="false" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700" aria-live="polite">
+                        </div>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <button id="btnCopyDashFreeText" type="button" class="btn-primary" data-i18n="dash_text_copy">Copy Hypen text</button>
+                            <p id="dashTextCopyStatus" class="text-sm text-slate-500 dark:text-slate-400" role="status" aria-live="polite"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <footer class="app-footer">
             <p data-i18n="footer_credit">© 2026 · Designed and developed by @muhdnajb</p>
         </footer>
@@ -1191,6 +1414,15 @@
                 tab_emergency: "Dana Kecemasan",
                 tab_wedding: "Simpanan Perkahwinan",
                 tab_daily_dividend: "Dividen Harian",
+                tab_dash_text: "Teks Tanpa Sengkang",
+                dash_text_title: "Buang sengkang daripada teks",
+                dash_text_help: "Sengkang dibuang secara automatik semasa anda menaip; aksara lain dikekalkan.",
+                dash_text_input: "Masukkan nombor bersengkang",
+                dash_text_output: "Format tanpa sengkang",
+                dash_text_copy: "Salin teks tanpa sengkang",
+                dash_text_copied: "Teks tanpa sengkang telah disalin.",
+                dash_text_empty: "Masukkan teks untuk disalin.",
+                dash_text_copy_failed: "Tidak dapat menyalin teks. Sila pilih dan salin secara manual.",
                 daily_dividend_params: "Parameter Dividen Harian",
                 daily_dividend_balance: "Baki simpanan (RM)",
                 daily_dividend_rate: "Pulangan tahunan (%)",
@@ -1339,6 +1571,15 @@
                 tab_emergency: "Emergency Fund",
                 tab_wedding: "Wedding Savings",
                 tab_daily_dividend: "Daily Dividend",
+                tab_dash_text: "Hypen Text",
+                dash_text_title: "Remove dashes from text",
+                dash_text_help: "Dashes are removed automatically as you type; other characters are preserved.",
+                dash_text_input: "Enter dashed numbers",
+                dash_text_output: "Hypen format",
+                dash_text_copy: "Copy Hypen text",
+                dash_text_copied: "Hypen text copied.",
+                dash_text_empty: "Enter text to copy.",
+                dash_text_copy_failed: "Unable to copy text. Please select and copy it manually.",
                 daily_dividend_params: "Daily Dividend Parameters",
                 daily_dividend_balance: "Savings balance (RM)",
                 daily_dividend_rate: "Annual return (% p.a.)",
@@ -1455,7 +1696,7 @@
                 div_rate: "Est. Dividend Rate (%)",
                 inf_rate: "Annual Inflation Rate (%)",
                 fund_at_retire: "Fund at Retirement",
-                age_label: "Age",
+                age_label: "Age: ",
                 exp_at_retire: "Future Monthly Expense",
                 adj_infl: "Adjusted for inflation",
                 fund_lifespan: "Fund Lifespan",
@@ -1482,6 +1723,27 @@
             const allTabsVisible = visibilityInputs.every(input => input.checked);
             const tabsFit = tabScroller.scrollWidth <= tabScroller.clientWidth + 1;
             tabScroller.classList.toggle('is-centered', allTabsVisible && tabsFit);
+            moveNavIndicator();
+        };
+
+        // Slides the pill behind the active tab; skips the transition on first placement.
+        const moveNavIndicator = () => {
+            const indicator = document.getElementById('navIndicator');
+            const activeButton = document.querySelector('.app-nav .nav-tab.is-active');
+            if (!activeButton || activeButton.hidden || activeButton.offsetParent === null) {
+                indicator.style.opacity = '0';
+                return;
+            }
+            const isFirstPlacement = indicator.style.opacity !== '1';
+            indicator.classList.toggle('no-anim', isFirstPlacement);
+            indicator.style.width = `${activeButton.offsetWidth}px`;
+            indicator.style.height = `${activeButton.offsetHeight}px`;
+            indicator.style.transform = `translate(${activeButton.offsetLeft}px, ${activeButton.offsetTop}px)`;
+            indicator.style.opacity = '1';
+            if (isFirstPlacement) {
+                void indicator.offsetWidth;
+                indicator.classList.remove('no-anim');
+            }
         };
 
         const applyTabVisibility = (tabId, isVisible) => {
@@ -1557,6 +1819,104 @@
         // Format Utilities
         const formatRM = (val) => new Intl.NumberFormat('ms-MY', { style: 'currency', currency: 'MYR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val);
 
+        // Chart palette mirrors the CSS design tokens
+        const chartTheme = () => isDarkMode ? {
+            text: '#8a8f92',
+            muted: '#5d6366',
+            grid: 'rgba(255, 255, 255, 0.06)',
+            surface: '#161819',
+            primary: '#5ec4b6',
+            primaryFill: 'rgba(94, 196, 182, 0.10)',
+            primaryFillStrong: 'rgba(94, 196, 182, 0.22)',
+            primaryFillFade: 'rgba(94, 196, 182, 0)',
+            secondary: '#f0a64a',
+            danger: '#f2777b',
+            allocation: ['#5ec4b6', '#a594f9', '#5fcf8a'],
+            tooltipBg: '#ececec',
+            tooltipText: '#161819'
+        } : {
+            text: '#8e8e96',
+            muted: '#a1a1aa',
+            grid: 'rgba(24, 24, 27, 0.06)',
+            surface: '#ffffff',
+            primary: '#0f766e',
+            primaryFill: 'rgba(15, 118, 110, 0.07)',
+            primaryFillStrong: 'rgba(15, 118, 110, 0.18)',
+            primaryFillFade: 'rgba(15, 118, 110, 0)',
+            secondary: '#e08a1e',
+            danger: '#e5484d',
+            allocation: ['#0f766e', '#8b5cf6', '#22a35a'],
+            tooltipBg: '#18181b',
+            tooltipText: '#fafafa'
+        };
+
+        const applyChartDefaults = () => {
+            const theme = chartTheme();
+            Chart.defaults.font.family = "'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif";
+            Chart.defaults.font.size = 12;
+            Chart.defaults.color = theme.text;
+            Chart.defaults.animation.duration = 450;
+            Chart.defaults.animation.easing = 'easeOutQuart';
+            Chart.defaults.elements.line.borderWidth = 2;
+            Chart.defaults.elements.point.hoverRadius = 4;
+            if (Chart.defaults.scale.border) Chart.defaults.scale.border.display = false;
+            Chart.defaults.scale.ticks.padding = 8;
+            Chart.defaults.scale.ticks.font = { family: "'Space Grotesk', sans-serif", size: 11 };
+            Object.assign(Chart.defaults.plugins.legend.labels, {
+                usePointStyle: true, pointStyle: 'circle', boxWidth: 7, boxHeight: 7, padding: 18,
+                font: { size: 12, weight: '500' }
+            });
+            Object.assign(Chart.defaults.plugins.tooltip, {
+                backgroundColor: theme.tooltipBg,
+                titleColor: theme.tooltipText,
+                bodyColor: theme.tooltipText,
+                titleFont: { family: "'Space Grotesk', sans-serif", weight: '500', size: 12 },
+                bodyFont: { family: "'Space Grotesk', sans-serif", size: 12 },
+                padding: 10,
+                cornerRadius: 8,
+                caretSize: 5,
+                boxPadding: 4,
+                usePointStyle: true
+            });
+        };
+
+        // Renders "18 months" with a muted "Apr 2028" note, or a plain message when there is no estimate
+        const setTimeToTarget = (el, months, monthsLabel, targetDate, message) => {
+            if (message) {
+                el.innerHTML = `<span class="kpi-message">${message}</span>`;
+                return;
+            }
+            const dateLocale = currentLang === 'bm' ? 'ms-MY' : 'en-MY';
+            const formattedDate = new Intl.DateTimeFormat(dateLocale, { month: 'short', year: 'numeric' }).format(targetDate);
+            el.innerHTML = `<span>${months} ${monthsLabel}</span><span class="kpi-note"><i class="fa-regular fa-calendar"></i>${formattedDate}</span>`;
+        };
+
+        const syncRangeFill = (range) => {
+            const min = Number(range.min) || 0;
+            const max = Number(range.max) || 100;
+            const percent = max > min ? ((Number(range.value) - min) / (max - min)) * 100 : 0;
+            range.style.setProperty('--fill', `${Math.min(100, Math.max(0, percent))}%`);
+        };
+
+        // Briefly animates result values when their text changes
+        const initValueTransitions = () => {
+            const observer = new MutationObserver(records => {
+                new Set(records.map(record => record.target.nodeType === 1 ? record.target : record.target.parentElement))
+                    .forEach(el => {
+                        const valueEl = el.closest('h3[id]');
+                        if (!valueEl || valueEl.dataset.lastValue === valueEl.textContent) return;
+                        valueEl.dataset.lastValue = valueEl.textContent;
+                        if (valueEl.classList.contains('is-updating')) return;
+                        valueEl.classList.add('is-updating');
+                    });
+            });
+            document.querySelectorAll('.glass-card h3[id]').forEach(el => {
+                el.dataset.lastValue = el.textContent;
+                el.addEventListener('animationend', () => el.classList.remove('is-updating'));
+                observer.observe(el, { childList: true, characterData: true, subtree: true });
+            });
+        };
+
         // --- STREAMING_CHUNK: Managing Theme and Language Toggles ---
         const toggleTheme = () => {
             const html = document.documentElement;
@@ -1570,13 +1930,8 @@
                 document.getElementById('iconTheme').classList.replace('fa-sun', 'fa-moon');
             }
             // Re-render charts to update grid/text colors based on theme
-            calcSalary();
-            calcRetirement();
-            if (document.getElementById('tab3').classList.contains('block')) calcDividend();
-            if (document.getElementById('tab4').classList.contains('block')) calcWithdrawalLoss();
-            if (document.getElementById('tab5').classList.contains('block')) calcEmergencyFund();
-            if (!document.getElementById('tab6').classList.contains('hidden')) calcWeddingSavings();
-            if (!document.getElementById('tab7').classList.contains('hidden')) calcDailyDividend();
+            applyChartDefaults();
+            refreshCalculations();
         };
 
         const toggleLanguage = () => {
@@ -1584,13 +1939,26 @@
             renderLanguage();
 
             // Re-render to update chart labels and dynamic JS text
+            refreshCalculations();
+        };
+
+        const runTabCalculator = (tabId) => {
+            const calculators = {
+                tab1: calcSalary,
+                tab2: calcRetirement,
+                tab3: calcDividend,
+                tab4: calcWithdrawalLoss,
+                tab5: calcEmergencyFund,
+                tab6: calcWeddingSavings,
+                tab7: calcDailyDividend
+            };
+            if (calculators[tabId]) calculators[tabId]();
+        };
+
+        const refreshCalculations = () => {
             calcSalary();
             calcRetirement();
-            if (document.getElementById('tab3').classList.contains('block')) calcDividend();
-            if (document.getElementById('tab4').classList.contains('block')) calcWithdrawalLoss();
-            if (document.getElementById('tab5').classList.contains('block')) calcEmergencyFund();
-            if (!document.getElementById('tab6').classList.contains('hidden')) calcWeddingSavings();
-            if (!document.getElementById('tab7').classList.contains('hidden')) calcDailyDividend();
+            if (activeTabId !== 'tab1' && activeTabId !== 'tab2') runTabCalculator(activeTabId);
         };
 
         const renderLanguage = () => {
@@ -1623,40 +1991,16 @@
             moduleSelector.value = tabId;
             const activeTabButton = document.getElementById(`btn${tabId.charAt(0).toUpperCase()}${tabId.slice(1)}`);
             
-            // Unselected style (handles dark mode classes too)
-            const baseClass = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50";
-            document.getElementById('btnTab1').className = baseClass;
-            document.getElementById('btnTab2').className = baseClass;
-            document.getElementById('btnTab3').className = baseClass;
-            document.getElementById('btnTab4').className = baseClass;
-            document.getElementById('btnTab5').className = baseClass;
-            document.getElementById('btnTab6').className = baseClass;
-            document.getElementById('btnTab7').className = baseClass;
-            
+            document.querySelectorAll('.app-nav .nav-tab').forEach(button => {
+                const isActive = button === activeTabButton;
+                button.classList.toggle('is-active', isActive);
+                if (isActive) button.setAttribute('aria-current', 'page');
+                else button.removeAttribute('aria-current');
+            });
+
             targetTab.classList.remove('hidden');
-            
-            if (tabId === 'tab1') {
-                document.getElementById('btnTab1').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm";
-                calcSalary(); 
-            } else if (tabId === 'tab2') {
-                document.getElementById('btnTab2').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm";
-                calcRetirement();
-            } else if (tabId === 'tab3') {
-                document.getElementById('btnTab3').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm";
-                calcDividend();
-            } else if (tabId === 'tab4') {
-                document.getElementById('btnTab4').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm";
-                calcWithdrawalLoss();
-            } else if (tabId === 'tab5') {
-                document.getElementById('btnTab5').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm";
-                calcEmergencyFund();
-            } else if (tabId === 'tab6') {
-                document.getElementById('btnTab6').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm";
-                calcWeddingSavings();
-            } else if (tabId === 'tab7') {
-                document.getElementById('btnTab7').className = "flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm";
-                calcDailyDividend();
-            }
+            runTabCalculator(tabId);
+            moveNavIndicator();
 
             if (window.matchMedia('(min-width: 641px)').matches && !activeTabButton.hidden) {
                 activeTabButton.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
@@ -1679,16 +2023,14 @@
             document.getElementById('resEfBaseMonthly').innerText = formatRM(monthlyExpenses);
             document.getElementById('resEfRemaining').innerText = formatRM(remaining);
             if (monthsToTarget === 0) {
-                document.getElementById('resEfTime').innerText = t('ef_reached');
+                setTimeToTarget(document.getElementById('resEfTime'), 0, '', null, t('ef_reached'));
             } else if (monthsToTarget === null) {
-                document.getElementById('resEfTime').innerText = t('ef_no_contribution');
+                setTimeToTarget(document.getElementById('resEfTime'), 0, '', null, t('ef_no_contribution'));
             } else {
                 const targetDate = new Date();
                 targetDate.setDate(1);
                 targetDate.setMonth(targetDate.getMonth() + monthsToTarget);
-                const dateLocale = currentLang === 'bm' ? 'ms-MY' : 'en-MY';
-                const formattedDate = new Intl.DateTimeFormat(dateLocale, { month: 'short', year: 'numeric' }).format(targetDate);
-                document.getElementById('resEfTime').innerText = `${monthsToTarget} ${t('ef_months')} · ${formattedDate}`;
+                setTimeToTarget(document.getElementById('resEfTime'), monthsToTarget, t('ef_months'), targetDate);
             }
 
             drawEmergencyChart(currentSavings, monthlyContribution, target, monthsToTarget);
@@ -1697,8 +2039,8 @@
         const drawEmergencyChart = (currentSavings, monthlyContribution, target, monthsToTarget) => {
             const ctx = document.getElementById('emergencyChart').getContext('2d');
             if (chartEmergency) chartEmergency.destroy();
-            const textColor = isDarkMode ? '#b0b5b6' : '#64748b';
-            const gridColor = isDarkMode ? 'rgba(103, 111, 115, 0.45)' : 'rgba(226, 232, 240, 0.6)';
+            const textColor = chartTheme().text;
+            const gridColor = chartTheme().grid;
             const chartMonths = Math.min(600, Math.max(12, monthsToTarget || 12));
             const labels = ['0'];
             const savingsData = [currentSavings];
@@ -1713,15 +2055,15 @@
             chartEmergency = new Chart(ctx, {
                 type: 'line',
                 data: { labels, datasets: [
-                    { label: t('chart_ef_savings'), data: savingsData, borderColor: isDarkMode ? '#a5b9aa' : '#0f766e', backgroundColor: isDarkMode ? 'rgba(165, 185, 170, 0.12)' : 'rgba(15, 118, 110, 0.1)', fill: true, tension: 0.15, pointRadius: 0 },
-                    { label: t('chart_ef_target'), data: targetData, borderColor: isDarkMode ? '#c8b18e' : '#c95d2d', borderDash: [5, 4], fill: false, pointRadius: 0 }
+                    { label: t('chart_ef_savings'), data: savingsData, borderColor: chartTheme().primary, backgroundColor: chartTheme().primaryFill, fill: true, tension: 0.15, pointRadius: 0 },
+                    { label: t('chart_ef_target'), data: targetData, borderColor: chartTheme().secondary, borderDash: [5, 4], fill: false, pointRadius: 0 }
                 ] },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false },
                     plugins: {
-                        legend: { position: 'bottom', labels: { color: textColor, font: { family: 'DM Sans', weight: 'bold' } } },
+                        legend: { position: 'bottom', labels: { color: textColor } },
                         tooltip: { callbacks: { label: context => `${context.dataset.label}: ${formatRM(context.parsed.y)}` } }
                     },
                     scales: {
@@ -1779,16 +2121,14 @@
             document.getElementById('resWeddingMonthly').innerText = formatRM(monthlyContribution);
             document.getElementById('resWeddingRemaining').innerText = formatRM(remaining);
             if (monthsToTarget === 0) {
-                document.getElementById('resWeddingTime').innerText = t('wedding_reached');
+                setTimeToTarget(document.getElementById('resWeddingTime'), 0, '', null, t('wedding_reached'));
             } else if (monthsToTarget === null) {
-                document.getElementById('resWeddingTime').innerText = t(isManual ? 'wedding_no_manual_contribution' : 'wedding_no_contribution');
+                setTimeToTarget(document.getElementById('resWeddingTime'), 0, '', null, t(isManual ? 'wedding_no_manual_contribution' : 'wedding_no_contribution'));
             } else {
                 const targetDate = new Date();
                 targetDate.setDate(1);
                 targetDate.setMonth(targetDate.getMonth() + monthsToTarget);
-                const dateLocale = currentLang === 'bm' ? 'ms-MY' : 'en-MY';
-                const formattedDate = new Intl.DateTimeFormat(dateLocale, { month: 'short', year: 'numeric' }).format(targetDate);
-                document.getElementById('resWeddingTime').innerText = `${monthsToTarget} ${t('wedding_months')} · ${formattedDate}`;
+                setTimeToTarget(document.getElementById('resWeddingTime'), monthsToTarget, t('wedding_months'), targetDate);
             }
 
             drawWeddingChart(currentSavings, monthlyContribution, target, monthsToTarget);
@@ -1797,8 +2137,8 @@
         const drawWeddingChart = (currentSavings, monthlyContribution, target, monthsToTarget) => {
             const ctx = document.getElementById('weddingChart').getContext('2d');
             if (chartWedding) chartWedding.destroy();
-            const textColor = isDarkMode ? '#b0b5b6' : '#64748b';
-            const gridColor = isDarkMode ? 'rgba(103, 111, 115, 0.45)' : 'rgba(226, 232, 240, 0.6)';
+            const textColor = chartTheme().text;
+            const gridColor = chartTheme().grid;
             const chartMonths = Math.min(600, Math.max(12, monthsToTarget || 12));
             const labels = ['0'];
             const savingsData = [currentSavings];
@@ -1813,15 +2153,15 @@
             chartWedding = new Chart(ctx, {
                 type: 'line',
                 data: { labels, datasets: [
-                    { label: t('chart_wedding_savings'), data: savingsData, borderColor: isDarkMode ? '#a5b9aa' : '#0f766e', backgroundColor: isDarkMode ? 'rgba(165, 185, 170, 0.12)' : 'rgba(15, 118, 110, 0.1)', fill: true, tension: 0.15, pointRadius: 0 },
-                    { label: t('chart_wedding_target'), data: targetData, borderColor: isDarkMode ? '#c8b18e' : '#c95d2d', borderDash: [5, 4], fill: false, pointRadius: 0 }
+                    { label: t('chart_wedding_savings'), data: savingsData, borderColor: chartTheme().primary, backgroundColor: chartTheme().primaryFill, fill: true, tension: 0.15, pointRadius: 0 },
+                    { label: t('chart_wedding_target'), data: targetData, borderColor: chartTheme().secondary, borderDash: [5, 4], fill: false, pointRadius: 0 }
                 ] },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false },
                     plugins: {
-                        legend: { position: 'bottom', labels: { color: textColor, font: { family: 'DM Sans', weight: 'bold' } } },
+                        legend: { position: 'bottom', labels: { color: textColor } },
                         tooltip: { callbacks: { label: context => `${context.dataset.label}: ${formatRM(context.parsed.y)}` } }
                     },
                     scales: {
@@ -1862,20 +2202,20 @@
         const drawWithdrawalChart = (labels, withoutWithdrawal, afterWithdrawal) => {
             const ctx = document.getElementById('withdrawalChart').getContext('2d');
             if (chartWithdrawal) chartWithdrawal.destroy();
-            const textColor = isDarkMode ? '#b0b5b6' : '#64748b';
-            const gridColor = isDarkMode ? 'rgba(103, 111, 115, 0.45)' : 'rgba(226, 232, 240, 0.6)';
+            const textColor = chartTheme().text;
+            const gridColor = chartTheme().grid;
             chartWithdrawal = new Chart(ctx, {
                 type: 'line',
                 data: { labels, datasets: [
-                    { label: t('chart_withdrawal_no_take'), data: withoutWithdrawal, borderColor: isDarkMode ? '#a5b9aa' : '#0f766e', backgroundColor: isDarkMode ? 'rgba(165, 185, 170, 0.12)' : 'rgba(15, 118, 110, 0.1)', fill: true, tension: 0.2, pointRadius: 0 },
-                    { label: t('chart_withdrawal_after'), data: afterWithdrawal, borderColor: isDarkMode ? '#c59da1' : '#e11d48', borderDash: [5, 4], fill: false, tension: 0.2, pointRadius: 0 }
+                    { label: t('chart_withdrawal_no_take'), data: withoutWithdrawal, borderColor: chartTheme().primary, backgroundColor: chartTheme().primaryFill, fill: true, tension: 0.2, pointRadius: 0 },
+                    { label: t('chart_withdrawal_after'), data: afterWithdrawal, borderColor: chartTheme().danger, borderDash: [5, 4], fill: false, tension: 0.2, pointRadius: 0 }
                 ] },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false },
                     plugins: {
-                        legend: { position: 'bottom', labels: { color: textColor, font: { family: 'DM Sans', weight: 'bold' } } },
+                        legend: { position: 'bottom', labels: { color: textColor } },
                         tooltip: { callbacks: { label: context => `${context.dataset.label}: ${formatRM(context.parsed.y)}` } }
                     },
                     scales: {
@@ -1927,20 +2267,20 @@
         const drawDividendChart = (labels, balances, contributions) => {
             const ctx = document.getElementById('dividendChart').getContext('2d');
             if (chartDividend) chartDividend.destroy();
-            const textColor = isDarkMode ? '#b0b5b6' : '#64748b';
-            const gridColor = isDarkMode ? 'rgba(103, 111, 115, 0.45)' : 'rgba(226, 232, 240, 0.6)';
+            const textColor = chartTheme().text;
+            const gridColor = chartTheme().grid;
             chartDividend = new Chart(ctx, {
                 type: 'line',
                 data: { labels, datasets: [
-                    { label: t('chart_dividend_balance'), data: balances, borderColor: isDarkMode ? '#a5b9aa' : '#0f766e', backgroundColor: isDarkMode ? 'rgba(165, 185, 170, 0.14)' : 'rgba(15, 118, 110, 0.12)', fill: true, tension: 0.25, pointRadius: 2 },
-                    { label: t('chart_dividend_contributions'), data: contributions, borderColor: isDarkMode ? '#c8b18e' : '#c95d2d', borderDash: [5, 4], fill: false, tension: 0.15, pointRadius: 0 }
+                    { label: t('chart_dividend_balance'), data: balances, borderColor: chartTheme().primary, backgroundColor: chartTheme().primaryFill, fill: true, tension: 0.25, pointRadius: 0 },
+                    { label: t('chart_dividend_contributions'), data: contributions, borderColor: chartTheme().secondary, borderDash: [5, 4], fill: false, tension: 0.15, pointRadius: 0 }
                 ] },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false },
                     plugins: {
-                        legend: { position: 'bottom', labels: { color: textColor, font: { family: 'DM Sans', weight: 'bold' } } },
+                        legend: { position: 'bottom', labels: { color: textColor } },
                         tooltip: { callbacks: { label: context => `${context.dataset.label}: ${formatRM(context.parsed.y)}` } }
                     },
                     scales: {
@@ -1987,8 +2327,7 @@
             const ctx = document.getElementById('salaryChart').getContext('2d');
             if(chartSalary) chartSalary.destroy();
 
-            const textColor = isDarkMode ? '#e2e8f0' : '#475569';
-            const borderColor = isDarkMode ? '#2d3235' : '#ffffff';
+            const theme = chartTheme();
 
             chartSalary = new Chart(ctx, {
                 type: 'doughnut',
@@ -1996,22 +2335,21 @@
                     labels: [t('chart_needs'), t('chart_wants'), t('chart_savings')],
                     datasets: [{
                         data: [needs, wants, save],
-                        backgroundColor: isDarkMode
-                            ? ['#82a39b', '#a092aa', '#8ca391']
-                            : ['#0ea5e9', '#a855f7', '#10b981'],
-                        borderWidth: 4,
-                        borderColor: borderColor,
-                        hoverOffset: 8
+                        backgroundColor: theme.allocation,
+                        borderWidth: 3,
+                        borderColor: theme.surface,
+                        borderRadius: 6,
+                        hoverOffset: 6
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '65%',
+                    cutout: '74%',
                     plugins: {
-                        legend: { 
-                            position: 'bottom', 
-                            labels: { font: { family: 'DM Sans', weight: 'bold' }, color: textColor } 
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: theme.text }
                         },
                         tooltip: {
                             callbacks: {
@@ -2043,12 +2381,15 @@
                 
                 elSld.addEventListener('input', (e) => {
                     elNum.value = e.target.value;
+                    syncRangeFill(elSld);
                     calcRetirement();
                 });
                 elNum.addEventListener('input', (e) => {
                     elSld.value = e.target.value || 0;
+                    syncRangeFill(elSld);
                     calcRetirement();
                 });
+                syncRangeFill(elSld);
             });
         };
 
@@ -2120,17 +2461,15 @@
             const depSub = document.getElementById('resRetDepletionSubtext');
             
             if (depletionAge) {
-                const darkCardClass = isDarkMode ? 'bg-rose-900/20 border-t-rose-500' : 'bg-rose-50/30 border-t-rose-500';
-                cardDepletion.className = `glass-card p-5 shadow-card border-t-4 ${darkCardClass}`;
-                depText.innerHTML = `${t('depleted')}<br>${depletionAge}`;
-                depText.className = "font-display text-xl font-extrabold text-rose-600 dark:text-rose-400 leading-tight";
+                cardDepletion.className = 'glass-card p-5 shadow-card is-danger';
+                depText.innerHTML = `<span class="kpi-note">${t('depleted')}</span><span>${depletionAge}</span>`;
+                depText.className = "kpi-compact font-display font-extrabold text-rose-600 dark:text-rose-400 leading-tight";
                 depSub.innerHTML = `<span class="text-rose-500 dark:text-rose-400"><i class="fa-solid fa-triangle-exclamation"></i> ${t('risk_high')}</span>`;
             } else {
-                const darkCardClass = isDarkMode ? 'bg-emerald-900/20 border-t-emerald-500' : 'bg-emerald-50/30 border-t-emerald-500';
-                cardDepletion.className = `glass-card p-5 shadow-card border-t-4 ${darkCardClass}`;
-                depText.innerHTML = `${t('lasts')}<br>${deathAge} ${t('years')}`;
-                depText.className = "font-display text-xl font-extrabold text-emerald-600 dark:text-emerald-400 leading-tight";
-                depSub.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400"><i class="fa-solid fa-shield-check"></i> ${t('safe')}</span>`;
+                cardDepletion.className = 'glass-card p-5 shadow-card is-safe';
+                depText.innerHTML = `<span class="kpi-note">${t('lasts')}</span><span>${deathAge} ${t('years')}</span>`;
+                depText.className = "kpi-compact font-display font-extrabold text-emerald-600 dark:text-emerald-400 leading-tight";
+                depSub.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400"><i class="fa-solid fa-circle-check"></i> ${t('safe')}</span>`;
             }
 
             drawRetirementChart(labels, chartData, currentAge, retireAge, depletionAge);
@@ -2142,15 +2481,15 @@
             if (chartRetirement) chartRetirement.destroy();
 
             // Theme adapted colors
-            const gridColor = isDarkMode ? 'rgba(103, 111, 115, 0.45)' : 'rgba(226, 232, 240, 0.6)';
-            const textColor = isDarkMode ? '#b0b5b6' : '#64748b';
-            const tooltipBg = isDarkMode ? 'rgba(55, 60, 64, 0.97)' : 'rgba(15, 23, 42, 0.9)';
-            const accentColor = isDarkMode ? '#b99e7b' : '#ca8a04';
-            const dangerColor = isDarkMode ? '#b98289' : '#f43f5e';
+            const theme = chartTheme();
+            const gridColor = theme.grid;
+            const textColor = theme.text;
+            const accentColor = theme.primary;
+            const dangerColor = theme.danger;
 
             let gradientFill = ctx.createLinearGradient(0, 0, 0, 400);
-            gradientFill.addColorStop(0, isDarkMode ? 'rgba(185, 158, 123, 0.24)' : 'rgba(202, 138, 4, 0.3)');
-            gradientFill.addColorStop(1, isDarkMode ? 'rgba(185, 158, 123, 0.015)' : 'rgba(202, 138, 4, 0.02)');
+            gradientFill.addColorStop(0, theme.primaryFillStrong);
+            gradientFill.addColorStop(1, theme.primaryFillFade);
 
             chartRetirement = new Chart(ctx, {
                 type: 'line',
@@ -2161,8 +2500,8 @@
                         data: data,
                         borderColor: accentColor,
                         backgroundColor: gradientFill,
-                        borderWidth: 3,
-                        pointBackgroundColor: isDarkMode ? '#2d3235' : '#ffffff',
+                        borderWidth: 2.5,
+                        pointBackgroundColor: theme.surface,
                         pointBorderColor: accentColor,
                         pointRadius: 0,
                         pointHoverRadius: 6,
@@ -2173,7 +2512,7 @@
                                 const ageAtPoint = startAge + context.p0DataIndex;
                                 if (ageAtPoint >= retireAge) {
                                     if (depletionAge && (depletionAge - ageAtPoint) <= 5) return dangerColor;
-                                    return isDarkMode ? '#a6adaf' : '#64748b';
+                                    return theme.muted;
                                 }
                                 return accentColor;
                             }
@@ -2187,22 +2526,19 @@
                     plugins: {
                         legend: { display: false },
                         tooltip: {
-                            backgroundColor: tooltipBg,
-                            titleFont: { family: 'Space Grotesk', size: 13 },
-                            bodyFont: { family: 'DM Sans', size: 14, weight: 'bold' },
-                            padding: 12,
+                            bodyFont: { family: "'Space Grotesk', sans-serif", size: 13, weight: '600' },
                             displayColors: false,
                             callbacks: {
-                                label: context => formatRM(context.parsed.y)
+                                title: items => `${t('age_label')} ${items[0].label}`,
+                                label: context => `${context.dataset.label}: ${formatRM(context.parsed.y)}`
                             }
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            grid: { color: gridColor, drawBorder: false },
+                            grid: { color: gridColor },
                             ticks: {
-                                font: { family: 'DM Sans', size: 11 },
                                 color: textColor,
                                 callback: val => {
                                     if(val >= 1000000) return 'RM' + (val / 1000000).toFixed(1) + 'M';
@@ -2212,9 +2548,8 @@
                             }
                         },
                         x: {
-                            grid: { display: false, drawBorder: false },
+                            grid: { display: false },
                             ticks: {
-                                font: { family: 'DM Sans', size: 11 },
                                 color: textColor,
                                 maxTicksLimit: 8
                             }
@@ -2230,6 +2565,51 @@
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         }).format(value);
+
+        const updateDashFreeText = () => {
+            const input = document.getElementById('inpDashedText').value;
+            document.getElementById('outDashFreeText').value = input.replace(/[-\u2010-\u2015\u2212]/g, '');
+            document.getElementById('dashTextCopyStatus').textContent = '';
+        };
+
+        const copyDashFreeText = async () => {
+            const output = document.getElementById('outDashFreeText');
+            const status = document.getElementById('dashTextCopyStatus');
+            if (!output.value) {
+                status.textContent = t('dash_text_empty');
+                return;
+            }
+
+            const copyUsingSelection = () => {
+                output.focus();
+                output.select();
+                const copied = document.execCommand('copy');
+                output.setSelectionRange(0, 0);
+                if (!copied) throw new Error('Copy command was rejected.');
+            };
+
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(output.value);
+                } else {
+                    copyUsingSelection();
+                }
+                status.textContent = t('dash_text_copied');
+            } catch (error) {
+                try {
+                    copyUsingSelection();
+                    status.textContent = t('dash_text_copied');
+                } catch (fallbackError) {
+                    status.textContent = t('dash_text_copy_failed');
+                    console.error('Unable to copy Hypen text:', { error, fallbackError });
+                }
+            }
+        };
+
+        const initDashFreeText = () => {
+            document.getElementById('inpDashedText').addEventListener('input', updateDashFreeText);
+            document.getElementById('btnCopyDashFreeText').addEventListener('click', copyDashFreeText);
+        };
 
         const initTabScroller = () => {
             const tabScroller = document.getElementById('tabScroller');
@@ -2300,8 +2680,8 @@
         const drawDailyDividendChart = (dividendPerDay, days) => {
             const ctx = document.getElementById('dailyDividendChart').getContext('2d');
             if (chartDailyDividend) chartDailyDividend.destroy();
-            const textColor = isDarkMode ? '#b0b5b6' : '#64748b';
-            const gridColor = isDarkMode ? 'rgba(103, 111, 115, 0.45)' : 'rgba(226, 232, 240, 0.6)';
+            const textColor = chartTheme().text;
+            const gridColor = chartTheme().grid;
             const labels = Array.from({ length: days + 1 }, (_, day) => String(day));
             const dividendData = labels.map((_, day) => dividendPerDay * day);
 
@@ -2312,8 +2692,8 @@
                     datasets: [{
                         label: t('daily_dividend_chart_label'),
                         data: dividendData,
-                        borderColor: isDarkMode ? '#a5b9aa' : '#0f766e',
-                        backgroundColor: isDarkMode ? 'rgba(165, 185, 170, 0.12)' : 'rgba(15, 118, 110, 0.1)',
+                        borderColor: chartTheme().primary,
+                        backgroundColor: chartTheme().primaryFill,
                         fill: true,
                         tension: 0.1,
                         pointRadius: 0
@@ -2324,7 +2704,7 @@
                     maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false },
                     plugins: {
-                        legend: { position: 'bottom', labels: { color: textColor, font: { family: 'DM Sans', weight: 'bold' } } },
+                        legend: { position: 'bottom', labels: { color: textColor } },
                         tooltip: { callbacks: { label: context => `${context.dataset.label}: ${formatDailyDividendRM(context.parsed.y)}` } }
                     },
                     scales: {
@@ -2339,6 +2719,7 @@
             const startMonthInput = document.getElementById('inpDivStartMonth');
             const now = new Date();
             startMonthInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            applyChartDefaults();
             initTabVisibilityControls();
             initTabScroller();
             initSalaryListeners();
@@ -2348,6 +2729,7 @@
             initEmergencyFundListeners();
             initWeddingSavingsListeners();
             initDailyDividendListeners();
+            initDashFreeText();
             renderLanguage();
             calcSalary(); 
             calcRetirement();
@@ -2357,8 +2739,14 @@
             };
             window.addEventListener('scroll', updateFooterVisibility, { passive: true });
             window.addEventListener('resize', updateFooterVisibility);
-            new ResizeObserver(updateFooterVisibility).observe(document.querySelector('.max-w-7xl'));
+            new ResizeObserver(updateFooterVisibility).observe(document.querySelector('.app-shell'));
             updateFooterVisibility();
+            initValueTransitions();
+            if (document.fonts) document.fonts.ready.then(() => {
+                moveNavIndicator();
+                // Redraw canvases once web fonts are available
+                Object.values(Chart.instances).forEach(chart => chart.update('none'));
+            });
             // tab 1 is active by default
         };
     </script>
