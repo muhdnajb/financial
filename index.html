@@ -541,10 +541,10 @@
                     <label class="tab-visibility-option" for="showTab1"><input id="showTab1" type="checkbox" data-tab-id="tab1" checked><span data-i18n="tab_salary">Salary Allocation</span></label>
                     <label class="tab-visibility-option" for="showTab2"><input id="showTab2" type="checkbox" data-tab-id="tab2" checked><span data-i18n="tab_retire">Retirement Calculator</span></label>
                     <label class="tab-visibility-option" for="showTab3"><input id="showTab3" type="checkbox" data-tab-id="tab3" checked><span data-i18n="tab_dividend">Dividend Calculator</span></label>
-                    <label class="tab-visibility-option" for="showTab4"><input id="showTab4" type="checkbox" data-tab-id="tab4" checked><span data-i18n="tab_withdrawal">Margin Loss</span></label>
+                    <label class="tab-visibility-option" for="showTab4"><input id="showTab4" type="checkbox" data-tab-id="tab4"><span data-i18n="tab_withdrawal">Margin Loss</span></label>
                     <label class="tab-visibility-option" for="showTab5"><input id="showTab5" type="checkbox" data-tab-id="tab5" checked><span data-i18n="tab_emergency">Emergency Fund</span></label>
                     <label class="tab-visibility-option" for="showTab6"><input id="showTab6" type="checkbox" data-tab-id="tab6" checked><span data-i18n="tab_wedding">Wedding Savings</span></label>
-                    <label class="tab-visibility-option" for="showTab7"><input id="showTab7" type="checkbox" data-tab-id="tab7" checked><span data-i18n="tab_daily_dividend">Daily Dividend</span></label>
+                    <label class="tab-visibility-option" for="showTab7"><input id="showTab7" type="checkbox" data-tab-id="tab7"><span data-i18n="tab_daily_dividend">Daily Dividend</span></label>
                 </div>
                 <!-- Theme Toggle -->
                 <button id="btnTheme" onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
@@ -561,14 +561,14 @@
         <div class="app-nav-shell">
             <div id="tabScroller" class="app-nav">
                 <label for="moduleSelector" class="sr-only" data-i18n="module_selector">Select module</label>
-                <select id="moduleSelector" onchange="switchTab(this.value)">
+                <select id="moduleSelector">
                     <option value="tab1" data-i18n="tab_salary">Salary Allocation</option>
                     <option value="tab2" data-i18n="tab_retire">Retirement Calculator</option>
                     <option value="tab3" data-i18n="tab_dividend">Dividend Calculator</option>
-                    <option value="tab4" data-i18n="tab_withdrawal">Margin Loss</option>
+                    <option value="tab4" data-i18n="tab_withdrawal" hidden>Margin Loss</option>
                     <option value="tab5" data-i18n="tab_emergency">Emergency Fund</option>
                     <option value="tab6" data-i18n="tab_wedding">Wedding Savings</option>
-                    <option value="tab7" data-i18n="tab_daily_dividend">Daily Dividend</option>
+                    <option value="tab7" data-i18n="tab_daily_dividend" hidden>Daily Dividend</option>
                 </select>
                 <button onclick="switchTab('tab1')" id="btnTab1" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 shadow-sm">
                     <i class="fa-solid fa-wallet mr-2"></i> <span data-i18n="tab_salary">Agihan Gaji</span>
@@ -579,7 +579,7 @@
                 <button onclick="switchTab('tab3')" id="btnTab3" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
                     <i class="fa-solid fa-chart-column mr-2"></i> <span data-i18n="tab_dividend">Kalkulator Dividen</span>
                 </button>
-                <button onclick="switchTab('tab4')" id="btnTab4" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                <button onclick="switchTab('tab4')" id="btnTab4" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50" hidden>
                     <i class="fa-solid fa-arrow-trend-down mr-2"></i> <span data-i18n="tab_withdrawal">Withdrawal Loss</span>
                 </button>
                 <button onclick="switchTab('tab5')" id="btnTab5" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
@@ -588,7 +588,7 @@
                 <button onclick="switchTab('tab6')" id="btnTab6" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
                     <i class="fa-solid fa-ring mr-2"></i> <span data-i18n="tab_wedding">Wedding Savings</span>
                 </button>
-                <button onclick="switchTab('tab7')" id="btnTab7" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                <button onclick="switchTab('tab7')" id="btnTab7" class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50" hidden>
                     <i class="fa-solid fa-calendar-day mr-2"></i> <span data-i18n="tab_daily_dividend">Daily Dividend</span>
                 </button>
             </div>
@@ -1161,6 +1161,10 @@
         // State
         let currentLang = 'en';
         let isDarkMode = false;
+        let activeTabId = 'tab1';
+        const moduleOptions = new Map(
+            [...document.querySelectorAll('#moduleSelector option')].map(option => [option.value, option])
+        );
         
         let chartSalary = null;
         let chartRetirement = null;
@@ -1495,14 +1499,25 @@
 
             const tabNumber = tabId.slice(3);
             document.getElementById(`btnTab${tabNumber}`).hidden = !isVisible;
-            document.querySelector(`#moduleSelector option[value="${tabId}"]`).hidden = !isVisible;
+            const moduleSelector = document.getElementById('moduleSelector');
+            const moduleOption = moduleOptions.get(tabId);
+            if (isVisible) {
+                const nextOption = [...moduleSelector.options].find(option =>
+                    Number(option.value.slice(3)) > Number(tabNumber)
+                );
+                moduleSelector.insertBefore(moduleOption, nextOption || null);
+            } else {
+                moduleOption.remove();
+            }
 
             document.querySelectorAll('[data-tab-id]').forEach(input => {
                 input.disabled = input.checked && visibleTabIds.length === 1;
             });
 
-            if (!isVisible && document.getElementById('moduleSelector').value === tabId) {
+            if (!isVisible && activeTabId === tabId) {
                 switchTab(visibleTabIds[0]);
+            } else {
+                moduleSelector.value = activeTabId;
             }
             updateTabAlignment();
         };
@@ -1516,10 +1531,16 @@
         };
 
         const initTabVisibilityControls = () => {
+            const moduleSelector = document.getElementById('moduleSelector');
+            moduleSelector.addEventListener('change', () => switchTab(moduleSelector.value));
+
             document.querySelectorAll('[data-tab-id]').forEach(checkbox => {
                 checkbox.addEventListener('change', () => {
                     applyTabVisibility(checkbox.dataset.tabId, checkbox.checked);
                 });
+            });
+            document.querySelectorAll('[data-tab-id]:not(:checked)').forEach(checkbox => {
+                applyTabVisibility(checkbox.dataset.tabId, false);
             });
 
             document.addEventListener('click', event => {
@@ -1596,8 +1617,10 @@
                 if (!firstVisibleTab) return;
                 tabId = firstVisibleTab.dataset.tabId;
             }
+            activeTabId = tabId;
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById('moduleSelector').value = tabId;
+            const moduleSelector = document.getElementById('moduleSelector');
+            moduleSelector.value = tabId;
             const activeTabButton = document.getElementById(`btn${tabId.charAt(0).toUpperCase()}${tabId.slice(1)}`);
             
             // Unselected style (handles dark mode classes too)
