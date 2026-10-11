@@ -199,6 +199,12 @@
         .icon-btn[aria-expanded="true"] { color: var(--ink); border-color: var(--line-strong); background: var(--surface-2); }
         .icon-btn:active { transform: scale(0.94); }
         .icon-btn.is-square { width: 2.375rem; padding: 0; }
+        .icon-btn[hidden] { display: none; }
+
+        .admin-menu-btn { gap: 0.4rem; }
+        .admin-menu-btn .fa-user-shield { color: var(--accent); }
+        .admin-menu-btn .fa-chevron-down { font-size: 0.625rem; transition: transform 200ms var(--ease); }
+        .admin-menu-btn[aria-expanded="true"] .fa-chevron-down { transform: rotate(180deg); }
 
         #iconTheme.fa-sun { animation: icon-swap-a 420ms var(--ease); }
         #iconTheme.fa-moon { animation: icon-swap-b 420ms var(--ease); }
@@ -207,8 +213,9 @@
 
         :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-        /* Tab visibility popover */
-        .tab-visibility-menu {
+        /* Header popovers (tab visibility, admin modules) */
+        .tab-visibility-menu,
+        .admin-menu {
             position: absolute;
             z-index: 30;
             top: calc(100% + 0.5rem);
@@ -224,7 +231,10 @@
             animation: pop-in 180ms var(--ease);
         }
 
-        .tab-visibility-menu[hidden] { display: none; }
+        .tab-visibility-menu[hidden],
+        .admin-menu[hidden] { display: none; }
+        .admin-menu { width: min(11rem, calc(100vw - 2rem)); padding: 0.5rem; }
+        .tab-visibility-menu hr { margin: 0.5rem 0; border-color: var(--line); }
 
         @keyframes pop-in {
             from { opacity: 0; transform: translateY(-4px) scale(0.97); }
@@ -249,6 +259,39 @@
         .tab-visibility-option:hover { background: var(--surface-2); }
         .tab-visibility-option input { width: 1rem; height: 1rem; accent-color: var(--accent); cursor: pointer; }
         .tab-visibility-option input:disabled { cursor: not-allowed; }
+
+        .admin-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            width: 100%;
+            min-height: 2.25rem;
+            padding: 0.25rem 0.375rem;
+            border-radius: 8px;
+            color: var(--ink-2);
+            font-size: 0.85rem;
+            text-align: left;
+            transition: background-color 140ms ease, color 140ms ease;
+        }
+
+        .admin-menu-item i { flex: 0 0 auto; width: 1rem; color: var(--muted-2); font-size: 0.8rem; text-align: center; }
+        .admin-menu-item:hover { background: var(--surface-2); color: var(--ink); }
+
+        /* Admin sign-in dialog: the form inside is a regular card */
+        .admin-dialog {
+            width: min(23rem, calc(100vw - 2rem));
+            max-width: none;
+            margin: auto;
+            padding: 0;
+            overflow: visible;
+            border: 0;
+            background: transparent;
+            color: var(--ink);
+        }
+        .admin-dialog[open] { animation: panel-in 240ms var(--ease); }
+        .app-shell .admin-dialog .glass-card { box-shadow: var(--shadow-pop); }
+        .admin-login-error:empty { display: none; }
+        .admin-login-error { margin-top: 0.5rem; color: var(--c-rose); font-size: 0.75rem; }
 
         /* ---------- Navigation (segmented control) ---------- */
         .app-nav-shell { min-width: 0; margin-bottom: 1.75rem; }
@@ -646,6 +689,261 @@
         .app-shell .chart-panel > h2.mb-6,
         .app-shell .chart-panel > .flex.mb-6 { margin-bottom: 1.25rem; }
 
+        /* Wedding expense breakdown */
+        .app-shell .glass-card label.inline-check {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.625rem;
+            color: var(--muted);
+            font-size: 0.78rem;
+            cursor: pointer;
+        }
+        .inline-check input { width: 0.95rem; height: 0.95rem; accent-color: var(--accent); cursor: pointer; }
+
+        .expense-list { display: flex; flex-direction: column; gap: 0.5rem; }
+        .expense-row {
+            display: grid;
+            grid-template-columns: 0.625rem minmax(0, 1fr) 7.25rem 2.375rem;
+            align-items: center;
+            gap: 0.5rem;
+            animation: panel-in 220ms var(--ease);
+        }
+        .expense-swatch { width: 0.625rem; height: 0.625rem; border-radius: 999px; background: var(--line-strong); }
+        .app-shell .glass-card .expense-row input.w-full:not([type='range']) { padding: 0.55rem 0.75rem; font-size: 0.875rem; }
+        .app-shell .glass-card .expense-row input[type='number'] { text-align: right; }
+        .expense-remove { height: 2.375rem; border-radius: var(--radius-sm); }
+        .expense-remove:hover { color: var(--c-rose); }
+
+        .expense-add {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            margin-top: 0.75rem;
+            padding: 0.6rem 0.875rem;
+            border: 1px dashed var(--line-strong);
+            border-radius: var(--radius-sm);
+            color: var(--muted);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease;
+        }
+        .expense-add:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+        .expense-add i { font-size: 0.75rem; }
+
+        .expense-total {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding-top: 0.875rem;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 0.8125rem;
+        }
+        .expense-total strong { color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+        .breakdown-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+            align-items: center;
+            gap: 2rem;
+        }
+        .breakdown-donut { position: relative; width: 100%; max-width: 15rem; aspect-ratio: 1; margin-inline: auto; }
+        .breakdown-center {
+            position: absolute;
+            inset: 22%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.15rem;
+            text-align: center;
+            pointer-events: none;
+        }
+        .breakdown-center-label {
+            max-width: 100%;
+            overflow: hidden;
+            color: var(--muted);
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .breakdown-center-value { color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+        .breakdown-center-share { min-height: 1rem; color: var(--muted-2); font-size: 0.75rem; font-variant-numeric: tabular-nums; }
+
+        .breakdown-legend { display: flex; flex-direction: column; gap: 0.125rem; margin: 0; padding: 0; list-style: none; }
+        .breakdown-legend-row {
+            display: grid;
+            grid-template-columns: 0.625rem minmax(0, 1fr) auto 3rem;
+            align-items: center;
+            gap: 0.625rem;
+            width: 100%;
+            padding: 0.5rem 0.625rem;
+            border-radius: 8px;
+            color: var(--ink-2);
+            font-size: 0.8125rem;
+            text-align: left;
+            transition: background-color 160ms ease, opacity 160ms ease;
+        }
+        .breakdown-legend-row:hover,
+        .breakdown-legend-row:focus-visible,
+        .breakdown-legend-row.is-active { background: var(--surface-2); }
+        .breakdown-legend-row.is-active { color: var(--ink); }
+        .breakdown-legend.has-focus .breakdown-legend-row:not(.is-active) { opacity: 0.45; }
+        .breakdown-legend-row .legend-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .breakdown-legend-row .legend-amount { color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-variant-numeric: tabular-nums; }
+        .breakdown-legend-row .legend-share { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
+        .breakdown-empty { padding: 0.5rem 0.625rem; color: var(--muted); font-size: 0.8125rem; }
+
+
+        /* Wedding savings report */
+        .btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            height: 2.5rem;
+            padding: 0 1rem;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            color: var(--ink);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background-color 160ms ease, border-color 160ms ease, transform 160ms var(--ease);
+        }
+        .btn-ghost:hover { border-color: var(--line-strong); background: var(--surface-2); }
+        .btn-ghost:active { transform: scale(0.97); }
+        .btn-ghost i, .btn-primary i { font-size: 0.8rem; }
+        .btn-primary:disabled { opacity: 0.65; cursor: progress; transform: none; box-shadow: none; }
+
+        .report-bar { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; }
+        .report-bar-icon {
+            display: grid;
+            flex: 0 0 auto;
+            place-items: center;
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 9px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+        .report-bar-copy { flex: 1 1 auto; min-width: 0; }
+        .report-bar-title { color: var(--ink); font-size: 0.9rem; font-weight: 600; }
+        .report-bar-text { color: var(--muted); font-size: 0.78rem; line-height: 1.45; }
+        .report-bar-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: flex-end; }
+        .report-status-msg:empty { display: none; }
+        .report-status-msg { margin-top: 0.25rem; color: var(--c-rose); font-size: 0.75rem; }
+
+        .report-dialog {
+            width: min(68rem, calc(100vw - 2rem));
+            max-width: none;
+            max-height: calc(100dvh - 2rem);
+            margin: auto;
+            padding: 0;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: var(--page);
+            color: var(--ink);
+            box-shadow: var(--shadow-pop);
+        }
+        .report-dialog[open] { display: flex; flex-direction: column; animation: panel-in 240ms var(--ease); }
+        .report-dialog::backdrop,
+        .admin-dialog::backdrop { background: rgba(10, 10, 12, 0.45); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+        .report-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1.125rem 1.5rem;
+            border-bottom: 1px solid var(--line);
+            background: var(--surface);
+        }
+        .report-head h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; }
+        .report-head-meta { color: var(--muted); font-size: 0.78rem; }
+        .report-head-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 0.5rem; }
+        .report-body { display: flex; flex-direction: column; gap: 1rem; padding: 1.25rem 1.5rem 1.5rem; overflow-y: auto; }
+
+        .report-section { padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+        .report-section h3 { margin-bottom: 0.875rem; color: var(--ink); font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em; }
+        .report-section h4 { margin: 1.25rem 0 0.5rem; color: var(--ink-2); font-size: 0.8125rem; font-weight: 600; }
+        .report-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+
+        .report-summary-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 1rem; }
+        .report-summary-head h3 { margin: 0; }
+        .report-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 999px;
+            background: var(--surface-2);
+            color: var(--ink-2);
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .report-status.is-good i { color: var(--c-green); }
+        .report-status.is-warn i { color: var(--c-amber); }
+        .report-status.is-neutral i { color: var(--accent); }
+
+        .report-kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
+        .report-kpi { padding: 0.875rem 1rem; border-radius: var(--radius-sm); background: var(--surface-2); }
+        .report-kpi-label { color: var(--muted); font-size: 0.75rem; font-weight: 500; }
+        .report-kpi-value { margin-top: 0.35rem; color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.2; }
+        .report-kpi-note { margin-top: 0.2rem; color: var(--muted); font-size: 0.75rem; }
+
+        .report-progress { margin-top: 1.125rem; }
+        .report-progress-row { display: flex; justify-content: space-between; gap: 1rem; color: var(--ink-2); font-size: 0.8125rem; font-weight: 500; }
+        .report-progress-row strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+        .report-progress-track { height: 0.5rem; margin-top: 0.5rem; overflow: hidden; border-radius: 999px; background: var(--track); }
+        .report-progress-fill { height: 100%; border-radius: inherit; background: var(--accent); transition: width 600ms var(--ease); }
+        .report-progress-note { margin-top: 0.4rem; color: var(--muted); font-size: 0.75rem; font-variant-numeric: tabular-nums; }
+
+        .report-insights { display: flex; flex-direction: column; gap: 0.625rem; margin: 0; padding: 0; list-style: none; }
+        .report-insights li { display: flex; gap: 0.75rem; color: var(--ink-2); font-size: 0.85rem; line-height: 1.5; }
+        .report-insight-icon {
+            display: grid;
+            flex: 0 0 auto;
+            place-items: center;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 8px;
+            background: var(--surface-2);
+            color: var(--accent);
+            font-size: 0.75rem;
+        }
+        .report-insight-icon.is-good { color: var(--c-green); }
+        .report-insight-icon.is-warn { color: var(--c-amber); }
+
+        .report-chart { position: relative; width: 100%; }
+        .report-empty { color: var(--muted); font-size: 0.8125rem; }
+
+        .report-table { width: 100%; margin-top: 1rem; border-collapse: collapse; font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
+        .report-table th { padding: 0.5rem 0.5rem; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 0.72rem; font-weight: 500; text-align: left; }
+        .report-table td { padding: 0.55rem 0.5rem; border-bottom: 1px solid var(--line); color: var(--ink-2); }
+        .report-table tfoot td { border-bottom: 0; color: var(--ink); font-weight: 600; }
+        .report-table .is-num { text-align: right; white-space: nowrap; }
+        .report-table .report-cell-name { display: flex; align-items: center; gap: 0.5rem; min-width: 0; }
+        .report-table .report-cell-name span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .report-table .is-reached { color: var(--c-green); font-weight: 500; }
+        .report-table .is-fill { width: 100%; max-width: 0; }
+
+        .report-details { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 2rem; margin: 0; }
+        .report-details div { display: flex; justify-content: space-between; gap: 1rem; padding: 0.55rem 0; border-bottom: 1px solid var(--line); font-size: 0.8125rem; }
+        .report-details dt { color: var(--muted); }
+        .report-details dd { margin: 0; color: var(--ink); font-weight: 500; text-align: right; }
+        .report-disclaimer { color: var(--muted); font-size: 0.75rem; line-height: 1.5; }
+
+        @media (max-width: 900px) {
+            .report-grid, .report-details { grid-template-columns: minmax(0, 1fr); }
+            .report-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
         /* ---------- Footer ---------- */
         .app-footer {
             position: fixed;
@@ -679,7 +977,24 @@
             body { padding-top: 1.25rem; padding-inline: 1rem; }
             .page-header { margin-bottom: 1.25rem; }
             .brand-subtitle { display: none; }
+            /* Admins get a fourth header action, so the brand gives up some room */
+            .is-admin .page-header { gap: 0.75rem; }
+            .is-admin .brand { gap: 0.625rem; }
+            .is-admin .brand-title { font-size: clamp(0.9rem, 4.2vw, 1.15rem); }
+            .is-admin .header-actions { gap: 0.25rem; }
+            .admin-menu-btn { width: 2.375rem; padding: 0; }
+            .admin-menu-btn span, .admin-menu-btn .fa-chevron-down { display: none; }
             .chart-panel { min-height: 340px; }
+            .breakdown-layout { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+            .report-bar { flex-wrap: wrap; }
+            .report-bar-actions { width: 100%; }
+            .report-bar-actions > button { flex: 1 1 0; justify-content: center; }
+            .report-dialog { width: 100%; height: 100%; max-height: 100%; border: 0; border-radius: 0; }
+            .report-head { padding: 1rem; }
+            .report-head-actions .btn-primary span { display: none; }
+            .report-body { padding: 1rem; }
+            .report-section { padding: 1rem; }
+            .expense-row { grid-template-columns: 0.625rem minmax(0, 1fr) 6.25rem 2.375rem; gap: 0.375rem; }
             .app-nav { width: 100%; padding: 0; background: transparent; }
             .app-nav .nav-tab, .nav-indicator { display: none; }
             .app-nav select {
@@ -696,6 +1011,11 @@
                 font-size: 0.9rem;
                 font-weight: 500;
             }
+        }
+
+        /* The header actions leave no room for the logo mark on very narrow phones */
+        @media (max-width: 350px) {
+            .brand-mark { display: none; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -724,7 +1044,8 @@
                 </div>
             </div>
             <div class="header-actions">
-                <button id="btnTabVisibility" type="button" class="icon-btn is-square" aria-haspopup="true" aria-expanded="false" aria-controls="tabVisibilityMenu" onclick="toggleTabVisibilityMenu()">
+                <!-- Admin only: the public view always shows the five default modules and never the restricted ones -->
+                <button id="btnTabVisibility" type="button" class="icon-btn is-square" aria-haspopup="true" aria-expanded="false" aria-controls="tabVisibilityMenu" onclick="toggleTabVisibilityMenu()" hidden>
                     <i class="fa-solid fa-sliders" aria-hidden="true"></i>
                     <span class="sr-only" data-i18n="tab_visibility_button">Customize visible tabs</span>
                 </button>
@@ -734,9 +1055,11 @@
                     <label class="tab-visibility-option" for="showTab1"><input id="showTab1" type="checkbox" data-tab-id="tab1" checked><span data-i18n="tab_salary">Salary Allocation</span></label>
                     <label class="tab-visibility-option" for="showTab2"><input id="showTab2" type="checkbox" data-tab-id="tab2" checked><span data-i18n="tab_retire">Retirement Calculator</span></label>
                     <label class="tab-visibility-option" for="showTab3"><input id="showTab3" type="checkbox" data-tab-id="tab3" checked><span data-i18n="tab_dividend">Dividend Calculator</span></label>
-                    <label class="tab-visibility-option" for="showTab4"><input id="showTab4" type="checkbox" data-tab-id="tab4"><span data-i18n="tab_withdrawal">Margin Loss</span></label>
                     <label class="tab-visibility-option" for="showTab5"><input id="showTab5" type="checkbox" data-tab-id="tab5" checked><span data-i18n="tab_emergency">Emergency Fund</span></label>
                     <label class="tab-visibility-option" for="showTab6"><input id="showTab6" type="checkbox" data-tab-id="tab6" checked><span data-i18n="tab_wedding">Wedding Savings</span></label>
+                    <hr>
+                    <p class="tab-visibility-menu-help" data-i18n="admin_modules">Admin-only modules</p>
+                    <label class="tab-visibility-option" for="showTab4"><input id="showTab4" type="checkbox" data-tab-id="tab4"><span data-i18n="tab_withdrawal">Margin Loss</span></label>
                     <label class="tab-visibility-option" for="showTab7"><input id="showTab7" type="checkbox" data-tab-id="tab7"><span data-i18n="tab_daily_dividend">Daily Dividend</span></label>
                     <label class="tab-visibility-option" for="showTab8"><input id="showTab8" type="checkbox" data-tab-id="tab8"><span data-i18n="tab_dash_text">Hypen Text</span></label>
                 </div>
@@ -744,6 +1067,19 @@
                     <i class="fa-solid fa-moon" id="iconTheme" aria-hidden="true"></i>
                 </button>
                 <button id="btnLang" type="button" onclick="toggleLanguage()" class="icon-btn">EN</button>
+                <!-- Public visitors see the lock; signed-in admins get the account menu -->
+                <button id="btnAdminLogin" type="button" class="icon-btn is-square" aria-haspopup="dialog" onclick="openAdminLogin()">
+                    <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                    <span class="sr-only" data-i18n="admin_login_button">Admin sign-in</span>
+                </button>
+                <button id="btnAdminMenu" type="button" class="icon-btn admin-menu-btn" aria-haspopup="true" aria-expanded="false" aria-controls="adminMenu" onclick="toggleAdminMenu()" hidden>
+                    <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
+                    <span data-i18n="admin_label">Admin</span>
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                </button>
+                <div id="adminMenu" class="admin-menu" role="group" aria-labelledby="btnAdminMenu" hidden>
+                    <button type="button" id="btnAdminSignOut" class="admin-menu-item"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><span data-i18n="admin_sign_out">Sign out</span></button>
+                </div>
             </div>
         </header>
 
@@ -772,7 +1108,7 @@
                     <i class="fa-solid fa-chart-column" aria-hidden="true"></i><span data-i18n="tab_dividend">Kalkulator Dividen</span>
                 </button>
                 <button type="button" onclick="switchTab('tab4')" id="btnTab4" class="nav-tab" hidden>
-                    <i class="fa-solid fa-arrow-trend-down" aria-hidden="true"></i><span data-i18n="tab_withdrawal">Withdrawal Loss</span>
+                    <i class="fa-solid fa-arrow-trend-down" aria-hidden="true"></i><span data-i18n="tab_withdrawal">Margin Loss</span>
                 </button>
                 <button type="button" onclick="switchTab('tab5')" id="btnTab5" class="nav-tab">
                     <i class="fa-solid fa-shield-heart" aria-hidden="true"></i><span data-i18n="tab_emergency">Emergency Fund</span>
@@ -1222,10 +1558,10 @@
                                 <label for="selWeddingMode" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="wedding_mode">Savings contribution mode</label>
                                 <select id="selWeddingMode" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
                                     <option value="percentage" data-i18n="wedding_mode_percentage">Percentage of net salary</option>
-                                    <option value="manual" data-i18n="wedding_mode_manual">Manual monthly amount</option>
+                                    <option value="manual" data-i18n="wedding_mode_manual" selected>Manual monthly amount</option>
                                 </select>
                             </div>
-                            <div id="weddingPercentageFields" class="space-y-5">
+                            <div id="weddingPercentageFields" class="space-y-5 hidden">
                                 <label for="inpWeddingSalary" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="net_salary">Monthly Net Salary (RM)</label>
                                 <input type="number" id="inpWeddingSalary" value="3000" min="0" step="100" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
                                 <div>
@@ -1251,31 +1587,59 @@
                                 </div>
                                 <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="wedding_percentage_help">This percentage is applied to the savings amount from the selected allocation rule.</p>
                             </div>
-                            <div id="weddingManualFields" class="hidden">
+                            <div id="weddingManualFields">
                                 <label for="inpWeddingManualMonthly" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="wedding_manual_amount">Monthly wedding savings (RM)</label>
                                 <input type="number" id="inpWeddingManualMonthly" value="900" min="0" step="50" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2" data-i18n="wedding_manual_help">Enter the amount you can save this month and adjust it whenever your contribution changes.</p>
+                                <!-- <p class="text-xs text-slate-500 dark:text-slate-400 mt-2" data-i18n="wedding_manual_help">Enter the amount you can save this month and adjust it whenever your contribution changes.</p> -->
                             </div>
                             <div>
                                 <label for="inpWeddingTarget" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="wedding_target">Wedding budget target (RM)</label>
                                 <input type="number" id="inpWeddingTarget" value="20000" min="0" step="500" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                <label class="inline-check" for="chkWeddingUseBreakdown"><input id="chkWeddingUseBreakdown" type="checkbox" checked><span data-i18n="wedding_use_breakdown">Use expense breakdown total as target</span></label>
                             </div>
                             <div>
                                 <label for="inpWeddingCurrent" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="wedding_current">Current wedding savings (RM)</label>
                                 <input type="number" id="inpWeddingCurrent" value="5000" min="0" step="100" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
                             </div>
-                            <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="wedding_note">Choose a percentage of net salary based on your allocation rule, or enter a flexible monthly amount. The projection assumes the current monthly contribution stays constant, with no returns or withdrawals.</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="wedding_note">The projection assumes the current monthly contribution stays constant, with no returns or withdrawals.</p>
+                        </div>
+                    </div>
+                    <div class="glass-card shadow-soft p-6 md:p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center border border-brand-100 dark:border-brand-800">
+                                <i class="fa-solid fa-list-check text-lg"></i>
+                            </div>
+                            <h2 class="font-display text-xl font-bold text-slate-800 dark:text-slate-100" data-i18n="wedding_expenses_title">Wedding expenses</h2>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4" data-i18n="wedding_expenses_help">Rename, add or remove items to match your plans. Amounts update the breakdown chart instantly.</p>
+                        <div id="weddingExpenseList" class="expense-list"></div>
+                        <button id="btnAddWeddingExpense" type="button" class="expense-add"><i class="fa-solid fa-plus" aria-hidden="true"></i><span data-i18n="wedding_add_expense">Add expense</span></button>
+                        <div class="expense-total">
+                            <span data-i18n="wedding_breakdown_total">Total budget</span>
+                            <strong id="resWeddingBreakdownTotal">RM 0</strong>
                         </div>
                     </div>
                 </div>
                 <div class="lg:col-span-8 flex flex-col gap-6">
+                    <div class="glass-card report-bar">
+                        <span class="report-bar-icon" aria-hidden="true"><i class="fa-solid fa-file-lines"></i></span>
+                        <div class="report-bar-copy">
+                            <p class="report-bar-title" data-i18n="report_title">Savings report</p>
+                            <p class="report-bar-text" data-i18n="report_bar_text">Charts, insights and a PDF summary of your wedding plan.</p>
+                            <p class="report-status-msg" data-report-status role="status" aria-live="polite"></p>
+                        </div>
+                        <div class="report-bar-actions">
+                            <button type="button" id="btnViewWeddingReport" class="btn-ghost"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i><span data-i18n="report_view">View report</span></button>
+                            <button type="button" class="btn-primary" data-report-pdf><i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i><span data-i18n="report_download">Download PDF</span></button>
+                        </div>
+                    </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div id="weddingSavingsPoolCard" class="glass-card p-5 shadow-card border-l-4 border-l-brand-500">
+                        <div id="weddingSavingsPoolCard" class="glass-card p-5 shadow-card border-l-4 border-l-brand-500 hidden">
                             <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="wedding_savings_pool">Monthly savings allocation</p>
                             <h3 class="font-display text-2xl font-extrabold text-brand-600 dark:text-brand-400" id="resWeddingSavingsPool">RM 0</h3>
                         </div>
                         <div class="glass-card p-5 shadow-card border-l-4 border-l-emerald-500">
-                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="wedding_monthly">Wedding fund contribution (30%)</p>
+                            <p id="lblWeddingMonthly" class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="wedding_manual_result">Monthly wedding fund contribution</p>
                             <h3 class="font-display text-2xl font-extrabold text-emerald-600 dark:text-emerald-400" id="resWeddingMonthly">RM 0</h3>
                         </div>
                         <div class="glass-card p-5 shadow-card border-l-4 border-l-gold-500">
@@ -1285,6 +1649,20 @@
                         <div class="glass-card p-5 shadow-card border-l-4 border-l-purple-500">
                             <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="wedding_time">Estimated time to target</p>
                             <h3 class="kpi-compact font-display font-extrabold text-purple-600 dark:text-purple-400 leading-tight" id="resWeddingTime">-</h3>
+                        </div>
+                    </div>
+                    <div class="glass-card shadow-soft p-6 flex flex-col relative">
+                        <h2 class="font-display text-lg font-bold text-slate-800 dark:text-white mb-6" data-i18n="wedding_donut_title">Budget breakdown</h2>
+                        <div class="breakdown-layout">
+                            <div class="breakdown-donut">
+                                <canvas id="weddingBreakdownChart" role="img" aria-labelledby="weddingDonutLabel weddingDonutValue"></canvas>
+                                <div class="breakdown-center" aria-live="polite">
+                                    <span id="weddingDonutLabel" class="breakdown-center-label">Total budget</span>
+                                    <strong id="weddingDonutValue" class="breakdown-center-value">RM 0</strong>
+                                    <span id="weddingDonutShare" class="breakdown-center-share"></span>
+                                </div>
+                            </div>
+                            <ul id="weddingBreakdownLegend" class="breakdown-legend"></ul>
                         </div>
                     </div>
                     <div class="glass-card chart-panel shadow-soft p-6 flex-grow flex flex-col relative">
@@ -1375,6 +1753,42 @@
             </div>
         </div>
 
+        <dialog id="weddingReportDialog" class="report-dialog" aria-labelledby="weddingReportTitle">
+            <div class="report-head">
+                <div class="report-head-copy">
+                    <h2 id="weddingReportTitle" data-i18n="report_heading">Wedding Savings Report</h2>
+                    <p id="weddingReportGenerated" class="report-head-meta"></p>
+                    <p class="report-status-msg" data-report-status role="status" aria-live="polite"></p>
+                </div>
+                <div class="report-head-actions">
+                    <button type="button" class="btn-primary" data-report-pdf><i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i><span data-i18n="report_download">Download PDF</span></button>
+                    <button type="button" id="btnCloseWeddingReport" class="icon-btn is-square"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                </div>
+            </div>
+            <div id="weddingReportBody" class="report-body"></div>
+        </dialog>
+
+        <dialog id="adminLoginDialog" class="admin-dialog" aria-labelledby="adminLoginTitle">
+            <form id="adminLoginForm" class="glass-card shadow-soft">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center">
+                        <i class="fa-solid fa-user-shield text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 id="adminLoginTitle" data-i18n="admin_login_title">Admin sign-in</h2>
+                        <p data-i18n="admin_login_help">Enter the passcode to unlock the admin modules.</p>
+                    </div>
+                </div>
+                <label for="inpAdminPasscode" class="mb-2 block" data-i18n="admin_passcode">Passcode</label>
+                <input id="inpAdminPasscode" type="password" autocomplete="off" class="w-full" aria-describedby="adminLoginError">
+                <p id="adminLoginError" class="admin-login-error" role="alert"></p>
+                <div class="flex justify-end gap-2 mt-6">
+                    <button type="button" id="btnCancelAdminLogin" class="btn-ghost" data-i18n="admin_cancel">Cancel</button>
+                    <button type="submit" class="btn-primary" data-i18n="admin_unlock">Unlock</button>
+                </div>
+            </form>
+        </dialog>
+
         <footer class="app-footer">
             <p data-i18n="footer_credit">© 2026 · Designed and developed by @muhdnajb</p>
         </footer>
@@ -1388,13 +1802,22 @@
         const moduleOptions = new Map(
             [...document.querySelectorAll('#moduleSelector option')].map(option => [option.value, option])
         );
-        
+
+        // Role-based access: these modules are reachable only after an admin signs in.
+        // The page is static, so the passcode only keeps them out of the public UI;
+        // their markup still ships to every browser. Do not rely on it to protect real secrets.
+        const ADMIN_TAB_IDS = ['tab4', 'tab7', 'tab8'];
+        const ADMIN_PASSCODE_HASH = 'a35c5f63916fff41369754c7a01cc4a82e9e3e5f1e05628791b5f5770435d6b0'; // SHA-256 of the passcode
+        const ADMIN_SESSION_KEY = 'financialPlannerAdmin';
+        let isAdmin = false;
+
         let chartSalary = null;
         let chartRetirement = null;
         let chartDividend = null;
         let chartWithdrawal = null;
         let chartEmergency = null;
         let chartWedding = null;
+        let chartWeddingBreakdown = null;
         let chartDailyDividend = null;
 
         // Translation Dictionary
@@ -1407,6 +1830,17 @@
                 tab_visibility_button: "Sesuaikan tab yang dipaparkan",
                 tab_visibility_title: "Tab yang dipaparkan",
                 tab_visibility_help: "Pilih tab yang ingin dipaparkan dalam navigasi.",
+                admin_login_button: "Log masuk admin",
+                admin_label: "Admin",
+                admin_modules: "Modul admin sahaja",
+                admin_sign_out: "Log keluar",
+                admin_login_title: "Log masuk admin",
+                admin_login_help: "Masukkan kod laluan untuk membuka modul admin.",
+                admin_passcode: "Kod laluan",
+                admin_unlock: "Buka kunci",
+                admin_cancel: "Batal",
+                admin_wrong_passcode: "Kod laluan tidak sah. Sila cuba lagi.",
+                admin_unavailable: "Log masuk admin memerlukan sambungan selamat (HTTPS).",
                 tab_salary: "Agihan Gaji",
                 tab_retire: "Kalkulator Persaraan",
                 tab_dividend: "Kalkulator Dividen",
@@ -1452,11 +1886,84 @@
                 wedding_remaining: "Baki diperlukan",
                 wedding_time: "Anggaran masa untuk capai sasaran",
                 wedding_reached: "Sasaran telah dicapai",
+                wedding_no_target: "Tambah perbelanjaan atau masukkan sasaran untuk anggaran masa",
+                report_title: "Laporan simpanan",
+                report_bar_text: "Carta, pandangan dan ringkasan PDF pelan perkahwinan anda.",
+                report_view: "Lihat laporan",
+                report_download: "Muat turun PDF",
+                report_preparing: "Menyediakan PDF...",
+                report_pdf_error: "PDF tidak dapat dihasilkan. Semak sambungan internet anda dan cuba lagi.",
+                report_close: "Tutup laporan",
+                report_heading: "Laporan Simpanan Perkahwinan",
+                report_generated: "Dijana pada {date}",
+                report_summary: "Ringkasan",
+                report_status_reached: "Sasaran dicapai",
+                report_status_projected: "Dalam progres",
+                report_status_no_contribution: "Tiada caruman",
+                report_status_no_target: "Tiada sasaran",
+                report_kpi_target: "Sasaran bajet",
+                report_kpi_saved: "Telah disimpan",
+                report_kpi_remaining: "Baki diperlukan",
+                report_kpi_time: "Masa untuk capai sasaran",
+                report_kpi_monthly: "Caruman bulanan",
+                report_kpi_categories: "Kategori perbelanjaan",
+                report_no_estimate: "Tiada anggaran",
+                report_progress: "Kemajuan dana",
+                report_funded: "{pct} tercapai",
+                report_progress_of: "{saved} daripada {target}",
+                report_insights: "Pandangan utama",
+                report_category_chart: "Perbelanjaan mengikut kategori",
+                report_projection_chart: "Unjuran simpanan",
+                report_table_category: "Kategori",
+                report_table_amount: "Amaun",
+                report_table_share: "Bahagian",
+                report_table_monthly: "Sebulan",
+                report_table_total: "Jumlah",
+                report_milestones: "Pencapaian",
+                report_milestone: "Pencapaian",
+                report_milestone_date: "Tarikh unjuran",
+                report_milestone_reached: "Dicapai",
+                report_details: "Butiran pelan",
+                report_mode: "Mod caruman",
+                report_salary: "Gaji bersih",
+                report_rule: "Peraturan agihan",
+                report_allocation: "Bahagian simpanan untuk kahwin",
+                report_target_source: "Sumber sasaran",
+                report_target_breakdown: "Jumlah pecahan perbelanjaan",
+                report_target_manual: "Dimasukkan secara manual",
+                report_current_savings: "Simpanan semasa",
+                report_empty_categories: "Belum ada amaun perbelanjaan dimasukkan.",
+                report_disclaimer: "Anggaran mengandaikan caruman bulanan tetap tanpa pulangan pelaburan atau pengeluaran. Agihan bulanan setiap kategori dibahagikan mengikut bahagiannya dalam bajet.",
+                report_page: "Halaman {page} daripada {total}",
+                insight_no_target: "Tambah perbelanjaan atau masukkan sasaran untuk memulakan pelan anda.",
+                insight_progress: "Anda telah menyimpan {saved}, iaitu {pct} daripada sasaran {target}.",
+                insight_reached: "Simpanan anda sudah mencukupi untuk keseluruhan bajet {target}.",
+                insight_projection: "Dengan {monthly} sebulan, anda akan mencapai sasaran dalam {months} bulan ({date}).",
+                insight_no_contribution: "Tetapkan caruman bulanan untuk mengunjurkan bila sasaran akan dicapai.",
+                insight_largest: "{name} ialah perbelanjaan terbesar, iaitu {amount} ({pct} daripada bajet).",
+                insight_top3: "Tiga kategori teratas merangkumi {pct} daripada bajet.",
+                insight_target_over: "Senarai perbelanjaan berjumlah {total}, iaitu {gap} melebihi sasaran anda.",
+                insight_target_under: "Senarai perbelanjaan berjumlah {total}, iaitu {gap} kurang daripada sasaran anda.",
+                insight_empty_item: "1 item perbelanjaan belum mempunyai amaun.",
+                insight_empty_items: "{count} item perbelanjaan belum mempunyai amaun.",
                 wedding_no_contribution: "Masukkan peratusan melebihi 0 untuk anggaran masa",
                 wedding_months: "bulan",
                 wedding_chart_title: "Unjuran simpanan perkahwinan",
                 chart_wedding_savings: "Baki tabung kahwin",
                 chart_wedding_target: "Sasaran",
+                wedding_use_breakdown: "Guna jumlah pecahan perbelanjaan sebagai sasaran",
+                wedding_expenses_title: "Perbelanjaan perkahwinan",
+                wedding_expenses_help: "Tukar nama, tambah atau buang item mengikut perancangan anda. Amaun dikemas kini dalam carta pecahan serta-merta.",
+                wedding_add_expense: "Tambah perbelanjaan",
+                wedding_remove_expense: "Buang",
+                wedding_expense_name: "Nama perbelanjaan",
+                wedding_expense_amount: "Amaun (RM)",
+                wedding_untitled_expense: "Perbelanjaan tanpa nama",
+                wedding_breakdown_total: "Jumlah bajet",
+                wedding_donut_title: "Pecahan bajet",
+                wedding_donut_empty: "Masukkan amaun perbelanjaan untuk melihat pecahan bajet.",
+                wedding_other: "Lain-lain",
+                wedding_share_of_budget: "daripada bajet",
                 ef_params: "Pelan Dana Kecemasan",
                 ef_expenses_group: "Jumlah perbelanjaan asas bulanan (RM)",
                 ef_housing: "Perumahan",
@@ -1564,6 +2071,17 @@
                 tab_visibility_button: "Customize visible tabs",
                 tab_visibility_title: "Visible tabs",
                 tab_visibility_help: "Choose which tabs appear in navigation.",
+                admin_login_button: "Admin sign-in",
+                admin_label: "Admin",
+                admin_modules: "Admin-only modules",
+                admin_sign_out: "Sign out",
+                admin_login_title: "Admin sign-in",
+                admin_login_help: "Enter the passcode to unlock the admin modules.",
+                admin_passcode: "Passcode",
+                admin_unlock: "Unlock",
+                admin_cancel: "Cancel",
+                admin_wrong_passcode: "Incorrect passcode. Please try again.",
+                admin_unavailable: "Admin sign-in needs a secure (HTTPS) connection.",
                 tab_salary: "Salary Allocation",
                 tab_retire: "Retirement Calculator",
                 tab_dividend: "Dividend Calculator",
@@ -1603,17 +2121,90 @@
                 wedding_no_manual_contribution: "Enter a monthly amount to estimate time",
                 wedding_target: "Wedding budget target (RM)",
                 wedding_current: "Current wedding savings (RM)",
-                wedding_note: "Choose a percentage of net salary based on your allocation rule, or enter a flexible monthly amount. The projection assumes the current monthly contribution stays constant, with no returns or withdrawals.",
+                wedding_note: "The projection assumes the current monthly contribution stays constant, with no returns or withdrawals.",
                 wedding_savings_pool: "Monthly savings allocation",
                 wedding_monthly: "Wedding fund contribution",
                 wedding_remaining: "Amount still needed",
                 wedding_time: "Estimated time to target",
                 wedding_reached: "Target already reached",
+                wedding_no_target: "Add expenses or target to estimate time",
+                report_title: "Savings report",
+                report_bar_text: "Charts, insights and a PDF summary of your wedding plan.",
+                report_view: "View report",
+                report_download: "Download PDF",
+                report_preparing: "Preparing PDF...",
+                report_pdf_error: "Couldn't create the PDF. Check your internet connection and try again.",
+                report_close: "Close report",
+                report_heading: "Wedding Savings Report",
+                report_generated: "Generated {date}",
+                report_summary: "Summary",
+                report_status_reached: "Target reached",
+                report_status_projected: "In progress",
+                report_status_no_contribution: "No contribution set",
+                report_status_no_target: "No target set",
+                report_kpi_target: "Budget target",
+                report_kpi_saved: "Saved so far",
+                report_kpi_remaining: "Still needed",
+                report_kpi_time: "Time to target",
+                report_kpi_monthly: "Monthly contribution",
+                report_kpi_categories: "Expense categories",
+                report_no_estimate: "No estimate",
+                report_progress: "Funding progress",
+                report_funded: "{pct} funded",
+                report_progress_of: "{saved} of {target}",
+                report_insights: "Key insights",
+                report_category_chart: "Expenses by category",
+                report_projection_chart: "Savings projection",
+                report_table_category: "Category",
+                report_table_amount: "Amount",
+                report_table_share: "Share",
+                report_table_monthly: "Per month",
+                report_table_total: "Total",
+                report_milestones: "Milestones",
+                report_milestone: "Milestone",
+                report_milestone_date: "Projected date",
+                report_milestone_reached: "Reached",
+                report_details: "Plan details",
+                report_mode: "Contribution mode",
+                report_salary: "Net salary",
+                report_rule: "Allocation rule",
+                report_allocation: "Wedding share of savings",
+                report_target_source: "Target source",
+                report_target_breakdown: "Expense breakdown total",
+                report_target_manual: "Entered manually",
+                report_current_savings: "Current savings",
+                report_empty_categories: "No expense amounts entered yet.",
+                report_disclaimer: "Estimates assume a constant monthly contribution with no investment returns or withdrawals. Each category's monthly allocation splits your contribution by its share of the budget.",
+                report_page: "Page {page} of {total}",
+                insight_no_target: "Add expenses or target to start your plan.",
+                insight_progress: "You've saved {saved}, {pct} of your {target} target.",
+                insight_reached: "Your savings already cover the full {target} budget.",
+                insight_projection: "At {monthly} a month, you'll reach your target in {months} months ({date}).",
+                insight_no_contribution: "Set a monthly contribution to project when you'll reach your target.",
+                insight_largest: "{name} is your largest expense at {amount}, {pct} of the budget.",
+                insight_top3: "Your top 3 categories make up {pct} of the budget.",
+                insight_target_over: "Your expense list totals {total}, {gap} more than your target.",
+                insight_target_under: "Your expense list totals {total}, {gap} less than your target.",
+                insight_empty_item: "1 expense item has no amount yet.",
+                insight_empty_items: "{count} expense items have no amount yet.",
                 wedding_no_contribution: "Enter a percentage above 0 to estimate time",
                 wedding_months: "months",
                 wedding_chart_title: "Wedding savings projection",
                 chart_wedding_savings: "Wedding fund balance",
                 chart_wedding_target: "Target",
+                wedding_use_breakdown: "Use expense breakdown total as target",
+                wedding_expenses_title: "Wedding expenses",
+                wedding_expenses_help: "Rename, add or remove items to match your plans. Amounts update the breakdown chart instantly.",
+                wedding_add_expense: "Add expense",
+                wedding_remove_expense: "Remove",
+                wedding_expense_name: "Expense name",
+                wedding_expense_amount: "Amount (RM)",
+                wedding_untitled_expense: "Untitled expense",
+                wedding_breakdown_total: "Total budget",
+                wedding_donut_title: "Budget breakdown",
+                wedding_donut_empty: "Enter expense amounts to see the budget breakdown.",
+                wedding_other: "Other",
+                wedding_share_of_budget: "of budget",
                 ef_params: "Emergency Fund Plan",
                 ef_expenses_group: "Total basic monthly expenses (RM)",
                 ef_housing: "Housing",
@@ -1747,6 +2338,8 @@
         };
 
         const applyTabVisibility = (tabId, isVisible) => {
+            // Restricted modules can only be switched on by a signed-in admin
+            if (isAdminTab(tabId) && !isAdmin) isVisible = false;
             const checkbox = document.querySelector(`[data-tab-id="${tabId}"]`);
             checkbox.checked = isVisible;
 
@@ -1764,6 +2357,8 @@
             const moduleSelector = document.getElementById('moduleSelector');
             const moduleOption = moduleOptions.get(tabId);
             if (isVisible) {
+                // Detached options miss language changes, so refresh the label on the way back in
+                moduleOption.textContent = t(moduleOption.dataset.i18n);
                 const nextOption = [...moduleSelector.options].find(option =>
                     Number(option.value.slice(3)) > Number(tabNumber)
                 );
@@ -1784,13 +2379,16 @@
             updateTabAlignment();
         };
 
-        const toggleTabVisibilityMenu = (forceOpen) => {
-            const menu = document.getElementById('tabVisibilityMenu');
-            const button = document.getElementById('btnTabVisibility');
+        const toggleHeaderMenu = (menuId, buttonId, forceOpen) => {
+            const menu = document.getElementById(menuId);
+            const button = document.getElementById(buttonId);
             const isOpen = forceOpen === undefined ? menu.hidden : forceOpen;
             menu.hidden = !isOpen;
             button.setAttribute('aria-expanded', String(isOpen));
         };
+
+        const toggleTabVisibilityMenu = (forceOpen) => toggleHeaderMenu('tabVisibilityMenu', 'btnTabVisibility', forceOpen);
+        const toggleAdminMenu = (forceOpen) => toggleHeaderMenu('adminMenu', 'btnAdminMenu', forceOpen);
 
         const initTabVisibilityControls = () => {
             const moduleSelector = document.getElementById('moduleSelector');
@@ -1816,11 +2414,121 @@
             });
         };
 
+        // --- Admin access ---
+        const isAdminTab = (tabId) => ADMIN_TAB_IDS.includes(tabId);
+
+        const sha256Hex = async (text) => {
+            const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+            return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('');
+        };
+
+        const setAdminMode = (enabled) => {
+            isAdmin = enabled;
+            document.body.classList.toggle('is-admin', enabled);
+            document.getElementById('btnAdminLogin').hidden = enabled;
+            document.getElementById('btnAdminMenu').hidden = !enabled;
+            document.getElementById('btnTabVisibility').hidden = !enabled;
+            toggleTabVisibilityMenu(false);
+            toggleAdminMenu(false);
+            if (!enabled) {
+                // Back to the public defaults: every public module shown, restricted ones hidden.
+                // Public tabs are restored first so one is always left to fall back to.
+                const visibilityInputs = [...document.querySelectorAll('[data-tab-id]')];
+                visibilityInputs.filter(input => !input.checked && !isAdminTab(input.dataset.tabId))
+                    .forEach(input => applyTabVisibility(input.dataset.tabId, true));
+                visibilityInputs.filter(input => input.checked && isAdminTab(input.dataset.tabId))
+                    .forEach(input => applyTabVisibility(input.dataset.tabId, false));
+            }
+        };
+
+        const openAdminLogin = () => {
+            document.getElementById('adminLoginForm').reset();
+            document.getElementById('adminLoginError').textContent = '';
+            document.getElementById('adminLoginDialog').showModal();
+        };
+
+        const submitAdminLogin = async (event) => {
+            event.preventDefault();
+            const passcodeInput = document.getElementById('inpAdminPasscode');
+            const error = document.getElementById('adminLoginError');
+            let passcodeHash;
+            try {
+                passcodeHash = await sha256Hex(passcodeInput.value);
+            } catch (hashError) {
+                // crypto.subtle is only available on HTTPS, localhost or file://
+                error.textContent = t('admin_unavailable');
+                console.error('Unable to verify the admin passcode:', hashError);
+                return;
+            }
+            if (passcodeHash !== ADMIN_PASSCODE_HASH) {
+                error.textContent = t('admin_wrong_passcode');
+                passcodeInput.select();
+                return;
+            }
+
+            // Keeps the admin signed in across reloads until the browser tab is closed
+            try {
+                sessionStorage.setItem(ADMIN_SESSION_KEY, passcodeHash);
+            } catch (storageError) {
+                console.warn('Admin session could not be saved; sign-in lasts until the page reloads.', storageError);
+            }
+            document.getElementById('adminLoginDialog').close();
+            setAdminMode(true);
+            // Open the visibility panel: the restricted modules start switched off
+            toggleTabVisibilityMenu(true);
+            document.getElementById('btnTabVisibility').focus();
+        };
+
+        const signOutAdmin = () => {
+            try {
+                sessionStorage.removeItem(ADMIN_SESSION_KEY);
+            } catch (storageError) {
+                console.warn('Admin session could not be cleared from storage.', storageError);
+            }
+            // Reset the admin modules so nothing typed there lingers behind the lock
+            ADMIN_TAB_IDS.forEach(tabId => {
+                document.querySelectorAll(`#${tabId} input`).forEach(input => { input.value = input.defaultValue; });
+                runTabCalculator(tabId);
+            });
+            updateDashFreeText();
+            setAdminMode(false);
+            document.getElementById('btnAdminLogin').focus();
+        };
+
+        const initAdminControls = () => {
+            const dialog = document.getElementById('adminLoginDialog');
+            document.getElementById('adminLoginForm').addEventListener('submit', submitAdminLogin);
+            document.getElementById('btnCancelAdminLogin').addEventListener('click', () => dialog.close());
+            dialog.addEventListener('click', event => {
+                if (event.target === dialog) dialog.close();
+            });
+
+            document.getElementById('btnAdminSignOut').addEventListener('click', signOutAdmin);
+
+            document.addEventListener('click', event => {
+                if (event.target instanceof Element && event.target.closest('#adminMenu, #btnAdminMenu')) return;
+                toggleAdminMenu(false);
+            });
+            document.addEventListener('keydown', event => {
+                if (event.key !== 'Escape' || document.getElementById('adminMenu').hidden) return;
+                toggleAdminMenu(false);
+                document.getElementById('btnAdminMenu').focus();
+            });
+
+            let hasAdminSession = false;
+            try {
+                hasAdminSession = sessionStorage.getItem(ADMIN_SESSION_KEY) === ADMIN_PASSCODE_HASH;
+            } catch (storageError) {
+                console.warn('Admin session could not be read; starting in public mode.', storageError);
+            }
+            setAdminMode(hasAdminSession);
+        };
+
         // Format Utilities
         const formatRM = (val) => new Intl.NumberFormat('ms-MY', { style: 'currency', currency: 'MYR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val);
 
         // Chart palette mirrors the CSS design tokens
-        const chartTheme = () => isDarkMode ? {
+        const chartTheme = (dark = isDarkMode) => dark ? {
             text: '#8a8f92',
             muted: '#5d6366',
             grid: 'rgba(255, 255, 255, 0.06)',
@@ -1832,6 +2540,9 @@
             secondary: '#f0a64a',
             danger: '#f2777b',
             allocation: ['#5ec4b6', '#a594f9', '#5fcf8a'],
+            categorical: ['#3987e5', '#d95926', '#199e70', '#c98500', '#d55181', '#008300', '#9085e9', '#e66767'],
+            other: '#73787b',
+            track: '#262a2c',
             tooltipBg: '#ececec',
             tooltipText: '#161819'
         } : {
@@ -1846,6 +2557,9 @@
             secondary: '#e08a1e',
             danger: '#e5484d',
             allocation: ['#0f766e', '#8b5cf6', '#22a35a'],
+            categorical: ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300', '#4a3aa7', '#e34948'],
+            other: '#a1a1aa',
+            track: '#ebebe8',
             tooltipBg: '#18181b',
             tooltipText: '#fafafa'
         };
@@ -1880,15 +2594,30 @@
             });
         };
 
+        // Translation with {placeholder} substitution
+        const tf = (key, vars = {}) => t(key).replace(/\{(\w+)\}/g, (match, name) => vars[name] ?? match);
+
+        const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+
+        const dateLocale = () => currentLang === 'bm' ? 'ms-MY' : 'en-MY';
+        const formatMonthYear = date => new Intl.DateTimeFormat(dateLocale(), { month: 'short', year: 'numeric' }).format(date);
+        const formatLongDate = date => new Intl.DateTimeFormat(dateLocale(), { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+
+        // First day of the month that is `months` from the current month
+        const monthsFromNow = months => {
+            const date = new Date();
+            date.setDate(1);
+            date.setMonth(date.getMonth() + months);
+            return date;
+        };
+
         // Renders "18 months" with a muted "Apr 2028" note, or a plain message when there is no estimate
         const setTimeToTarget = (el, months, monthsLabel, targetDate, message) => {
             if (message) {
                 el.innerHTML = `<span class="kpi-message">${message}</span>`;
                 return;
             }
-            const dateLocale = currentLang === 'bm' ? 'ms-MY' : 'en-MY';
-            const formattedDate = new Intl.DateTimeFormat(dateLocale, { month: 'short', year: 'numeric' }).format(targetDate);
-            el.innerHTML = `<span>${months} ${monthsLabel}</span><span class="kpi-note"><i class="fa-regular fa-calendar"></i>${formattedDate}</span>`;
+            el.innerHTML = `<span>${months} ${monthsLabel}</span><span class="kpi-note"><i class="fa-regular fa-calendar"></i>${formatMonthYear(targetDate)}</span>`;
         };
 
         const syncRangeFill = (range) => {
@@ -1937,6 +2666,7 @@
         const toggleLanguage = () => {
             currentLang = currentLang === 'bm' ? 'en' : 'bm';
             renderLanguage();
+            renderWeddingExpenses();
 
             // Re-render to update chart labels and dynamic JS text
             refreshCalculations();
@@ -1965,6 +2695,8 @@
             document.documentElement.lang = currentLang === 'bm' ? 'ms' : 'en';
             document.getElementById('btnLang').innerText = currentLang === 'bm' ? 'BM' : 'EN';
             document.getElementById('btnTabVisibility').title = t('tab_visibility_button');
+            document.getElementById('btnAdminLogin').title = t('admin_login_button');
+            document.getElementById('btnAdminMenu').title = t('admin_label');
 
             // Update all data-i18n elements
             document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -1977,13 +2709,14 @@
         };
 
         const switchTab = (tabId) => {
-            const targetTab = document.getElementById(tabId);
+            let targetTab = document.getElementById(tabId);
             if (!targetTab || !targetTab.classList.contains('tab-content')) return;
             const visibilityInput = document.querySelector(`[data-tab-id="${tabId}"]`);
-            if (visibilityInput && !visibilityInput.checked) {
+            if ((isAdminTab(tabId) && !isAdmin) || (visibilityInput && !visibilityInput.checked)) {
                 const firstVisibleTab = [...document.querySelectorAll('[data-tab-id]')].find(input => input.checked);
                 if (!firstVisibleTab) return;
                 tabId = firstVisibleTab.dataset.tabId;
+                targetTab = document.getElementById(tabId);
             }
             activeTabId = tabId;
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -2081,7 +2814,238 @@
             document.getElementById('selEfTargetMonths').addEventListener('change', calcEmergencyFund);
         };
 
+        // Wedding expense breakdown: each item keeps the color slot it was created with,
+        // so removing one never repaints the others. Items beyond the 8 slots fold into "Other".
+        const WEDDING_COLOR_SLOTS = 8;
+        let weddingExpenseSeq = 0;
+        let weddingExpenses = [];
+        let weddingBreakdown = { segments: [], total: 0 };
+        let weddingBreakdownHover = null;
+        let weddingBreakdownPinned = null;
+
+        const createWeddingExpense = () => {
+            const usedSlots = new Set(weddingExpenses.map(item => item.slot));
+            const freeSlot = [...Array(WEDDING_COLOR_SLOTS).keys()].find(slot => !usedSlots.has(slot));
+            return { id: ++weddingExpenseSeq, name: '', amount: 0, slot: freeSlot ?? null };
+        };
+
+        // Start with one blank row so the list is ready for entry
+        weddingExpenses.push(createWeddingExpense());
+
+        const weddingExpenseName = item => item.name.trim() || t('wedding_untitled_expense');
+
+        const weddingExpenseColor = (item, theme) => item.slot === null ? theme.other : theme.categorical[item.slot];
+
+        const formatSharePct = value => `${value > 0 && value < 10 ? value.toFixed(1) : Math.round(value)}%`;
+
+        const findWeddingExpense = row => row && weddingExpenses.find(item => item.id === Number(row.dataset.id));
+
+        const renderWeddingExpenses = () => {
+            const list = document.getElementById('weddingExpenseList');
+            list.innerHTML = '';
+            weddingExpenses.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'expense-row';
+                row.dataset.id = item.id;
+                row.innerHTML = `
+                    <span class="expense-swatch" aria-hidden="true"></span>
+                    <input type="text" class="expense-name w-full" maxlength="40" autocomplete="off" spellcheck="false">
+                    <input type="number" class="expense-amount w-full" min="0" step="100" inputmode="decimal" placeholder="0">
+                    <button type="button" class="icon-btn is-square expense-remove"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>`;
+                const nameInput = row.querySelector('.expense-name');
+                nameInput.value = item.name;
+                nameInput.placeholder = t('wedding_expense_name');
+                nameInput.setAttribute('aria-label', t('wedding_expense_name'));
+                row.querySelector('.expense-amount').value = item.amount || '';
+                list.appendChild(row);
+                updateWeddingExpenseLabels(row, item);
+            });
+        };
+
+        const updateWeddingExpenseLabels = (row, item) => {
+            const name = weddingExpenseName(item);
+            row.querySelector('.expense-amount').setAttribute('aria-label', `${t('wedding_expense_amount')}: ${name}`);
+            row.querySelector('.expense-remove').setAttribute('aria-label', `${t('wedding_remove_expense')}: ${name}`);
+        };
+
+        const getWeddingSegments = theme => {
+            const segments = weddingExpenses
+                .filter(item => item.slot !== null && item.amount > 0)
+                .map(item => ({ key: `item-${item.id}`, label: weddingExpenseName(item), amount: item.amount, color: weddingExpenseColor(item, theme) }));
+            const otherAmount = weddingExpenses
+                .filter(item => item.slot === null)
+                .reduce((total, item) => total + item.amount, 0);
+            if (otherAmount > 0) segments.push({ key: 'other', label: t('wedding_other'), amount: otherAmount, color: theme.other });
+            return segments;
+        };
+
+        const renderWeddingBreakdownLegend = () => {
+            const legend = document.getElementById('weddingBreakdownLegend');
+            const { segments, total } = weddingBreakdown;
+            legend.innerHTML = '';
+            if (!segments.length) {
+                const empty = document.createElement('li');
+                empty.className = 'breakdown-empty';
+                empty.textContent = t('wedding_donut_empty');
+                legend.appendChild(empty);
+                return;
+            }
+            segments.forEach(segment => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <button type="button" class="breakdown-legend-row">
+                        <span class="expense-swatch" aria-hidden="true"></span>
+                        <span class="legend-name"></span>
+                        <span class="legend-amount"></span>
+                        <span class="legend-share"></span>
+                    </button>`;
+                const row = li.firstElementChild;
+                row.dataset.key = segment.key;
+                row.querySelector('.expense-swatch').style.background = segment.color;
+                row.querySelector('.legend-name').textContent = segment.label;
+                row.querySelector('.legend-name').title = segment.label;
+                row.querySelector('.legend-amount').textContent = formatRM(segment.amount);
+                row.querySelector('.legend-share').textContent = formatSharePct(segment.amount / total * 100);
+                legend.appendChild(li);
+            });
+        };
+
+        // Highlights the hovered (or else the clicked) slice: offset it, dim the rest, and show it in the centre
+        const applyWeddingBreakdownFocus = () => {
+            if (!chartWeddingBreakdown) return;
+            const { segments, total } = weddingBreakdown;
+            const focusKey = weddingBreakdownHover ?? weddingBreakdownPinned;
+            const focused = segments.find(segment => segment.key === focusKey);
+            const dataset = chartWeddingBreakdown.data.datasets[0];
+            if (segments.length) {
+                dataset.backgroundColor = segments.map(segment => !focused || segment === focused ? segment.color : `${segment.color}59`);
+                dataset.hoverBackgroundColor = dataset.backgroundColor;
+                dataset.offset = segments.map(segment => segment === focused ? 8 : 0);
+            }
+            chartWeddingBreakdown.update();
+
+            document.getElementById('weddingDonutLabel').textContent = focused ? focused.label : t('wedding_breakdown_total');
+            document.getElementById('weddingDonutValue').textContent = formatRM(focused ? focused.amount : total);
+            document.getElementById('weddingDonutShare').textContent = focused ? `${formatSharePct(focused.amount / total * 100)} ${t('wedding_share_of_budget')}` : '';
+            document.getElementById('weddingBreakdownLegend').classList.toggle('has-focus', Boolean(focused));
+            document.querySelectorAll('#weddingBreakdownLegend .breakdown-legend-row').forEach(row => {
+                row.classList.toggle('is-active', row.dataset.key === focusKey);
+                row.setAttribute('aria-pressed', String(row.dataset.key === weddingBreakdownPinned));
+            });
+        };
+
+        const setWeddingBreakdownHover = key => {
+            if (key === weddingBreakdownHover) return;
+            weddingBreakdownHover = key;
+            applyWeddingBreakdownFocus();
+        };
+
+        const toggleWeddingBreakdownPin = key => {
+            weddingBreakdownPinned = key && key !== weddingBreakdownPinned ? key : null;
+            applyWeddingBreakdownFocus();
+        };
+
+        const drawWeddingBreakdownChart = total => {
+            const theme = chartTheme();
+            const segments = getWeddingSegments(theme);
+            weddingBreakdown = { segments, total };
+            if (!segments.some(segment => segment.key === weddingBreakdownPinned)) weddingBreakdownPinned = null;
+            if (!segments.some(segment => segment.key === weddingBreakdownHover)) weddingBreakdownHover = null;
+
+            document.querySelectorAll('#weddingExpenseList .expense-row').forEach(row => {
+                const item = findWeddingExpense(row);
+                if (item) row.querySelector('.expense-swatch').style.background = weddingExpenseColor(item, theme);
+            });
+            renderWeddingBreakdownLegend();
+
+            const isEmpty = segments.length === 0;
+            const dataset = {
+                data: isEmpty ? [1] : segments.map(segment => segment.amount),
+                backgroundColor: isEmpty ? [theme.track] : segments.map(segment => segment.color),
+                hoverBackgroundColor: isEmpty ? [theme.track] : segments.map(segment => segment.color),
+                offset: segments.map(() => 0),
+                borderColor: theme.surface,
+                borderWidth: isEmpty ? 0 : 2,
+                borderRadius: 4,
+                hoverOffset: 0
+            };
+            const labels = isEmpty ? [''] : segments.map(segment => segment.label);
+
+            // Update in place so slices animate between values instead of redrawing from scratch
+            if (chartWeddingBreakdown) {
+                chartWeddingBreakdown.data.labels = labels;
+                Object.assign(chartWeddingBreakdown.data.datasets[0], dataset);
+            } else {
+                const segmentKeyAt = elements => elements.length ? weddingBreakdown.segments[elements[0].index]?.key ?? null : null;
+                chartWeddingBreakdown = new Chart(document.getElementById('weddingBreakdownChart').getContext('2d'), {
+                    type: 'doughnut',
+                    data: { labels, datasets: [dataset] },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '70%',
+                        layout: { padding: 10 },
+                        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                        onHover: (event, elements) => {
+                            const key = segmentKeyAt(elements);
+                            event.native.target.style.cursor = key ? 'pointer' : 'default';
+                            setWeddingBreakdownHover(key);
+                        },
+                        onClick: (event, elements) => toggleWeddingBreakdownPin(segmentKeyAt(elements))
+                    }
+                });
+            }
+            applyWeddingBreakdownFocus();
+        };
+
+        const initWeddingBreakdownListeners = () => {
+            const expenseList = document.getElementById('weddingExpenseList');
+            expenseList.addEventListener('input', event => {
+                const row = event.target.closest('.expense-row');
+                const item = findWeddingExpense(row);
+                if (!item) return;
+                if (event.target.classList.contains('expense-name')) {
+                    item.name = event.target.value;
+                    updateWeddingExpenseLabels(row, item);
+                } else {
+                    item.amount = Math.max(0, parseFloat(event.target.value) || 0);
+                }
+                calcWeddingSavings();
+            });
+            expenseList.addEventListener('click', event => {
+                const button = event.target.closest('.expense-remove');
+                if (!button) return;
+                const index = weddingExpenses.indexOf(findWeddingExpense(button.closest('.expense-row')));
+                if (index === -1) return;
+                weddingExpenses.splice(index, 1);
+                renderWeddingExpenses();
+                calcWeddingSavings();
+                // Keep keyboard focus in the list after a row disappears
+                const removeButtons = expenseList.querySelectorAll('.expense-remove');
+                (removeButtons[Math.min(index, removeButtons.length - 1)] || document.getElementById('btnAddWeddingExpense')).focus();
+            });
+            document.getElementById('btnAddWeddingExpense').addEventListener('click', () => {
+                weddingExpenses.push(createWeddingExpense());
+                renderWeddingExpenses();
+                calcWeddingSavings();
+                expenseList.querySelector('.expense-row:last-child .expense-name').focus();
+            });
+            document.getElementById('chkWeddingUseBreakdown').addEventListener('change', calcWeddingSavings);
+
+            const legend = document.getElementById('weddingBreakdownLegend');
+            const legendKey = event => event.target.closest('.breakdown-legend-row')?.dataset.key ?? null;
+            legend.addEventListener('mouseover', event => { if (legendKey(event)) setWeddingBreakdownHover(legendKey(event)); });
+            legend.addEventListener('mouseleave', () => setWeddingBreakdownHover(null));
+            legend.addEventListener('focusin', event => setWeddingBreakdownHover(legendKey(event)));
+            legend.addEventListener('focusout', () => setWeddingBreakdownHover(null));
+            legend.addEventListener('click', event => { if (legendKey(event)) toggleWeddingBreakdownPin(legendKey(event)); });
+            document.getElementById('weddingBreakdownChart').addEventListener('mouseleave', () => setWeddingBreakdownHover(null));
+
+            renderWeddingExpenses();
+        };
+
         const initWeddingSavingsListeners = () => {
+            initWeddingBreakdownListeners();
             document.getElementById('selWeddingMode').addEventListener('change', updateWeddingSavingsMode);
             document.getElementById('inpWeddingSalary').addEventListener('input', calcWeddingSavings);
             document.getElementById('selWeddingRule').addEventListener('change', () => {
@@ -2092,6 +3056,7 @@
             ['inpWeddingTarget', 'inpWeddingCurrent'].forEach(id => {
                 document.getElementById(id).addEventListener('input', calcWeddingSavings);
             });
+            initWeddingReport();
             updateWeddingSavingsMode();
         };
 
@@ -2100,38 +3065,65 @@
             document.getElementById('weddingPercentageFields').classList.toggle('hidden', isManual);
             document.getElementById('weddingManualFields').classList.toggle('hidden', !isManual);
             document.getElementById('weddingSavingsPoolCard').classList.toggle('hidden', isManual);
-            document.querySelector('[data-i18n="wedding_monthly"]').innerText = t(isManual ? 'wedding_manual_result' : 'wedding_monthly');
+            const monthlyLabel = document.getElementById('lblWeddingMonthly');
+            monthlyLabel.dataset.i18n = isManual ? 'wedding_manual_result' : 'wedding_monthly';
+            monthlyLabel.innerText = t(monthlyLabel.dataset.i18n);
             calcWeddingSavings();
         };
 
-        const calcWeddingSavings = () => {
+        // Reads the wedding inputs once; shared by the tab and the report
+        const computeWeddingPlan = () => {
             const salary = Math.max(0, parseFloat(document.getElementById('inpWeddingSalary').value) || 0);
-            const [, , savingsPercent] = document.getElementById('selWeddingRule').value.split(',').map(Number);
+            const ruleSelect = document.getElementById('selWeddingRule');
+            const [, , savingsPercent] = ruleSelect.value.split(',').map(Number);
             const savings = salary * (savingsPercent / 100);
             const isManual = document.getElementById('selWeddingMode').value === 'manual';
+            const allocationPercent = Number(document.getElementById('selWeddingPercent').value);
             const monthlyContribution = isManual
                 ? Math.max(0, parseFloat(document.getElementById('inpWeddingManualMonthly').value) || 0)
-                : savings * (Number(document.getElementById('selWeddingPercent').value) / 100);
-            const target = Math.max(0, parseFloat(document.getElementById('inpWeddingTarget').value) || 0);
+                : savings * (allocationPercent / 100);
+            const breakdownTotal = weddingExpenses.reduce((total, item) => total + item.amount, 0);
+            const useBreakdown = document.getElementById('chkWeddingUseBreakdown').checked;
+            const target = useBreakdown ? breakdownTotal : Math.max(0, parseFloat(document.getElementById('inpWeddingTarget').value) || 0);
             const currentSavings = Math.max(0, parseFloat(document.getElementById('inpWeddingCurrent').value) || 0);
             const remaining = Math.max(0, target - currentSavings);
             const monthsToTarget = remaining === 0 ? 0 : monthlyContribution > 0 ? Math.ceil(remaining / monthlyContribution) : null;
 
+            let status;
+            if (target === 0) status = 'no_target';
+            else if (remaining === 0) status = 'reached';
+            else status = monthlyContribution > 0 ? 'projected' : 'no_contribution';
+
+            return {
+                salary, savings, savingsPercent, ruleLabel: ruleSelect.selectedOptions[0]?.textContent.trim() ?? '',
+                isManual, allocationPercent, monthlyContribution, breakdownTotal, useBreakdown, target,
+                currentSavings, remaining, monthsToTarget, status
+            };
+        };
+
+        const calcWeddingSavings = () => {
+            const plan = computeWeddingPlan();
+            const { savings, isManual, monthlyContribution, breakdownTotal, target, currentSavings, remaining, monthsToTarget } = plan;
+            const targetInput = document.getElementById('inpWeddingTarget');
+            targetInput.readOnly = plan.useBreakdown;
+            if (plan.useBreakdown) targetInput.value = breakdownTotal;
+
+            document.getElementById('resWeddingBreakdownTotal').innerText = formatRM(breakdownTotal);
             document.getElementById('resWeddingSavingsPool').innerText = formatRM(savings);
             document.getElementById('resWeddingMonthly').innerText = formatRM(monthlyContribution);
             document.getElementById('resWeddingRemaining').innerText = formatRM(remaining);
-            if (monthsToTarget === 0) {
+            if (target === 0) {
+                setTimeToTarget(document.getElementById('resWeddingTime'), 0, '', null, t('wedding_no_target'));
+            } else if (monthsToTarget === 0) {
                 setTimeToTarget(document.getElementById('resWeddingTime'), 0, '', null, t('wedding_reached'));
             } else if (monthsToTarget === null) {
                 setTimeToTarget(document.getElementById('resWeddingTime'), 0, '', null, t(isManual ? 'wedding_no_manual_contribution' : 'wedding_no_contribution'));
             } else {
-                const targetDate = new Date();
-                targetDate.setDate(1);
-                targetDate.setMonth(targetDate.getMonth() + monthsToTarget);
-                setTimeToTarget(document.getElementById('resWeddingTime'), monthsToTarget, t('wedding_months'), targetDate);
+                setTimeToTarget(document.getElementById('resWeddingTime'), monthsToTarget, t('wedding_months'), monthsFromNow(monthsToTarget));
             }
 
             drawWeddingChart(currentSavings, monthlyContribution, target, monthsToTarget);
+            drawWeddingBreakdownChart(breakdownTotal);
         };
 
         const drawWeddingChart = (currentSavings, monthlyContribution, target, monthsToTarget) => {
@@ -2169,6 +3161,648 @@
                         x: { title: { display: true, text: currentLang === 'bm' ? 'Bulan' : 'Months', color: textColor }, grid: { display: false }, ticks: { color: textColor, maxTicksLimit: 10 } }
                     }
                 }
+            });
+        };
+
+        // --- Wedding savings report: on-screen preview and PDF export ---
+        let weddingReportCharts = [];
+        let jsPdfLoader = null;
+
+        const REPORT_STATUS = {
+            reached: { tone: 'good', icon: 'fa-circle-check' },
+            projected: { tone: 'neutral', icon: 'fa-hourglass-half' },
+            no_contribution: { tone: 'neutral', icon: 'fa-circle-info' },
+            no_target: { tone: 'neutral', icon: 'fa-circle-info' }
+        };
+
+        const buildWeddingInsights = (plan, categories, emptyItems, fundedRatio) => {
+            const pct = ratio => formatSharePct(ratio * 100);
+            const insights = [];
+            const add = (icon, tone, text) => insights.push({ icon, tone, text });
+
+            if (plan.status === 'no_target') {
+                add('fa-circle-info', 'neutral', t('insight_no_target'));
+            } else if (plan.status === 'reached') {
+                add('fa-circle-check', 'good', tf('insight_reached', { target: formatRM(plan.target) }));
+            } else {
+                add('fa-piggy-bank', 'neutral', tf('insight_progress', { saved: formatRM(plan.currentSavings), pct: pct(fundedRatio), target: formatRM(plan.target) }));
+                add('fa-calendar-check', 'neutral', plan.monthsToTarget
+                    ? tf('insight_projection', { monthly: formatRM(plan.monthlyContribution), months: plan.monthsToTarget, date: formatMonthYear(monthsFromNow(plan.monthsToTarget)) })
+                    : t('insight_no_contribution'));
+            }
+            if (categories.length >= 2) {
+                const [largest] = categories;
+                add('fa-chart-simple', 'neutral', tf('insight_largest', { name: largest.label, amount: formatRM(largest.amount), pct: pct(largest.share) }));
+            }
+            if (categories.length >= 4) {
+                add('fa-layer-group', 'neutral', tf('insight_top3', { pct: pct(categories.slice(0, 3).reduce((total, category) => total + category.share, 0)) }));
+            }
+            if (!plan.useBreakdown && plan.breakdownTotal > 0 && plan.breakdownTotal !== plan.target) {
+                const key = plan.breakdownTotal > plan.target ? 'insight_target_over' : 'insight_target_under';
+                add('fa-scale-balanced', 'warn', tf(key, { total: formatRM(plan.breakdownTotal), gap: formatRM(Math.abs(plan.breakdownTotal - plan.target)) }));
+            }
+            if (emptyItems > 0) {
+                add('fa-pen', 'neutral', emptyItems === 1 ? t('insight_empty_item') : tf('insight_empty_items', { count: emptyItems }));
+            }
+            return insights;
+        };
+
+        const buildWeddingReport = () => {
+            const plan = computeWeddingPlan();
+            const categories = weddingExpenses
+                .filter(item => item.amount > 0)
+                .map(item => ({
+                    item,
+                    label: weddingExpenseName(item),
+                    amount: item.amount,
+                    share: item.amount / plan.breakdownTotal,
+                    monthly: plan.monthlyContribution * (item.amount / plan.breakdownTotal)
+                }))
+                .sort((a, b) => b.amount - a.amount);
+            const emptyItems = weddingExpenses.filter(item => item.amount === 0).length;
+            const fundedRatio = plan.target > 0 ? Math.min(1, plan.currentSavings / plan.target) : 0;
+            const milestones = plan.target > 0 ? [0.25, 0.5, 0.75, 1].map(ratio => {
+                const amount = plan.target * ratio;
+                const reached = plan.currentSavings >= amount;
+                const months = reached ? 0 : plan.monthlyContribution > 0 ? Math.ceil((amount - plan.currentSavings) / plan.monthlyContribution) : null;
+                return { ratio, amount, reached, date: months ? monthsFromNow(months) : null };
+            }) : [];
+            return {
+                plan, categories, emptyItems, fundedRatio, milestones,
+                insights: buildWeddingInsights(plan, categories, emptyItems, fundedRatio),
+                generatedAt: new Date()
+            };
+        };
+
+        const weddingReportKpis = ({ plan, categories }) => {
+            let timeValue = t('report_no_estimate');
+            if (plan.status !== 'no_target' && plan.remaining === 0) timeValue = t('report_status_reached');
+            else if (plan.monthsToTarget) timeValue = `${plan.monthsToTarget} ${t('wedding_months')}`;
+            return [
+                { label: t('report_kpi_target'), value: formatRM(plan.target) },
+                { label: t('report_kpi_saved'), value: formatRM(plan.currentSavings) },
+                { label: t('report_kpi_remaining'), value: formatRM(plan.remaining) },
+                { label: t('report_kpi_time'), value: timeValue, note: plan.monthsToTarget ? formatMonthYear(monthsFromNow(plan.monthsToTarget)) : '' },
+                { label: t('report_kpi_monthly'), value: formatRM(plan.monthlyContribution) },
+                { label: t('report_kpi_categories'), value: String(categories.length) }
+            ];
+        };
+
+        const weddingReportDetails = ({ plan }) => [
+            [t('report_mode'), t(plan.isManual ? 'wedding_mode_manual' : 'wedding_mode_percentage')],
+            ...(plan.isManual ? [] : [
+                [t('report_salary'), formatRM(plan.salary)],
+                [t('report_rule'), plan.ruleLabel],
+                [t('report_allocation'), `${plan.allocationPercent}%`]
+            ]),
+            [t('report_kpi_monthly'), formatRM(plan.monthlyContribution)],
+            [t('report_target_source'), t(plan.useBreakdown ? 'report_target_breakdown' : 'report_target_manual')],
+            [t('report_current_savings'), formatRM(plan.currentSavings)]
+        ];
+
+        const milestoneText = milestone => milestone.reached
+            ? t('report_milestone_reached')
+            : milestone.date ? formatMonthYear(milestone.date) : t('report_no_estimate');
+
+        // Chart configs shared by the preview (responsive, animated) and the PDF (fixed size, light theme)
+        const weddingReportChartConfigs = (report, theme, forPrint) => {
+            const { plan, categories } = report;
+            const sizing = forPrint
+                ? { responsive: false, animation: false, devicePixelRatio: 3 }
+                : { responsive: true, maintainAspectRatio: false };
+            const shortLabel = label => label.length > 22 ? `${label.slice(0, 21)}…` : label;
+
+            const category = categories.length ? {
+                type: 'bar',
+                data: {
+                    labels: categories.map(category => category.label),
+                    datasets: [{
+                        data: categories.map(category => category.amount),
+                        backgroundColor: categories.map(category => weddingExpenseColor(category.item, theme)),
+                        borderRadius: 4,
+                        borderSkipped: 'start',
+                        maxBarThickness: 22,
+                        categoryPercentage: 0.8,
+                        barPercentage: 0.9
+                    }]
+                },
+                options: {
+                    ...sizing,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: context => ` ${formatRM(context.parsed.x)} (${formatSharePct(categories[context.dataIndex].share * 100)})` } }
+                    },
+                    scales: {
+                        x: { beginAtZero: true, grid: { color: theme.grid }, ticks: { color: theme.text, maxTicksLimit: 5, maxRotation: 0, callback: value => formatRM(value) } },
+                        y: { grid: { display: false }, ticks: { color: theme.text, callback: (value, index) => shortLabel(categories[index].label) } }
+                    }
+                }
+            } : null;
+
+            const horizon = Math.min(600, Math.max(12, plan.monthsToTarget || 0));
+            const labels = [];
+            const balance = [];
+            const target = [];
+            for (let month = 0; month <= horizon; month++) {
+                labels.push(formatMonthYear(monthsFromNow(month)));
+                balance.push(plan.currentSavings + plan.monthlyContribution * month);
+                target.push(plan.target);
+            }
+            const projection = {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        { label: t('chart_wedding_savings'), data: balance, borderColor: theme.primary, backgroundColor: theme.primaryFill, fill: true, tension: 0.15, pointRadius: 0 },
+                        { label: t('chart_wedding_target'), data: target, borderColor: theme.secondary, borderDash: [5, 4], fill: false, pointRadius: 0 }
+                    ]
+                },
+                options: {
+                    ...sizing,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: theme.text } },
+                        tooltip: { callbacks: { label: context => `${context.dataset.label}: ${formatRM(context.parsed.y)}` } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: theme.grid }, ticks: { color: theme.text, maxTicksLimit: 6, callback: value => formatRM(value) } },
+                        x: { grid: { display: false }, ticks: { color: theme.text, maxTicksLimit: 6, maxRotation: 0 } }
+                    }
+                }
+            };
+
+            return { category, projection };
+        };
+
+        const renderWeddingReport = report => {
+            const { plan, categories, milestones, insights } = report;
+            const theme = chartTheme();
+            const status = REPORT_STATUS[plan.status];
+            const fundedPct = formatSharePct(report.fundedRatio * 100);
+            document.getElementById('weddingReportGenerated').textContent = tf('report_generated', { date: formatLongDate(report.generatedAt) });
+
+            const kpis = weddingReportKpis(report).map(kpi => `
+                <div class="report-kpi">
+                    <p class="report-kpi-label">${escapeHtml(kpi.label)}</p>
+                    <p class="report-kpi-value">${escapeHtml(kpi.value)}</p>
+                    ${kpi.note ? `<p class="report-kpi-note">${escapeHtml(kpi.note)}</p>` : ''}
+                </div>`).join('');
+            const insightItems = insights.map(insight => `
+                <li><span class="report-insight-icon is-${insight.tone}" aria-hidden="true"><i class="fa-solid ${insight.icon}"></i></span><span>${escapeHtml(insight.text)}</span></li>`).join('');
+            const categoryRows = categories.map(category => `
+                <tr>
+                    <td class="is-fill"><span class="report-cell-name"><span class="expense-swatch" style="background:${weddingExpenseColor(category.item, theme)}"></span><span>${escapeHtml(category.label)}</span></span></td>
+                    <td class="is-num">${formatRM(category.amount)}</td>
+                    <td class="is-num">${formatSharePct(category.share * 100)}</td>
+                    <td class="is-num">${formatRM(category.monthly)}</td>
+                </tr>`).join('');
+            const milestoneRows = milestones.map(milestone => `
+                <tr>
+                    <td class="is-fill">${Math.round(milestone.ratio * 100)}%</td>
+                    <td class="is-num">${formatRM(milestone.amount)}</td>
+                    <td class="is-num${milestone.reached ? ' is-reached' : ''}">${escapeHtml(milestoneText(milestone))}</td>
+                </tr>`).join('');
+            const details = weddingReportDetails(report).map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join('');
+
+            document.getElementById('weddingReportBody').innerHTML = `
+                <section class="report-section">
+                    <div class="report-summary-head">
+                        <h3>${escapeHtml(t('report_summary'))}</h3>
+                        <span class="report-status is-${status.tone}"><i class="fa-solid ${status.icon}" aria-hidden="true"></i>${escapeHtml(t(`report_status_${plan.status}`))}</span>
+                    </div>
+                    <div class="report-kpis">${kpis}</div>
+                    <div class="report-progress">
+                        <div class="report-progress-row"><span>${escapeHtml(t('report_progress'))}</span><strong>${escapeHtml(tf('report_funded', { pct: fundedPct }))}</strong></div>
+                        <div class="report-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(report.fundedRatio * 100)}" aria-label="${escapeHtml(t('report_progress'))}">
+                            <div class="report-progress-fill" style="width:${report.fundedRatio * 100}%"></div>
+                        </div>
+                        <p class="report-progress-note">${escapeHtml(tf('report_progress_of', { saved: formatRM(plan.currentSavings), target: formatRM(plan.target) }))}</p>
+                    </div>
+                </section>
+                <section class="report-section">
+                    <h3>${escapeHtml(t('report_insights'))}</h3>
+                    <ul class="report-insights">${insightItems}</ul>
+                </section>
+                <div class="report-grid">
+                    <section class="report-section">
+                        <h3>${escapeHtml(t('report_category_chart'))}</h3>
+                        ${categories.length ? `
+                            <div class="report-chart" style="height:${Math.max(140, categories.length * 34 + 40)}px"><canvas id="reportCategoryChart" role="img" aria-label="${escapeHtml(t('report_category_chart'))}"></canvas></div>
+                            <table class="report-table">
+                                <thead><tr><th>${escapeHtml(t('report_table_category'))}</th><th class="is-num">${escapeHtml(t('report_table_amount'))}</th><th class="is-num">${escapeHtml(t('report_table_share'))}</th><th class="is-num">${escapeHtml(t('report_table_monthly'))}</th></tr></thead>
+                                <tbody>${categoryRows}</tbody>
+                                <tfoot><tr><td>${escapeHtml(t('report_table_total'))}</td><td class="is-num">${formatRM(plan.breakdownTotal)}</td><td class="is-num">100%</td><td class="is-num">${formatRM(plan.monthlyContribution)}</td></tr></tfoot>
+                            </table>` : `<p class="report-empty">${escapeHtml(t('report_empty_categories'))}</p>`}
+                    </section>
+                    <section class="report-section">
+                        <h3>${escapeHtml(t('report_projection_chart'))}</h3>
+                        <div class="report-chart" style="height:260px"><canvas id="reportProjectionChart" role="img" aria-label="${escapeHtml(t('report_projection_chart'))}"></canvas></div>
+                        ${milestones.length ? `
+                            <h4>${escapeHtml(t('report_milestones'))}</h4>
+                            <table class="report-table">
+                                <thead><tr><th>${escapeHtml(t('report_milestone'))}</th><th class="is-num">${escapeHtml(t('report_table_amount'))}</th><th class="is-num">${escapeHtml(t('report_milestone_date'))}</th></tr></thead>
+                                <tbody>${milestoneRows}</tbody>
+                            </table>` : ''}
+                    </section>
+                </div>
+                <section class="report-section">
+                    <h3>${escapeHtml(t('report_details'))}</h3>
+                    <dl class="report-details">${details}</dl>
+                </section>
+                <p class="report-disclaimer">${escapeHtml(t('report_disclaimer'))}</p>`;
+        };
+
+        const destroyWeddingReportCharts = () => {
+            weddingReportCharts.forEach(chart => chart.destroy());
+            weddingReportCharts = [];
+        };
+
+        const drawWeddingReportCharts = report => {
+            destroyWeddingReportCharts();
+            const { category, projection } = weddingReportChartConfigs(report, chartTheme(), false);
+            if (category) weddingReportCharts.push(new Chart(document.getElementById('reportCategoryChart'), category));
+            weddingReportCharts.push(new Chart(document.getElementById('reportProjectionChart'), projection));
+        };
+
+        const openWeddingReport = () => {
+            const report = buildWeddingReport();
+            const dialog = document.getElementById('weddingReportDialog');
+            renderWeddingReport(report);
+            setWeddingReportStatus('');
+            document.getElementById('btnCloseWeddingReport').setAttribute('aria-label', t('report_close'));
+            dialog.querySelector('[data-report-pdf]').setAttribute('aria-label', t('report_download'));
+            dialog.showModal();
+            document.getElementById('weddingReportBody').scrollTop = 0;
+            drawWeddingReportCharts(report);
+        };
+
+        const setWeddingReportStatus = message => {
+            document.querySelectorAll('[data-report-status]').forEach(el => { el.textContent = message; });
+        };
+
+        // jsPDF is only needed for export, so it loads on first use
+        const loadJsPdf = () => {
+            if (window.jspdf) return Promise.resolve(window.jspdf.jsPDF);
+            jsPdfLoader ??= new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                script.onload = () => window.jspdf ? resolve(window.jspdf.jsPDF) : reject(new Error('jsPDF did not initialise'));
+                script.onerror = () => {
+                    jsPdfLoader = null;
+                    script.remove();
+                    reject(new Error('jsPDF failed to load'));
+                };
+                document.head.appendChild(script);
+            });
+            return jsPdfLoader;
+        };
+
+        // The PDF is set in Inter. jsPDF only embeds TTF (not WOFF2 or variable fonts), so load the static cuts.
+        const PDF_FONT = 'Inter';
+        const PDF_CHART_FONT = "'Inter PDF', system-ui, sans-serif";
+        const PDF_FONT_FILES = {
+            normal: 'https://cdn.jsdelivr.net/npm/@expo-google-fonts/inter@0.4.2/400Regular/Inter_400Regular.ttf',
+            bold: 'https://cdn.jsdelivr.net/npm/@expo-google-fonts/inter@0.4.2/700Bold/Inter_700Bold.ttf'
+        };
+        let pdfFontLoader = null;
+
+        const arrayBufferToBase64 = buffer => {
+            const bytes = new Uint8Array(buffer);
+            let binary = '';
+            for (let index = 0; index < bytes.length; index += 0x8000) {
+                binary += String.fromCharCode(...bytes.subarray(index, index + 0x8000));
+            }
+            return btoa(binary);
+        };
+
+        // Fetches Inter once: base64 for jsPDF, plus a FontFace so the chart images match the text
+        const loadPdfFonts = () => {
+            pdfFontLoader ??= Promise.all(Object.entries(PDF_FONT_FILES).map(async ([style, url]) => {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Inter ${style} failed to load (${response.status})`);
+                const buffer = await response.arrayBuffer();
+                const face = new FontFace('Inter PDF', buffer, { weight: style === 'bold' ? '700' : '400' });
+                document.fonts.add(await face.load());
+                return { style, file: `Inter-${style}.ttf`, data: arrayBufferToBase64(buffer) };
+            })).catch(error => {
+                pdfFontLoader = null;
+                throw error;
+            });
+            return pdfFontLoader;
+        };
+
+        const renderChartImage = (config, width, height, fontFamily) => {
+            const { defaults } = Chart;
+            const saved = { family: defaults.font.family, ticks: defaults.scale.ticks.font };
+            if (fontFamily) {
+                defaults.font.family = fontFamily;
+                defaults.scale.ticks.font = { ...saved.ticks, family: fontFamily };
+            }
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const chart = new Chart(canvas, config);
+                const image = chart.toBase64Image('image/png', 1);
+                chart.destroy();
+                return image;
+            } finally {
+                defaults.font.family = saved.family;
+                defaults.scale.ticks.font = saved.ticks;
+            }
+        };
+
+        const PDF_COLORS = {
+            ink: [24, 24, 27],
+            ink2: [63, 63, 70],
+            muted: [107, 107, 115],
+            line: [232, 232, 228],
+            panel: [246, 246, 244],
+            track: [235, 235, 232],
+            accent: [15, 118, 110],
+            good: [34, 163, 90],
+            warn: [224, 138, 30],
+            neutral: [15, 118, 110]
+        };
+        const hexToRgb = hex => [1, 3, 5].map(index => parseInt(hex.slice(index, index + 2), 16));
+        // Swap the no-break spaces Intl puts in "RM 1,000" so the Helvetica fallback renders them too
+        const pdfText = value => String(value).replace(/[  ]/g, ' ');
+
+        const createWeddingReportPdf = async () => {
+            // Fall back to the built-in Helvetica rather than failing the export if Inter can't be fetched
+            const [JsPdf, fonts] = await Promise.all([
+                loadJsPdf(),
+                loadPdfFonts().catch(error => {
+                    console.warn('Inter unavailable for the PDF, using Helvetica', error);
+                    return null;
+                })
+            ]);
+            const fontName = fonts ? PDF_FONT : 'helvetica';
+            const chartFont = fonts ? PDF_CHART_FONT : null;
+            const report = buildWeddingReport();
+            const { plan, categories, milestones, insights } = report;
+            const theme = chartTheme(false);
+            const charts = weddingReportChartConfigs(report, theme, true);
+            const doc = new JsPdf({ unit: 'mm', format: 'a4', compress: true });
+            fonts?.forEach(font => {
+                doc.addFileToVFS(font.file, font.data);
+                doc.addFont(font.file, PDF_FONT, font.style);
+            });
+            const pageW = doc.internal.pageSize.getWidth();
+            const pageH = doc.internal.pageSize.getHeight();
+            const margin = 16;
+            const contentW = pageW - margin * 2;
+            const bottomLimit = pageH - 20;
+            const chartPx = 720;
+            let y = margin;
+
+            const write = (value, x, top, { size = 10, style = 'normal', color = PDF_COLORS.ink, align = 'left' } = {}) => {
+                doc.setFont(fontName, style);
+                doc.setFontSize(size);
+                doc.setTextColor(...color);
+                doc.text(pdfText(value), x, top, { align });
+            };
+            const fitText = (value, maxWidth, size, style = 'normal') => {
+                doc.setFont(fontName, style);
+                doc.setFontSize(size);
+                let text = pdfText(value);
+                if (doc.getTextWidth(text) <= maxWidth) return text;
+                while (text.length > 1 && doc.getTextWidth(`${text}...`) > maxWidth) text = text.slice(0, -1);
+                return `${text.trimEnd()}...`;
+            };
+            const fitSize = (value, maxWidth, size, minSize, style) => {
+                doc.setFont(fontName, style);
+                for (; size > minSize; size -= 0.5) {
+                    doc.setFontSize(size);
+                    if (doc.getTextWidth(pdfText(value)) <= maxWidth) break;
+                }
+                return size;
+            };
+            const ensureSpace = height => {
+                if (y + height <= bottomLimit) return;
+                doc.addPage();
+                y = margin;
+            };
+            // Keeps a heading on the same page as the block that follows it
+            const heading = (title, keepWith = 10) => {
+                ensureSpace(12 + keepWith);
+                write(title, margin, y + 5, { size: 12.5, style: 'bold' });
+                y += 11;
+            };
+            const drawTable = (columns, rows, footer) => {
+                const rowH = 7.2;
+                const pad = 2.5;
+                const lefts = columns.reduce((acc, column, index) => [...acc, index ? acc[index - 1] + columns[index - 1].width * contentW : margin], []);
+                const drawRow = (cells, { header = false, bold = false } = {}) => {
+                    if (header) {
+                        doc.setFillColor(...PDF_COLORS.panel);
+                        doc.rect(margin, y, contentW, rowH, 'F');
+                    }
+                    cells.forEach((cell, index) => {
+                        const column = columns[index];
+                        const isObject = cell !== null && typeof cell === 'object';
+                        const swatch = isObject ? cell.swatch : null;
+                        const size = header ? 7.5 : 8.8;
+                        const style = header || bold ? 'bold' : 'normal';
+                        const cellW = column.width * contentW - pad * 2 - (swatch ? 4.5 : 0);
+                        let x = column.align === 'right' ? lefts[index] + column.width * contentW - pad : lefts[index] + pad;
+                        if (swatch) {
+                            doc.setFillColor(...swatch);
+                            doc.roundedRect(x, y + rowH / 2 - 1.3, 2.6, 2.6, 0.6, 0.6, 'F');
+                            x += 4.5;
+                        }
+                        const color = header ? PDF_COLORS.muted : bold ? PDF_COLORS.ink : PDF_COLORS.ink2;
+                        write(fitText(isObject ? cell.text : cell, cellW, size, style), x, y + rowH / 2 + 1.1, { size, style, color, align: column.align || 'left' });
+                    });
+                    if (!header) {
+                        doc.setDrawColor(...PDF_COLORS.line);
+                        doc.setLineWidth(0.2);
+                        doc.line(margin, y + rowH, margin + contentW, y + rowH);
+                    }
+                    y += rowH;
+                };
+                const drawHeader = () => drawRow(columns.map(column => column.header), { header: true });
+                // Keep a table that fits on one page together instead of leaving a stray row behind
+                const tableH = (rows.length + 1 + (footer ? 1 : 0)) * rowH;
+                ensureSpace(tableH <= bottomLimit - margin ? tableH : rowH * 3);
+                drawHeader();
+                [...rows, ...(footer ? [footer] : [])].forEach((row, index) => {
+                    if (y + rowH > bottomLimit) {
+                        doc.addPage();
+                        y = margin;
+                        drawHeader();
+                    }
+                    drawRow(row, { bold: footer && index === rows.length });
+                });
+                y += 7;
+            };
+
+            // Header and status
+            doc.setFillColor(...PDF_COLORS.accent);
+            doc.rect(0, 0, pageW, 2.5, 'F');
+            write(t('report_heading'), margin, y + 7, { size: 19, style: 'bold' });
+            write(tf('report_generated', { date: formatLongDate(report.generatedAt) }), margin, y + 13.5, { size: 9, color: PDF_COLORS.muted });
+            const status = REPORT_STATUS[plan.status];
+            const statusLabel = t(`report_status_${plan.status}`);
+            doc.setFont(fontName, 'bold');
+            doc.setFontSize(8.5);
+            const pillW = doc.getTextWidth(pdfText(statusLabel)) + 10.5;
+            const pillX = pageW - margin - pillW;
+            doc.setFillColor(...PDF_COLORS.panel);
+            doc.roundedRect(pillX, y + 1.5, pillW, 7.5, 3.75, 3.75, 'F');
+            doc.setFillColor(...PDF_COLORS[status.tone]);
+            doc.circle(pillX + 4.2, y + 5.25, 1.1, 'F');
+            write(statusLabel, pillX + 6.8, y + 6.6, { size: 8.5, style: 'bold', color: PDF_COLORS.ink2 });
+            y += 22;
+
+            // Metric tiles
+            const tileGap = 3;
+            const tileW = (contentW - tileGap * 2) / 3;
+            const tileH = 21;
+            weddingReportKpis(report).forEach((kpi, index) => {
+                const x = margin + (index % 3) * (tileW + tileGap);
+                const top = y + Math.floor(index / 3) * (tileH + tileGap);
+                doc.setFillColor(...PDF_COLORS.panel);
+                doc.roundedRect(x, top, tileW, tileH, 2, 2, 'F');
+                write(fitText(kpi.label, tileW - 7, 7.5), x + 3.5, top + 6, { size: 7.5, color: PDF_COLORS.muted });
+                write(kpi.value, x + 3.5, top + 13.5, { size: fitSize(kpi.value, tileW - 7, 13, 8, 'bold'), style: 'bold' });
+                if (kpi.note) write(fitText(kpi.note, tileW - 7, 7.5), x + 3.5, top + 18, { size: 7.5, color: PDF_COLORS.muted });
+            });
+            y += tileH * 2 + tileGap + 9;
+
+            // Funding progress
+            write(t('report_progress'), margin, y, { size: 9.5, style: 'bold' });
+            write(tf('report_funded', { pct: formatSharePct(report.fundedRatio * 100) }), pageW - margin, y, { size: 9.5, style: 'bold', align: 'right' });
+            doc.setFillColor(...PDF_COLORS.track);
+            doc.roundedRect(margin, y + 3, contentW, 3.2, 1.6, 1.6, 'F');
+            if (report.fundedRatio > 0) {
+                doc.setFillColor(...PDF_COLORS.accent);
+                doc.roundedRect(margin, y + 3, Math.max(3.2, contentW * report.fundedRatio), 3.2, 1.6, 1.6, 'F');
+            }
+            write(tf('report_progress_of', { saved: formatRM(plan.currentSavings), target: formatRM(plan.target) }), margin, y + 11, { size: 8, color: PDF_COLORS.muted });
+            y += 20;
+
+            // Insights
+            heading(t('report_insights'));
+            insights.forEach(insight => {
+                doc.setFont(fontName, 'normal');
+                doc.setFontSize(9.5);
+                const lines = doc.splitTextToSize(pdfText(insight.text), contentW - 7);
+                ensureSpace(lines.length * 4.7 + 2);
+                doc.setFillColor(...PDF_COLORS[insight.tone]);
+                doc.circle(margin + 1.3, y - 1.2, 1, 'F');
+                doc.setTextColor(...PDF_COLORS.ink2);
+                doc.text(lines, margin + 5, y, { lineHeightFactor: 1.4 });
+                y += lines.length * 4.7 + 2.3;
+            });
+            y += 5;
+
+            // Category breakdown
+            if (categories.length) {
+                const chartH = Math.min(95, 14 + categories.length * 8);
+                heading(t('report_category_chart'), chartH);
+                doc.addImage(renderChartImage(charts.category, chartPx, Math.round(chartPx * chartH / contentW), chartFont), 'PNG', margin, y, contentW, chartH, undefined, 'FAST');
+                y += chartH + 3;
+                drawTable(
+                    [
+                        { header: t('report_table_category'), width: 0.46 },
+                        { header: t('report_table_amount'), width: 0.2, align: 'right' },
+                        { header: t('report_table_share'), width: 0.14, align: 'right' },
+                        { header: t('report_table_monthly'), width: 0.2, align: 'right' }
+                    ],
+                    categories.map(category => [
+                        { text: category.label, swatch: hexToRgb(weddingExpenseColor(category.item, theme)) },
+                        formatRM(category.amount),
+                        formatSharePct(category.share * 100),
+                        formatRM(category.monthly)
+                    ]),
+                    [t('report_table_total'), formatRM(plan.breakdownTotal), '100%', formatRM(plan.monthlyContribution)]
+                );
+            } else {
+                heading(t('report_category_chart'));
+                write(t('report_empty_categories'), margin, y, { size: 9.5, color: PDF_COLORS.muted });
+                y += 10;
+            }
+
+            // Projection and milestones
+            const projectionH = 72;
+            heading(t('report_projection_chart'), projectionH);
+            doc.addImage(renderChartImage(charts.projection, chartPx, Math.round(chartPx * projectionH / contentW), chartFont), 'PNG', margin, y, contentW, projectionH, undefined, 'FAST');
+            y += projectionH + 6;
+            if (milestones.length) {
+                heading(t('report_milestones'), 16);
+                drawTable(
+                    [
+                        { header: t('report_milestone'), width: 0.4 },
+                        { header: t('report_table_amount'), width: 0.3, align: 'right' },
+                        { header: t('report_milestone_date'), width: 0.3, align: 'right' }
+                    ],
+                    milestones.map(milestone => [`${Math.round(milestone.ratio * 100)}%`, formatRM(milestone.amount), milestoneText(milestone)])
+                );
+            }
+
+            // Plan details
+            heading(t('report_details'), 8);
+            weddingReportDetails(report).forEach(([label, value]) => {
+                ensureSpace(7.5);
+                write(label, margin, y + 4.6, { size: 8.8, color: PDF_COLORS.muted });
+                write(fitText(value, contentW / 2, 8.8, 'bold'), pageW - margin, y + 4.6, { size: 8.8, style: 'bold', align: 'right' });
+                doc.setDrawColor(...PDF_COLORS.line);
+                doc.setLineWidth(0.2);
+                doc.line(margin, y + 7.2, pageW - margin, y + 7.2);
+                y += 7.2;
+            });
+
+            // Footer on every page
+            const pageCount = doc.getNumberOfPages();
+            for (let page = 1; page <= pageCount; page++) {
+                doc.setPage(page);
+                doc.setDrawColor(...PDF_COLORS.line);
+                doc.setLineWidth(0.2);
+                doc.line(margin, pageH - 14, pageW - margin, pageH - 14);
+                doc.setFont(fontName, 'normal');
+                doc.setFontSize(7);
+                doc.setTextColor(...PDF_COLORS.muted);
+                doc.text(doc.splitTextToSize(pdfText(t('report_disclaimer')), contentW - 34), margin, pageH - 10, { lineHeightFactor: 1.35 });
+                doc.text(pdfText(tf('report_page', { page, total: pageCount })), pageW - margin, pageH - 10, { align: 'right' });
+            }
+            return doc;
+        };
+
+        const downloadWeddingReportPdf = async () => {
+            const buttons = [...document.querySelectorAll('[data-report-pdf]')];
+            const setBusy = busy => buttons.forEach(button => {
+                button.disabled = busy;
+                button.querySelector('span').textContent = t(busy ? 'report_preparing' : 'report_download');
+            });
+            setWeddingReportStatus('');
+            setBusy(true);
+            try {
+                const doc = await createWeddingReportPdf();
+                const today = new Date();
+                const stamp = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                doc.save(`wedding-savings-report-${stamp}.pdf`);
+            } catch (error) {
+                console.error(error);
+                setWeddingReportStatus(t('report_pdf_error'));
+            } finally {
+                setBusy(false);
+            }
+        };
+
+        const initWeddingReport = () => {
+            const dialog = document.getElementById('weddingReportDialog');
+            document.getElementById('btnViewWeddingReport').addEventListener('click', openWeddingReport);
+            document.getElementById('btnCloseWeddingReport').addEventListener('click', () => dialog.close());
+            document.querySelectorAll('[data-report-pdf]').forEach(button => button.addEventListener('click', downloadWeddingReportPdf));
+            // Clicking the backdrop closes the report
+            dialog.addEventListener('click', event => {
+                if (event.target === dialog) dialog.close();
+            });
+            // The close event is queued, so skip cleanup if the report was reopened in the meantime
+            dialog.addEventListener('close', () => {
+                if (!dialog.open) destroyWeddingReportCharts();
             });
         };
 
@@ -2721,6 +4355,7 @@
             startMonthInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
             applyChartDefaults();
             initTabVisibilityControls();
+            initAdminControls();
             initTabScroller();
             initSalaryListeners();
             initRetListeners();
