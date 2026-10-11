@@ -75,6 +75,10 @@
             --shadow-pop: 0 2px 6px rgba(24, 24, 27, 0.05), 0 18px 40px -12px rgba(24, 24, 27, 0.2);
             --radius: 16px;
             --radius-sm: 10px;
+            /* Layout rhythm: page gutter, space between cards, and padding inside a card */
+            --gutter: clamp(1.25rem, 3vw, 2.5rem);
+            --stack: clamp(1.25rem, 2vw, 1.75rem);
+            --card-pad: clamp(1.5rem, 2.4vw, 2.25rem);
             --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
             --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%238e8e96' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
         }
@@ -115,7 +119,7 @@
         body {
             margin: 0;
             min-height: 100vh;
-            padding: 2.5rem 1.25rem calc(5rem + env(safe-area-inset-bottom));
+            padding: 3rem var(--gutter) calc(5rem + env(safe-area-inset-bottom));
             background: var(--page);
             color: var(--ink);
             font-family: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -129,7 +133,7 @@
 
         ::selection { background: var(--accent-ring); }
 
-        .app-shell { max-width: 1200px; margin: 0 auto; }
+        .app-shell { max-width: 80rem; margin: 0 auto; }
 
         /* ---------- Header ---------- */
         .page-header {
@@ -137,7 +141,7 @@
             align-items: center;
             justify-content: space-between;
             gap: 1.25rem;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
 
         .brand { display: flex; align-items: center; gap: 0.875rem; min-width: 0; }
@@ -215,7 +219,8 @@
 
         /* Header popovers (tab visibility, admin modules) */
         .tab-visibility-menu,
-        .admin-menu {
+        .admin-menu,
+        .task-widget-menu {
             position: absolute;
             z-index: 30;
             top: calc(100% + 0.5rem);
@@ -232,7 +237,8 @@
         }
 
         .tab-visibility-menu[hidden],
-        .admin-menu[hidden] { display: none; }
+        .admin-menu[hidden],
+        .task-widget-menu[hidden] { display: none; }
         .admin-menu { width: min(11rem, calc(100vw - 2rem)); padding: 0.5rem; }
         .tab-visibility-menu hr { margin: 0.5rem 0; border-color: var(--line); }
 
@@ -294,7 +300,7 @@
         .admin-login-error { margin-top: 0.5rem; color: var(--c-rose); font-size: 0.75rem; }
 
         /* ---------- Navigation (segmented control) ---------- */
-        .app-nav-shell { min-width: 0; margin-bottom: 1.75rem; }
+        .app-nav-shell { min-width: 0; margin-bottom: 2.25rem; }
 
         .app-nav {
             position: relative;
@@ -374,9 +380,9 @@
             to { opacity: 1; transform: none; }
         }
 
-        .app-shell .tab-content > .grid { gap: 1.25rem; }
-        .app-shell .tab-content .flex-col.gap-6 { gap: 1.25rem; }
-        .app-shell .tab-content .grid.gap-4 { gap: 0.875rem; }
+        .app-shell .tab-content > .grid { gap: var(--stack); }
+        .app-shell .tab-content .flex-col.gap-6 { gap: var(--stack); }
+        .app-shell .tab-content .grid.gap-4 { gap: 1.125rem; }
 
         /* ---------- Cards ---------- */
         .app-shell .glass-card {
@@ -388,11 +394,14 @@
             transition: background-color 240ms ease, border-color 240ms ease, box-shadow 240ms ease, transform 240ms var(--ease);
         }
 
-        .app-shell .glass-card.shadow-soft { padding: 1.5rem; }
-        @media (min-width: 768px) { .app-shell .glass-card.shadow-soft { padding: 1.75rem; } }
+        .app-shell .glass-card.shadow-soft { padding: var(--card-pad); }
 
         /* Card heading row */
-        .app-shell .glass-card > .flex.items-center.gap-3:first-child { gap: 0.75rem; margin-bottom: 1.5rem; }
+        .app-shell .glass-card > .flex.items-center.gap-3:first-child { gap: 0.875rem; margin-bottom: 1.75rem; }
+
+        /* Form rhythm: a little more air between fields than the utility defaults */
+        .app-shell .glass-card .space-y-5 > :not([hidden]) ~ :not([hidden]) { margin-top: 1.5rem; }
+        .app-shell .glass-card .space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 1.75rem; }
 
         .app-shell .glass-card .w-10.h-10 {
             width: 2rem;
@@ -416,7 +425,7 @@
 
         /* KPI cards */
         .app-shell .glass-card.shadow-card {
-            padding: 1.125rem 1.25rem 1.25rem;
+            padding: 1.375rem 1.5rem 1.5rem;
             border-left-width: 1px;
             border-top-width: 1px;
             border-color: var(--line);
@@ -817,10 +826,15 @@
         }
         .btn-ghost:hover { border-color: var(--line-strong); background: var(--surface-2); }
         .btn-ghost:active { transform: scale(0.97); }
+        .btn-ghost:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-ghost.is-danger:not(:disabled) { color: var(--c-rose); }
+        .btn-ghost.is-danger:not(:disabled):hover { border-color: var(--c-rose); background: var(--rose-soft); }
+        .btn-danger { background: var(--c-rose); color: #fff; }
+        .btn-danger:hover { background: var(--c-rose); filter: brightness(0.94); }
         .btn-ghost i, .btn-primary i { font-size: 0.8rem; }
         .btn-primary:disabled { opacity: 0.65; cursor: progress; transform: none; box-shadow: none; }
 
-        .report-bar { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; }
+        .report-bar { display: flex; align-items: center; gap: 1.125rem; padding: 1.25rem 1.5rem; }
         .report-bar-icon {
             display: grid;
             flex: 0 0 auto;
@@ -944,6 +958,407 @@
             .report-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
 
+        /* Shown in place of the navigation when every module is switched off */
+        .app-shell .glass-card.empty-notice { padding-block: 3rem; text-align: center; }
+        .empty-notice .report-bar-icon { margin: 0 auto 0.875rem; }
+        .empty-notice p { margin-top: 0.25rem; color: var(--muted); font-size: 0.8125rem; }
+        .is-admin .no-modules-public,
+        body:not(.is-admin) .no-modules-admin { display: none; }
+
+        /* ---------- Task tracker ---------- */
+        /* The progress card doubles as a switch between overall and today's progress */
+        .task-progress-card { cursor: pointer; user-select: none; }
+        .task-kpi-switch { margin-left: auto; color: var(--muted-2); font-size: 0.7rem; transition: transform 500ms var(--ease), color 160ms ease; }
+        .task-progress-card:hover .task-kpi-switch,
+        .task-progress-card:focus-visible .task-kpi-switch { color: var(--ink); }
+        .task-progress-card.is-daily .task-kpi-switch { transform: rotate(180deg); }
+        .app-shell .task-progress-card > p:first-child::before { transition: background-color 300ms ease; }
+        .app-shell .task-progress-card.is-daily > p:first-child::before { background: var(--c-amber); }
+        .task-progress-card.is-switching > p,
+        .task-progress-card.is-switching > h3 { animation: value-tick 320ms var(--ease); }
+        /* Add form, filters and view switch share one row and one control height */
+        .task-controls { display: flex; flex-wrap: wrap; align-items: end; gap: 1rem 1.5rem; margin-bottom: 1.75rem; }
+        .task-add { display: flex; flex: 1 1 27.5rem; align-items: end; gap: 1rem; min-width: 0; }
+        .task-field { min-width: 0; }
+        .task-field.is-title { flex: 1 1 9rem; }
+        .task-field.is-assignee { flex: 0 1 16rem; }
+        .task-field.is-platform { flex: 0 1 10rem; }
+        .task-field label { display: block; margin-bottom: 0.375rem; white-space: nowrap; }
+        .app-shell .glass-card .task-controls input,
+        .app-shell .glass-card .task-controls select { width: 100%; height: 2.75rem; padding: 0 0.875rem; font-size: 0.875rem; }
+        .task-add .btn-primary { flex: 0 0 auto; height: 2.75rem; white-space: nowrap; }
+
+        .task-view-toggle { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 0.125rem; height: 2.75rem; padding: 0.25rem; border-radius: 10px; background: var(--surface-3); }
+        .task-view-toggle.is-compact { height: 2.25rem; }
+        .task-view-toggle button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            height: 100%;
+            padding: 0 0.75rem;
+            border-radius: 8px;
+            color: var(--muted);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            transition: color 160ms ease, background-color 160ms ease;
+        }
+        .task-view-toggle button i { font-size: 0.75rem; }
+        .task-view-toggle button:hover { color: var(--ink); }
+        .task-view-toggle button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
+
+        .task-board { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); align-items: start; gap: 1.25rem; }
+        .task-column { padding: 1rem; border-radius: 14px; background: var(--surface-2); }
+        .task-column-head { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; padding: 0 0.25rem; }
+        .task-column-head h3 { color: var(--ink); font-size: 0.8125rem; font-weight: 600; }
+        /* The column title is the lowercase status value shown as a header */
+        .task-column-head h3::first-letter { text-transform: uppercase; }
+        .task-count {
+            min-width: 1.5rem;
+            margin-left: auto;
+            padding: 0.1rem 0.45rem;
+            border-radius: 999px;
+            background: var(--surface-3);
+            color: var(--muted);
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+        .task-status-dot { flex: 0 0 auto; width: 0.5rem; height: 0.5rem; border-radius: 999px; background: var(--muted-2); }
+        .task-status-dot.is-doing { background: var(--c-amber); }
+        .task-status-dot.is-done { background: var(--c-green); }
+        .task-column-list, .task-list { display: flex; flex-direction: column; gap: 0.625rem; }
+        /* The board is not paged, so a long column scrolls inside itself */
+        .task-column-list { max-height: 36rem; overflow-y: auto; }
+
+        /* Batch clearing, top right of the tracker card */
+        .task-heading { flex: 1 1 12rem; min-width: 0; }
+        /* Compact icon toolbar: filters, view switch and batch clearing */
+        .task-tools { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem; margin-left: auto; }
+        .task-tool,
+        .app-shell .glass-card label.task-tool {
+            position: relative;
+            display: inline-grid;
+            flex: 0 0 auto;
+            place-items: center;
+            width: 2.25rem;
+            height: 2.25rem;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            color: var(--muted);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+        }
+        .task-tool:hover:not(:disabled),
+        .app-shell .glass-card label.task-tool:hover { border-color: var(--line-strong); background: var(--surface-2); color: var(--ink); }
+        /* A filter that is narrowing the list stays lit */
+        .app-shell .glass-card label.task-tool.is-active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+        .task-tool:has(select:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .task-tool:disabled { opacity: 0.45; cursor: not-allowed; }
+        .task-tool.is-danger:not(:disabled) { color: var(--c-rose); }
+        .task-tool.is-danger:hover:not(:disabled) { border-color: var(--c-rose); background: var(--rose-soft); color: var(--c-rose); }
+        /* The real dropdown sits invisibly over its icon, so a click opens the native list */
+        .app-shell .glass-card .task-tool select {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            padding: 0 !important;
+            border: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .task-badge {
+            position: absolute;
+            top: -0.375rem;
+            right: -0.375rem;
+            min-width: 1.05rem;
+            height: 1.05rem;
+            padding: 0 0.25rem;
+            border-radius: 999px;
+            background: var(--c-rose);
+            color: #fff;
+            font-size: 0.625rem;
+            font-weight: 700;
+            line-height: 1.05rem;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+        .task-badge[hidden] { display: none; }
+        .task-tools-divider { width: 1px; height: 1.25rem; margin: 0 0.25rem; background: var(--line-strong); }
+
+        /* Selection and search, above the tasks */
+        .task-list-tools {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.875rem 1.5rem;
+            margin-bottom: 1.25rem;
+            padding-top: 1.75rem;
+            border-top: 1px solid var(--line);
+        }
+        .app-shell .glass-card label.task-select-all { display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap; cursor: pointer; }
+        .task-select-all input, .task-card input[type="checkbox"] { width: 1rem; height: 1rem; accent-color: var(--accent); cursor: pointer; }
+        .app-shell .glass-card label.task-select-all[hidden] { display: none; }
+        .task-select-toggle { height: 2.5rem; padding: 0 0.875rem; font-size: 0.8125rem; white-space: nowrap; }
+        .task-select-toggle[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+        .task-select-all input:disabled { cursor: not-allowed; }
+        .task-search { position: relative; flex: 1 1 14rem; max-width: 24rem; }
+        .task-search i { position: absolute; top: 50%; left: 0.875rem; color: var(--muted-2); font-size: 0.8rem; transform: translateY(-50%); pointer-events: none; }
+        .app-shell .glass-card .task-search input { width: 100%; height: 2.5rem; padding: 0 0.875rem 0 2.25rem; font-size: 0.875rem; }
+
+        /* Pager, below the list */
+        .task-pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 1.25rem; margin-top: 1.5rem; }
+        .task-pager[hidden] { display: none; }
+        .task-pager-info { color: var(--muted); font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
+        .task-pager-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; }
+        .app-shell .glass-card label.task-pager-size { display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
+        .app-shell .glass-card .task-pager-size select { width: 4.75rem; height: 2.25rem; padding: 0 0.625rem; font-size: 0.8125rem; }
+        .task-pager-pages { display: flex; align-items: center; gap: 0.25rem; }
+        .task-pager-pages[hidden] { display: none; }
+        .task-pager-pages button {
+            min-width: 2.25rem;
+            height: 2.25rem;
+            padding: 0 0.5rem;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--ink-2);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            font-variant-numeric: tabular-nums;
+            transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+        }
+        .task-pager-pages button:hover:not(:disabled):not([aria-current]) { border-color: var(--line-strong); background: var(--surface-2); }
+        .task-pager-pages button[aria-current="page"] { border-color: var(--accent); background: var(--accent); color: var(--on-accent); }
+        .task-pager-pages button:disabled { opacity: 0.45; cursor: not-allowed; }
+        .task-pager-pages button i { font-size: 0.7rem; }
+        .task-pager-gap { padding: 0 0.25rem; color: var(--muted-2); }
+        .task-empty { padding: 0.75rem 0.25rem; color: var(--muted); font-size: 0.8125rem; }
+
+        /* One card markup serves both views: stacked on the board, a single row in the list */
+        .task-card {
+            display: grid;
+            grid-template-columns: minmax(5.5rem, 1fr) minmax(0, auto) 2rem;
+            grid-template-areas: "title title remove" "tag status status" "platform date date" "progress progress progress";
+            align-items: center;
+            gap: 0.625rem 0.75rem;
+            padding: 0.875rem 1rem;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: var(--surface);
+        }
+        .task-list .task-card, .task-list-head {
+            grid-template-columns: minmax(0, 2fr) minmax(0, 1.1fr) 7.5rem 9rem 9rem minmax(7rem, 1fr) 2rem;
+            grid-template-areas: "title tag platform date status progress remove";
+        }
+        /* Select mode adds a leading checkbox column */
+        .is-selecting .task-card {
+            grid-template-columns: auto minmax(5.5rem, 1fr) minmax(0, auto) 2rem;
+            grid-template-areas: "select title title remove" "tag tag status status" "platform platform date date" "progress progress progress progress";
+        }
+        .is-selecting .task-list .task-card, .is-selecting .task-list-head {
+            grid-template-columns: 1rem minmax(0, 2fr) minmax(0, 1.1fr) 7.5rem 9rem 9rem minmax(7rem, 1fr) 2rem;
+            grid-template-areas: "select title tag platform date status progress remove";
+        }
+        .task-list-head { display: grid; gap: 0.75rem; padding: 0 1rem; color: var(--muted); font-size: 0.72rem; font-weight: 500; }
+
+        .app-shell .glass-card .task-card input.task-title {
+            grid-area: title;
+            width: 100%;
+            padding: 0.3rem 0.4rem;
+            border-color: transparent;
+            background-color: transparent;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .app-shell .glass-card .task-card.is-done input.task-title { color: var(--muted); text-decoration: line-through; }
+
+        .task-tag {
+            grid-area: tag;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            min-width: 0;
+            max-width: 100%;
+            padding: 0.15rem 0.55rem 0.15rem 0.2rem;
+            border-radius: 999px;
+            background: color-mix(in srgb, var(--tag) 13%, transparent);
+            color: var(--ink);
+            font-size: 0.78rem;
+            font-weight: 500;
+        }
+        .task-tag:focus-within { box-shadow: 0 0 0 2px var(--accent-ring); }
+        .task-tag-dot {
+            display: grid;
+            flex: 0 0 auto;
+            place-items: center;
+            width: 1.375rem;
+            height: 1.375rem;
+            border-radius: 999px;
+            background: var(--tag);
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 700;
+        }
+        .task-tag-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .app-shell .glass-card .task-card .task-tag input,
+        .app-shell .glass-card .task-card .task-tag input:focus {
+            min-width: 0;
+            width: 100%;
+            padding: 0;
+            border: 0;
+            background-color: transparent;
+            box-shadow: none;
+            font-size: 0.78rem;
+        }
+
+        .task-card [data-field="status"] { grid-area: status; }
+        .task-card [data-field="platform"] { grid-area: platform; }
+        .app-shell .glass-card .task-card input.task-platform-input { width: 100%; padding: 0.3rem 0.5rem; font-size: 0.78rem; }
+        .app-shell .glass-card .task-card select {
+            padding: 0.3rem 0.5rem;
+            padding-right: 1.75rem !important;
+            background-position: right 0.5rem center;
+            background-size: 0.875rem;
+            font-size: 0.78rem;
+        }
+
+        .task-time { color: var(--muted-2); }
+        .task-date {
+            grid-area: date;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+        .task-date i { color: var(--muted-2); font-size: 0.72rem; }
+
+        .task-progress { grid-area: progress; display: flex; align-items: center; gap: 0.625rem; }
+        .task-progress input[type=range] { flex: 1 1 auto; margin: 0; }
+        .task-progress-value { min-width: 2.5rem; color: var(--muted); font-size: 0.75rem; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+        .task-card.is-done .task-progress-value { color: var(--c-green); }
+
+        .task-remove.icon-btn { grid-area: remove; width: 2rem; min-width: 2rem; height: 2rem; border-color: transparent; background: transparent; font-size: 0.75rem; }
+        .task-remove.icon-btn:hover { color: var(--c-rose); }
+        .task-card input[type="checkbox"] { grid-area: select; }
+        .task-card.is-selected { border-color: var(--accent); background: linear-gradient(var(--accent-soft), var(--accent-soft)), var(--surface); }
+
+        /* Dense rows for the one-line list. The stacked cards used on narrower screens keep
+           their roomier, touch-friendly spacing. */
+        @media (min-width: 901px) {
+            .task-list { gap: 0.3rem; }
+            .task-list .task-card { padding: 0.25rem 0.75rem; border-radius: 8px; }
+            .task-list-head { padding: 0 0.75rem; }
+            .app-shell .glass-card .task-list .task-card input.task-title { padding: 0.15rem 0.4rem; font-size: 0.84rem; }
+            .app-shell .glass-card .task-list .task-card select { padding-block: 0.15rem; }
+            .app-shell .glass-card .task-list .task-card input.task-platform-input { padding-block: 0.15rem; }
+            .task-list .task-tag { padding-block: 0.1rem; }
+            .task-list .task-tag-dot { width: 1.25rem; height: 1.25rem; }
+            .task-list .task-remove.icon-btn { width: 1.75rem; min-width: 1.75rem; height: 1.75rem; }
+        }
+
+        .task-chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--stack); }
+        /* A lone date chart takes the full width; with both switched off the row disappears */
+        .task-chart-grid.is-single { grid-template-columns: minmax(0, 1fr); }
+        .task-chart-grid[hidden] { display: none; }
+
+        /* Visual insights control bar: a checkbox per insight card */
+        .task-widget[hidden] { display: none !important; }
+        .task-widget-menu { width: min(16rem, calc(100vw - 3rem)); }
+        .task-tool[aria-expanded="true"] { border-color: var(--line-strong); background: var(--surface-2); color: var(--ink); }
+        /* Lit while at least one card is switched off */
+        .task-tool.is-active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+
+        /* Platform breakdown: summary tiles above a share doughnut and a status bar */
+        .task-platform-kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 2.25rem; }
+        .task-platform-kpis .report-kpi-value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .task-platform-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 2rem 3rem; }
+        .task-platform-charts .breakdown-layout { grid-template-columns: minmax(0, 12rem) minmax(0, 1fr); gap: 1.5rem; }
+        .task-platform-charts .breakdown-legend-row { cursor: default; }
+        .task-chart-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 1.25rem; }
+        .app-shell .task-chart-head h2 { margin-bottom: 0; }
+        .task-chart-note:empty { display: none; }
+        .task-chart-note { margin-top: 0.75rem; color: var(--muted); font-size: 0.75rem; }
+
+        /* Radial bar chart. Each ring's length is normalised to 100 and spans three quarters of a
+           circle, so a full bar is 75 units and the offset is the part still to go. */
+        .task-radial-pair {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 2.5rem;
+            margin-bottom: 2.25rem;
+            padding-bottom: 2.25rem;
+            border-bottom: 1px solid var(--line);
+        }
+        .task-radial-pair[hidden] { display: none; }
+        /* One chart with its legend; two of these sit side by side when there is room */
+        .task-radial {
+            display: grid;
+            grid-template-columns: minmax(0, 19rem) minmax(0, 22rem);
+            align-items: center;
+            justify-content: center;
+            gap: 1rem 2.5rem;
+        }
+        .task-radial-heading { grid-column: 1 / -1; margin-bottom: 0; text-align: center; }
+        .task-radial-more { grid-column: 1 / -1; color: var(--muted); font-size: 0.75rem; text-align: center; }
+        .task-radial-more:empty { display: none; }
+        @media (min-width: 1200px) {
+            .task-radial-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 2rem 3rem; }
+            .task-radial { grid-template-columns: minmax(0, 17.5rem) minmax(0, 1fr); justify-content: stretch; gap: 1rem 1.5rem; }
+        }
+        .task-radial-chart { display: block; width: 100%; height: auto; }
+        .task-radial-chart circle { fill: none; stroke-width: 13; stroke-dasharray: 75 100; }
+        .task-radial-track { stroke: var(--track); }
+        .task-radial-value { stroke: var(--gauge); stroke-dashoffset: 75; transition: stroke-dashoffset 800ms var(--ease); }
+        .task-radial-grid line { stroke: var(--line-strong); stroke-width: 1; }
+        .task-radial-grid text { fill: var(--muted-2); font-size: 8.5px; text-anchor: middle; dominant-baseline: middle; font-variant-numeric: tabular-nums; }
+        .task-radial-label { fill: var(--ink-2); font-size: 10.5px; font-weight: 500; text-anchor: end; dominant-baseline: middle; }
+        .task-radial-label .is-value { fill: var(--ink); font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+
+        /* Item labels and captions inside the progress charts are shown in lowercase. Chart headings,
+           and platform names (which are your own text), keep their capitals. */
+        #taskStatusRadial .task-radial-name,
+        .task-radial-note,
+        .task-legend { text-transform: lowercase; }
+
+        .task-radial-legend { display: flex; flex-direction: column; gap: 0.875rem; margin: 0; padding: 0; list-style: none; }
+        .task-radial-legend li { display: grid; grid-template-columns: 0.625rem minmax(0, 1fr) auto; align-items: center; gap: 0 0.75rem; }
+        .task-radial-dot { width: 0.625rem; height: 0.625rem; border-radius: 999px; background: var(--gauge); }
+        .task-radial-legend li > div { min-width: 0; }
+        .task-radial-name { overflow: hidden; color: var(--ink); font-size: 0.875rem; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+        .task-radial-note { color: var(--muted); font-size: 0.75rem; line-height: 1.4; }
+        .task-radial-legend strong { color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 1.125rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+        .task-analytics-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 3rem; }
+        .task-subhead { margin-bottom: 0.75rem; color: var(--ink-2); font-size: 0.8125rem; font-weight: 600; }
+        .task-split { display: flex; gap: 2px; height: 0.625rem; overflow: hidden; border-radius: 999px; background: var(--track); }
+        .task-split span { height: 100%; background: var(--muted-2); transition: width 400ms var(--ease); }
+        .task-split .is-doing { background: var(--c-amber); }
+        .task-split .is-done { background: var(--c-green); }
+        .task-legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin: 0.625rem 0 0; padding: 0; list-style: none; color: var(--ink-2); font-size: 0.8125rem; }
+        .task-legend li { display: inline-flex; align-items: center; gap: 0.4rem; }
+        .task-legend strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+        .task-assignee-rows { display: flex; flex-direction: column; gap: 0.625rem; }
+        .task-assignee-row {
+            display: grid;
+            grid-template-columns: minmax(0, 10rem) 5.5rem minmax(0, 1fr) 2.75rem;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--muted);
+            font-size: 0.8125rem;
+            font-variant-numeric: tabular-nums;
+        }
+        .task-assignee-row .task-tag { grid-area: auto; justify-self: start; }
+        .task-assignee-row .report-progress-track { margin-top: 0; }
+        .task-assignee-row strong { color: var(--ink); text-align: right; }
+        .task-storage-note { margin-top: 1.25rem; color: var(--muted); font-size: 0.75rem; }
+
         /* ---------- Footer ---------- */
         .app-footer {
             position: fixed;
@@ -973,6 +1388,21 @@
         }
 
         /* ---------- Responsive ---------- */
+        /* Below this width a task row has no room for all its columns, so the list uses the card layout */
+        @media (max-width: 900px) {
+            .task-platform-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .task-platform-charts { grid-template-columns: minmax(0, 1fr); }
+            .task-list-head { display: none; }
+            .task-list .task-card {
+                grid-template-columns: minmax(5.5rem, 1fr) minmax(0, auto) 2rem;
+                grid-template-areas: "title title remove" "tag status status" "platform date date" "progress progress progress";
+            }
+            .is-selecting .task-list .task-card {
+                grid-template-columns: auto minmax(5.5rem, 1fr) minmax(0, auto) 2rem;
+                grid-template-areas: "select title title remove" "tag tag status status" "platform platform date date" "progress progress progress progress";
+            }
+        }
+
         @media (max-width: 640px) {
             body { padding-top: 1.25rem; padding-inline: 1rem; }
             .page-header { margin-bottom: 1.25rem; }
@@ -995,6 +1425,25 @@
             .report-body { padding: 1rem; }
             .report-section { padding: 1rem; }
             .expense-row { grid-template-columns: 0.625rem minmax(0, 1fr) 6.25rem 2.375rem; gap: 0.375rem; }
+            .task-add { flex-direction: column; align-items: stretch; flex-basis: 100%; }
+            .task-add .task-field { flex: 0 0 auto; }
+            .task-add .btn-primary { justify-content: center; }
+            .task-board { grid-auto-flow: row; }
+            .task-search { max-width: none; }
+            /* Six controls in the toolbar: slightly smaller and closer so they stay on a single line */
+            .task-tools { gap: 0.25rem; }
+            .task-tools-divider { display: none; }
+            .task-tools .task-tool,
+            .app-shell .glass-card .task-tools label.task-tool { width: 2.125rem; height: 2.125rem; }
+            .task-tools .task-view-toggle { height: 2.125rem; }
+            .task-tools .task-view-toggle button { padding: 0 0.55rem; }
+            .task-pager, .task-pager-controls { justify-content: flex-start; }
+            .task-chart-grid { grid-template-columns: minmax(0, 1fr); }
+            .task-platform-charts .breakdown-layout { grid-template-columns: minmax(0, 1fr); }
+            .task-radial { grid-template-columns: minmax(0, 1fr); }
+            .task-radial-chart { max-width: 21rem; margin-inline: auto; }
+            .task-analytics-grid { grid-template-columns: minmax(0, 1fr); }
+            .task-assignee-row { grid-template-columns: minmax(0, 1fr) auto; }
             .app-nav { width: 100%; padding: 0; background: transparent; }
             .app-nav .nav-tab, .nav-indicator { display: none; }
             .app-nav select {
@@ -1062,6 +1511,7 @@
                     <label class="tab-visibility-option" for="showTab4"><input id="showTab4" type="checkbox" data-tab-id="tab4"><span data-i18n="tab_withdrawal">Margin Loss</span></label>
                     <label class="tab-visibility-option" for="showTab7"><input id="showTab7" type="checkbox" data-tab-id="tab7"><span data-i18n="tab_daily_dividend">Daily Dividend</span></label>
                     <label class="tab-visibility-option" for="showTab8"><input id="showTab8" type="checkbox" data-tab-id="tab8"><span data-i18n="tab_dash_text">Hypen Text</span></label>
+                    <label class="tab-visibility-option" for="showTab9"><input id="showTab9" type="checkbox" data-tab-id="tab9"><span data-i18n="tab_tasks">Task Tracker</span></label>
                 </div>
                 <button id="btnTheme" type="button" onclick="toggleTheme()" class="icon-btn is-square" aria-label="Toggle theme">
                     <i class="fa-solid fa-moon" id="iconTheme" aria-hidden="true"></i>
@@ -1097,6 +1547,7 @@
                     <option value="tab6" data-i18n="tab_wedding">Wedding Savings</option>
                     <option value="tab7" data-i18n="tab_daily_dividend" hidden>Daily Dividend</option>
                     <option value="tab8" data-i18n="tab_dash_text" hidden>Hypen Text</option>
+                    <option value="tab9" data-i18n="tab_tasks" hidden>Task Tracker</option>
                 </select>
                 <button type="button" onclick="switchTab('tab1')" id="btnTab1" class="nav-tab is-active" aria-current="page">
                     <i class="fa-solid fa-wallet" aria-hidden="true"></i><span data-i18n="tab_salary">Agihan Gaji</span>
@@ -1122,8 +1573,18 @@
                 <button type="button" onclick="switchTab('tab8')" id="btnTab8" class="nav-tab" hidden>
                     <i class="fa-solid fa-text-width" aria-hidden="true"></i><span data-i18n="tab_dash_text">Hypen Text</span>
                 </button>
+                <button type="button" onclick="switchTab('tab9')" id="btnTab9" class="nav-tab" hidden>
+                    <i class="fa-solid fa-list-check" aria-hidden="true"></i><span data-i18n="tab_tasks">Task Tracker</span>
+                </button>
             </div>
         </nav>
+
+        <div id="noModulesNotice" class="glass-card shadow-soft empty-notice" role="status" hidden>
+            <span class="report-bar-icon" aria-hidden="true"><i class="fa-solid fa-eye-slash"></i></span>
+            <h2 data-i18n="no_modules_title">No modules available</h2>
+            <p class="no-modules-public" data-i18n="no_modules_public">There is nothing to show here right now. Please check back later.</p>
+            <p class="no-modules-admin" data-i18n="no_modules_admin">All modules are switched off. Use the visible tabs panel in the header to switch one on.</p>
+        </div>
 
         <div id="tab1" class="tab-content block">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -1753,6 +2214,291 @@
             </div>
         </div>
 
+        <div id="tab9" class="tab-content hidden">
+            <div class="flex flex-col gap-6">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="glass-card p-5 shadow-card border-l-4 border-l-brand-500">
+                        <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="task_kpi_total">Total tasks</p>
+                        <h3 class="font-display text-2xl font-extrabold text-brand-600 dark:text-brand-400" id="resTaskTotal">0</h3>
+                        <p class="text-xs font-medium mt-2" id="resTaskTotalNote">-</p>
+                    </div>
+                    <div class="glass-card p-5 shadow-card border-l-4 border-l-gold-500">
+                        <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="task_kpi_doing">On-going</p>
+                        <h3 class="font-display text-2xl font-extrabold text-gold-600 dark:text-gold-400" id="resTaskDoing">0</h3>
+                        <p class="text-xs font-medium mt-2" id="resTaskDoingNote">-</p>
+                    </div>
+                    <div class="glass-card p-5 shadow-card border-l-4 border-l-emerald-500">
+                        <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="task_kpi_done">Completed</p>
+                        <h3 class="font-display text-2xl font-extrabold text-emerald-600 dark:text-emerald-400" id="resTaskDone">0</h3>
+                        <p class="text-xs font-medium mt-2" id="resTaskDoneNote">-</p>
+                    </div>
+                    <!-- Click (or Enter/Space) switches this card between overall and today's progress -->
+                    <div id="taskProgressCard" class="glass-card p-5 shadow-card border-l-4 border-l-purple-500 task-progress-card" role="button" tabindex="0" aria-pressed="false">
+                        <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2"><span id="lblTaskProgress">Overall progress</span><i class="fa-solid fa-arrows-rotate task-kpi-switch" aria-hidden="true"></i></p>
+                        <h3 class="font-display text-2xl font-extrabold text-purple-600 dark:text-purple-400" id="resTaskProgress">0%</h3>
+                        <p class="text-xs font-medium mt-2" id="resTaskProgressNote">-</p>
+                        <div class="report-progress-track" role="img" aria-labelledby="lblTaskProgress resTaskProgress"><div id="taskOverallBar" class="report-progress-fill" style="width: 0%"></div></div>
+                    </div>
+                </div>
+
+                <div class="glass-card shadow-soft p-6 md:p-8">
+                    <div class="flex flex-wrap items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center">
+                            <i class="fa-solid fa-list-check text-lg"></i>
+                        </div>
+                        <div class="task-heading">
+                            <h2 class="font-display text-xl font-bold" data-i18n="task_title">Task tracker</h2>
+                            <p data-i18n="task_subtitle">Plan and track tasks and queries on a board or in a list.</p>
+                        </div>
+                        <div class="task-tools">
+                            <label id="taskStatusTool" class="task-tool">
+                                <i class="fa-solid fa-filter" aria-hidden="true"></i>
+                                <span class="sr-only" data-i18n="task_filter_status_label">Filter by status</span>
+                                <select id="selTaskStatusFilter">
+                                    <option value="all" data-i18n="task_filter_all_status">All statuses</option>
+                                    <option value="todo" data-i18n="task_status_todo">pending</option>
+                                    <option value="doing" data-i18n="task_status_doing">on-going</option>
+                                    <option value="done" data-i18n="task_status_done">completed</option>
+                                </select>
+                            </label>
+                            <label id="taskAssigneeTool" class="task-tool">
+                                <i class="fa-solid fa-user-tag" aria-hidden="true"></i>
+                                <span class="sr-only" data-i18n="task_filter_assignee_label">Filter by requester</span>
+                                <select id="selTaskAssigneeFilter"><option value="all">Everyone</option></select>
+                            </label>
+                            <div class="task-view-toggle is-compact" role="group" aria-labelledby="taskViewLabel">
+                                <span id="taskViewLabel" class="sr-only" data-i18n="task_view_label">View</span>
+                                <button type="button" data-task-view="board" aria-pressed="false"><i class="fa-solid fa-table-columns" aria-hidden="true"></i><span class="sr-only" data-i18n="task_view_board">Board</span></button>
+                                <button type="button" data-task-view="list" aria-pressed="true"><i class="fa-solid fa-list" aria-hidden="true"></i><span class="sr-only" data-i18n="task_view_list">List</span></button>
+                            </div>
+                            <button type="button" id="btnTaskWidgets" class="task-tool" aria-haspopup="true" aria-expanded="false" aria-controls="taskWidgetMenu">
+                                <i class="fa-solid fa-chart-pie" aria-hidden="true"></i>
+                                <span class="sr-only" data-i18n="task_widgets_button">Choose insight cards</span>
+                            </button>
+                            <div id="taskWidgetMenu" class="task-widget-menu" role="group" aria-labelledby="taskWidgetMenuHeading" hidden>
+                                <h2 id="taskWidgetMenuHeading" class="tab-visibility-menu-heading" data-i18n="task_widgets_menu_title">Insight cards</h2>
+                                <p class="tab-visibility-menu-help" data-i18n="task_widgets_help">Choose which insight cards to show.</p>
+                                <label class="tab-visibility-option"><input type="checkbox" data-task-widget-toggle="progress" checked><span data-i18n="task_analytics_title">Progress analytics</span></label>
+                                <label class="tab-visibility-option"><input type="checkbox" data-task-widget-toggle="platform" checked><span data-i18n="task_platform_title">Platform breakdown</span></label>
+                                <label class="tab-visibility-option"><input type="checkbox" data-task-widget-toggle="timeline" checked><span data-i18n="task_chart_timeline_title">Tasks by date</span></label>
+                                <label class="tab-visibility-option"><input type="checkbox" data-task-widget-toggle="completion" checked><span data-i18n="task_chart_completion_title">Completion rate</span></label>
+                            </div>
+                            <span class="task-tools-divider" aria-hidden="true"></span>
+                            <button type="button" id="btnTaskClearSelected" class="task-tool is-danger" disabled>
+                                <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                                <span id="lblTaskClearSelected" class="sr-only">Clear selected (0)</span>
+                                <span id="taskClearCount" class="task-badge" aria-hidden="true" hidden>0</span>
+                            </button>
+                            <button type="button" id="btnTaskClearAll" class="task-tool is-danger" disabled>
+                                <i class="fa-solid fa-broom" aria-hidden="true"></i>
+                                <span class="sr-only" data-i18n="task_clear_all">Clear all</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="task-controls">
+                        <form id="taskAddForm" class="task-add" autocomplete="off">
+                            <div class="task-field is-title">
+                                <label for="inpTaskTitle" data-i18n="task_new">New task</label>
+                                <input id="inpTaskTitle" type="text" maxlength="120">
+                            </div>
+                            <div class="task-field is-assignee">
+                                <label for="inpTaskAssignee" data-i18n="task_assignee">Requested by</label>
+                                <input id="inpTaskAssignee" type="text" maxlength="40" list="taskAssigneeOptions">
+                                <datalist id="taskAssigneeOptions"></datalist>
+                            </div>
+                            <div class="task-field is-platform">
+                                <label for="selTaskPlatform" data-i18n="task_platform">Platform</label>
+                                <select id="selTaskPlatform"></select>
+                            </div>
+                            <div id="taskPlatformCustomField" class="task-field is-platform" hidden>
+                                <label for="inpTaskPlatform" data-i18n="task_platform_custom_label">Other platform</label>
+                                <input id="inpTaskPlatform" type="text" maxlength="40">
+                            </div>
+                            <button type="submit" class="btn-primary"><i class="fa-solid fa-plus" aria-hidden="true"></i><span data-i18n="task_add">Add task</span></button>
+                        </form>
+                    </div>
+                    <div class="task-list-tools">
+                        <button type="button" id="btnTaskSelectMode" class="btn-ghost task-select-toggle" aria-pressed="false"><i class="fa-regular fa-square-check" aria-hidden="true"></i><span id="lblTaskSelectMode">Select</span></button>
+                        <label class="task-select-all" for="chkTaskSelectAll" hidden><input id="chkTaskSelectAll" type="checkbox" disabled><span data-i18n="task_select_all">Select all</span></label>
+                        <div class="task-search">
+                            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                            <label for="inpTaskSearch" class="sr-only" data-i18n="task_search">Search tasks</label>
+                            <input id="inpTaskSearch" type="search" autocomplete="off" spellcheck="false">
+                        </div>
+                    </div>
+                    <div id="taskItems"></div>
+                    <div id="taskPager" class="task-pager" hidden>
+                        <p id="taskPagerInfo" class="task-pager-info" role="status"></p>
+                        <div class="task-pager-controls">
+                            <label class="task-pager-size" for="selTaskPageSize"><span data-i18n="task_page_size">Per page</span>
+                                <select id="selTaskPageSize">
+                                    <option value="10" selected>10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                </select>
+                            </label>
+                            <nav id="taskPagerPages" class="task-pager-pages"></nav>
+                        </div>
+                    </div>
+                    <p class="task-storage-note" data-i18n="task_storage_note">Tasks are saved in this browser only.</p>
+                </div>
+
+                <div class="glass-card shadow-soft p-6 md:p-8 task-widget" data-task-widget="progress">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center">
+                            <i class="fa-solid fa-chart-simple text-lg"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-display text-xl font-bold" data-i18n="task_analytics_title">Progress analytics</h2>
+                            <p data-i18n="task_analytics_sub">Updates automatically as tasks change.</p>
+                        </div>
+                    </div>
+                    <div id="taskGauges" class="task-radial-pair" hidden>
+                      <section id="taskStatusRadial" class="task-radial">
+                        <h3 class="task-subhead task-radial-heading" data-i18n="task_radial_status_title">Progress and status</h3>
+                        <svg class="task-radial-chart" viewBox="0 0 300 300" role="img" aria-labelledby="taskRadialTitle">
+                            <title id="taskRadialTitle" data-i18n="task_radial_title">Progress and status at a glance</title>
+                            <!-- Rings start at 12 o'clock and run clockwise; outermost ring first -->
+                            <g transform="rotate(-90 150 150)">
+                                <circle class="task-radial-track" cx="150" cy="150" r="112" pathLength="100"></circle>
+                                <circle class="task-radial-track" cx="150" cy="150" r="94" pathLength="100"></circle>
+                                <circle class="task-radial-track" cx="150" cy="150" r="76" pathLength="100"></circle>
+                                <circle class="task-radial-track" cx="150" cy="150" r="58" pathLength="100"></circle>
+                            </g>
+                            <g class="task-radial-grid">
+                                <line x1="150.0" y1="102.0" x2="150.0" y2="28.0"></line>
+                                <line x1="194.3" y1="131.6" x2="262.7" y2="103.3"></line>
+                                <text x="272.9" y="99.1">25%</text>
+                                <line x1="183.9" y1="183.9" x2="236.3" y2="236.3"></line>
+                                <text x="244.0" y="244.0">50%</text>
+                                <line x1="131.6" y1="194.3" x2="103.3" y2="262.7"></line>
+                                <text x="99.1" y="272.9">75%</text>
+                                <line x1="102.0" y1="150.0" x2="28.0" y2="150.0"></line>
+                                <text x="17.0" y="150.0">100%</text>
+                            </g>
+                            <g transform="rotate(-90 150 150)">
+                                <circle id="gaugeTaskProgress" class="task-radial-value" style="--gauge: var(--accent)" cx="150" cy="150" r="112" pathLength="100"></circle>
+                                <circle id="gaugeTaskDone" class="task-radial-value" style="--gauge: var(--c-green)" cx="150" cy="150" r="94" pathLength="100"></circle>
+                                <circle id="gaugeTaskDoing" class="task-radial-value" style="--gauge: var(--c-amber)" cx="150" cy="150" r="76" pathLength="100"></circle>
+                                <circle id="gaugeTaskTodo" class="task-radial-value" style="--gauge: var(--muted-2)" cx="150" cy="150" r="58" pathLength="100"></circle>
+                            </g>
+                            <text id="gaugeTaskProgressLabel" class="task-radial-label" x="141" y="38"></text>
+                            <text id="gaugeTaskDoneLabel" class="task-radial-label" x="141" y="56"></text>
+                            <text id="gaugeTaskDoingLabel" class="task-radial-label" x="141" y="74"></text>
+                            <text id="gaugeTaskTodoLabel" class="task-radial-label" x="141" y="92"></text>
+                        </svg>
+                        <ul class="task-radial-legend">
+                            <li style="--gauge: var(--accent)">
+                                <span class="task-radial-dot" aria-hidden="true"></span>
+                                <div>
+                                    <p class="task-radial-name" data-i18n="task_kpi_progress">Overall progress</p>
+                                    <p id="gaugeTaskProgressNote" class="task-radial-note"></p>
+                                </div>
+                                <strong id="gaugeTaskProgressText">0%</strong>
+                            </li>
+                            <li style="--gauge: var(--c-green)">
+                                <span class="task-radial-dot" aria-hidden="true"></span>
+                                <div>
+                                    <p class="task-radial-name" data-i18n="task_status_done">completed</p>
+                                    <p id="gaugeTaskDoneNote" class="task-radial-note"></p>
+                                </div>
+                                <strong id="gaugeTaskDoneText">0%</strong>
+                            </li>
+                            <li style="--gauge: var(--c-amber)">
+                                <span class="task-radial-dot" aria-hidden="true"></span>
+                                <div>
+                                    <p class="task-radial-name" data-i18n="task_status_doing">on-going</p>
+                                    <p id="gaugeTaskDoingNote" class="task-radial-note"></p>
+                                </div>
+                                <strong id="gaugeTaskDoingText">0%</strong>
+                            </li>
+                            <li style="--gauge: var(--muted-2)">
+                                <span class="task-radial-dot" aria-hidden="true"></span>
+                                <div>
+                                    <p class="task-radial-name" data-i18n="task_status_todo">pending</p>
+                                    <p id="gaugeTaskTodoNote" class="task-radial-note"></p>
+                                </div>
+                                <strong id="gaugeTaskTodoText">0%</strong>
+                            </li>
+                        </ul>
+                      </section>
+                      <section id="taskPlatformRadial" class="task-radial">
+                        <h3 class="task-subhead task-radial-heading" data-i18n="task_radial_platform_title">Progress by platform</h3>
+                        <svg id="taskPlatformRadialChart" class="task-radial-chart" viewBox="0 0 300 300" role="img" aria-labelledby="taskPlatformRadial-title"></svg>
+                        <ul id="taskPlatformRadialLegend" class="task-radial-legend"></ul>
+                        <p id="taskPlatformRadialMore" class="task-radial-more"></p>
+                      </section>
+                    </div>
+                    <div id="taskAnalytics"></div>
+                </div>
+
+                <div class="glass-card shadow-soft p-6 md:p-8 task-widget" data-task-widget="platform">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center">
+                            <i class="fa-solid fa-layer-group text-lg"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-display text-xl font-bold" data-i18n="task_platform_title">Platform breakdown</h2>
+                            <p data-i18n="task_platform_sub">How your tasks are spread across platforms.</p>
+                        </div>
+                    </div>
+                    <p id="taskPlatformEmpty" class="report-empty" data-i18n="task_platform_empty">Add tasks to see the platform breakdown.</p>
+                    <div id="taskPlatformInsights" hidden>
+                        <div id="taskPlatformKpis" class="report-kpis task-platform-kpis"></div>
+                        <div class="task-platform-charts">
+                            <div>
+                                <h3 class="task-subhead" data-i18n="task_platform_share_title">Share of tasks</h3>
+                                <div class="breakdown-layout">
+                                    <div class="breakdown-donut">
+                                        <canvas id="taskPlatformShareChart" role="img" aria-labelledby="taskPlatformShareLabel taskPlatformTotal"></canvas>
+                                        <div class="breakdown-center">
+                                            <span id="taskPlatformShareLabel" class="breakdown-center-label" data-i18n="task_kpi_total">Total tasks</span>
+                                            <strong id="taskPlatformTotal" class="breakdown-center-value">0</strong>
+                                        </div>
+                                    </div>
+                                    <ul id="taskPlatformLegend" class="breakdown-legend"></ul>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="task-subhead" data-i18n="task_platform_status_title">Status by platform</h3>
+                                <div id="taskPlatformStatusWrap" class="relative w-full"><canvas id="taskPlatformStatusChart"></canvas></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task-chart-grid">
+                    <div class="glass-card chart-panel shadow-soft p-6 flex flex-col relative task-widget" data-task-widget="timeline">
+                        <div class="task-chart-head">
+                            <h2 class="font-display text-lg font-bold" data-i18n="task_chart_timeline_title">Tasks by date</h2>
+                            <div class="task-view-toggle is-compact" role="group" aria-labelledby="taskPeriodLabelA">
+                                <span id="taskPeriodLabelA" class="sr-only" data-i18n="task_period_label">Group by</span>
+                                <button type="button" data-task-period="daily" aria-pressed="true" data-i18n="task_period_daily">Daily</button>
+                                <button type="button" data-task-period="weekly" aria-pressed="false" data-i18n="task_period_weekly">Weekly</button>
+                                <button type="button" data-task-period="monthly" aria-pressed="false" data-i18n="task_period_monthly">Monthly</button>
+                            </div>
+                        </div>
+                        <div class="task-chart relative w-full flex-grow min-h-[280px]"><canvas id="taskTimelineChart"></canvas></div>
+                        <p class="report-empty task-chart-empty" data-i18n="task_chart_empty" hidden>Add a date to your tasks to see this chart.</p>
+                        <p id="taskChartNote" class="task-chart-note"></p>
+                    </div>
+                    <div class="glass-card chart-panel shadow-soft p-6 flex flex-col relative task-widget" data-task-widget="completion">
+                        <div class="task-chart-head">
+                            <h2 class="font-display text-lg font-bold" data-i18n="task_chart_completion_title">Completion rate</h2>
+                            <div class="task-view-toggle is-compact" role="group" aria-labelledby="taskPeriodLabelB">
+                                <span id="taskPeriodLabelB" class="sr-only" data-i18n="task_period_label">Group by</span>
+                                <button type="button" data-task-period="daily" aria-pressed="true" data-i18n="task_period_daily">Daily</button>
+                                <button type="button" data-task-period="weekly" aria-pressed="false" data-i18n="task_period_weekly">Weekly</button>
+                                <button type="button" data-task-period="monthly" aria-pressed="false" data-i18n="task_period_monthly">Monthly</button>
+                            </div>
+                        </div>
+                        <div class="task-chart relative w-full flex-grow min-h-[280px]"><canvas id="taskCompletionChart"></canvas></div>
+                        <p class="report-empty task-chart-empty" data-i18n="task_chart_empty" hidden>Add a date to your tasks to see this chart.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <dialog id="weddingReportDialog" class="report-dialog" aria-labelledby="weddingReportTitle">
             <div class="report-head">
                 <div class="report-head-copy">
@@ -1766,6 +2512,24 @@
                 </div>
             </div>
             <div id="weddingReportBody" class="report-body"></div>
+        </dialog>
+
+        <dialog id="taskConfirmDialog" class="admin-dialog" aria-labelledby="taskConfirmTitle" aria-describedby="taskConfirmMessage">
+            <form id="taskConfirmForm" class="glass-card shadow-soft">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center">
+                        <i class="fa-solid fa-trash-can text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 id="taskConfirmTitle" data-i18n="task_confirm_title">Delete tasks?</h2>
+                        <p id="taskConfirmMessage"></p>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" id="btnTaskConfirmCancel" class="btn-ghost" data-i18n="admin_cancel">Cancel</button>
+                    <button type="submit" class="btn-primary btn-danger" data-i18n="task_confirm_delete">Delete</button>
+                </div>
+            </form>
         </dialog>
 
         <dialog id="adminLoginDialog" class="admin-dialog" aria-labelledby="adminLoginTitle">
@@ -1806,7 +2570,7 @@
         // Role-based access: these modules are reachable only after an admin signs in.
         // The page is static, so the passcode only keeps them out of the public UI;
         // their markup still ships to every browser. Do not rely on it to protect real secrets.
-        const ADMIN_TAB_IDS = ['tab4', 'tab7', 'tab8'];
+        const ADMIN_TAB_IDS = ['tab4', 'tab7', 'tab8', 'tab9'];
         const ADMIN_PASSCODE_HASH = 'a35c5f63916fff41369754c7a01cc4a82e9e3e5f1e05628791b5f5770435d6b0'; // SHA-256 of the passcode
         const ADMIN_SESSION_KEY = 'financialPlannerAdmin';
         // The admin's tab selection. It is kept in this browser's localStorage, so it drives the
@@ -1833,6 +2597,9 @@
                 tab_visibility_button: "Sesuaikan tab yang dipaparkan",
                 tab_visibility_title: "Tab yang dipaparkan",
                 tab_visibility_help: "Menetapkan tab dalam paparan awam pada pelayar ini.",
+                no_modules_title: "Tiada modul tersedia",
+                no_modules_public: "Tiada apa-apa untuk dipaparkan buat masa ini. Sila kembali kemudian.",
+                no_modules_admin: "Semua modul dimatikan. Gunakan panel tab di bahagian atas untuk menghidupkan modul.",
                 admin_login_button: "Log masuk admin",
                 admin_label: "Admin",
                 admin_modules: "Modul admin sahaja",
@@ -1852,6 +2619,125 @@
                 tab_wedding: "Simpanan Perkahwinan",
                 tab_daily_dividend: "Dividen Harian",
                 tab_dash_text: "Teks Tanpa Sengkang",
+                tab_tasks: "Penjejak Tugasan",
+                task_title: "Penjejak tugasan",
+                task_subtitle: "Rancang dan jejak tugasan serta kuiri dalam papan atau senarai.",
+                task_new: "Tugasan baharu",
+                task_new_placeholder: "Apa yang perlu dibuat?",
+                task_assignee: "Daripada",
+                task_assignee_placeholder: "Siapa yang minta?",
+                task_unassigned: "Tiada nama",
+                task_add: "Tambah",
+                task_filter_status: "Status",
+                task_filter_status_label: "Tapis status",
+                task_filter_assignee_label: "Tapis ikut orang",
+                task_filter_all_status: "Semua status",
+                task_filter_all_assignees: "Semua orang",
+                task_status_todo: "belum mula",
+                task_status_doing: "sedang berjalan",
+                task_status_done: "selesai",
+                task_view_label: "Paparan",
+                task_view_board: "Papan",
+                task_view_list: "Senarai",
+                task_empty: "Tiada tugasan lagi. Tambah tugasan pertama anda di atas.",
+                task_empty_filtered: "Tiada tugasan yang sepadan dengan penapis ini.",
+                task_column_empty: "Tiada tugasan",
+                task_delete: "Padam tugasan",
+                task_title_label: "Tajuk tugasan",
+                task_progress_label: "Kemajuan",
+                task_search: "Cari tugasan",
+                task_search_placeholder: "Cari ikut tugasan, orang atau platform",
+                task_select_all: "Pilih semua",
+                task_select_mode: "Pilih",
+                task_select_cancel: "Batal",
+                task_select_one: "Pilih tugasan",
+                task_clear_selected: "Padam dipilih ({count})",
+                task_clear_all: "Padam semua",
+                task_confirm_title: "Padam tugasan?",
+                task_confirm_selected: "Tugasan dipilih yang akan dipadam: {count}. Tindakan ini tidak boleh dibatalkan.",
+                task_confirm_all: "Semua tugasan akan dipadam: {count}. Tindakan ini tidak boleh dibatalkan.",
+                task_confirm_delete: "Padam",
+                task_page_info: "Memaparkan {from}–{to} daripada {total}",
+                task_page_size: "Setiap halaman",
+                task_page_prev: "Halaman sebelumnya",
+                task_page_next: "Halaman seterusnya",
+                task_page_number: "Halaman {page}",
+                task_pager_label: "Halaman tugasan",
+                task_date: "Tarikh",
+                task_platform: "Platform",
+                task_platform_none: "Tiada",
+                task_platform_other: "lain-lain",
+                task_platform_custom: "Taip platform",
+                task_platform_custom_label: "Platform lain",
+                task_period_label: "Kumpul mengikut",
+                task_period_daily: "Harian",
+                task_period_weekly: "Mingguan",
+                task_period_monthly: "Bulanan",
+                task_unit_daily: "hari",
+                task_unit_weekly: "minggu",
+                task_unit_monthly: "bulan",
+                task_platform_title: "Pecahan platform",
+                task_platform_sub: "Taburan tugasan anda mengikut platform.",
+                task_platform_empty: "Tambah tugasan untuk melihat pecahan platform.",
+                task_platform_unset: "Tiada platform",
+                task_platform_share_title: "Bahagian tugasan",
+                task_platform_status_title: "Status mengikut platform",
+                task_platform_kpi_used: "Platform digunakan",
+                task_platform_kpi_used_note: "Tugasan tanpa platform: {count}",
+                task_platform_kpi_top: "Paling banyak tugasan",
+                task_platform_kpi_top_note: "{count} daripada {total} tugasan ({pct}%)",
+                task_platform_kpi_open: "Paling banyak belum selesai",
+                task_platform_kpi_open_note: "Masih terbuka: {count}",
+                task_platform_kpi_open_none: "Tiada yang terbuka",
+                task_platform_kpi_best: "Penyiapan tertinggi",
+                task_platform_kpi_best_note: "{done} daripada {total} selesai ({pct}%)",
+                task_platform_kpi_none: "Belum ada platform ditetapkan",
+                task_chart_timeline_title: "Tugasan mengikut tarikh",
+                task_chart_completion_title: "Kadar penyiapan",
+                task_widgets_help: "Pilih kad cerapan yang ingin dipaparkan.",
+                task_widgets_summary: "{shown} daripada {total} kad dipaparkan",
+                task_widgets_button: "Pilih kad cerapan",
+                task_widgets_menu_title: "Kad cerapan",
+                task_chart_completed: "Tugasan selesai",
+                task_chart_progress: "Purata kemajuan",
+                task_chart_empty: "Tambah tarikh pada tugasan untuk melihat carta ini.",
+                task_chart_capped: "Memaparkan {count} {unit} terkini.",
+                task_chart_undated: "Tugasan tanpa tarikh tidak disertakan: {count}.",
+                task_week_of: "Minggu bermula {date}",
+                task_col_task: "Tugasan",
+                task_storage_note: "Tugasan disimpan dalam pelayar ini sahaja.",
+                task_kpi_total: "Jumlah tugasan",
+                task_kpi_doing: "Sedang berjalan",
+                task_kpi_done: "Selesai",
+                task_kpi_progress: "Kemajuan keseluruhan",
+                task_kpi_progress_daily: "Kemajuan harian",
+                task_progress_overall_note: "Purata semua {total} tugasan",
+                task_progress_daily_note: "{done} daripada {total} tugasan hari ini selesai",
+                task_progress_daily_none: "Tiada tugasan ditambah hari ini",
+                task_progress_switch_daily: "Klik untuk kemajuan hari ini",
+                task_progress_switch_overall: "Klik untuk kemajuan keseluruhan",
+                task_note_open: "{count} masih terbuka",
+                task_note_todo: "{count} belum mula",
+                task_note_done_pct: "{pct}% daripada tugasan",
+                task_analytics_title: "Analitik kemajuan",
+                task_analytics_sub: "Dikemas kini secara automatik apabila tugasan berubah.",
+                task_analytics_empty: "Tambah tugasan untuk melihat analitik kemajuan.",
+                task_radial_title: "Kemajuan dan status sepintas lalu",
+                task_radial_status_title: "Kemajuan dan status",
+                task_radial_platform_title: "Kemajuan mengikut platform",
+                task_radial_platform_note: "{done} daripada {total} tugasan selesai",
+                task_radial_platform_more: "Memaparkan {count} platform dengan tugasan terbanyak. Selebihnya ada dalam Pecahan platform.",
+                task_gauge_progress_note: "Purata bar kemajuan semua tugasan",
+                task_gauge_done_note: "{count} daripada {total} tugasan telah selesai",
+                task_gauge_doing_note: "{count} daripada {total} tugasan sedang dibuat",
+                task_gauge_todo_note: "{count} daripada {total} tugasan belum dimulakan",
+                task_by_status: "Mengikut status",
+                task_by_assignee: "Mengikut orang",
+                task_assignee_done: "{done}/{total} selesai",
+                task_insight_remaining: "{open} tugasan berbaki, {doing} sedang berjalan.",
+                task_insight_all_done: "Semua tugasan telah selesai.",
+                task_insight_workload: "Tugasan terbuka paling banyak datang daripada {name} ({count}).",
+                task_insight_unassigned: "{count} tugasan terbuka tiada nama peminta.",
                 dash_text_title: "Buang sengkang daripada teks",
                 dash_text_help: "Sengkang dibuang secara automatik semasa anda menaip; aksara lain dikekalkan.",
                 dash_text_input: "Masukkan nombor bersengkang",
@@ -2075,6 +2961,9 @@
                 tab_visibility_button: "Customize visible tabs",
                 tab_visibility_title: "Visible tabs",
                 tab_visibility_help: "Sets the tabs shown in the public view on this browser.",
+                no_modules_title: "No modules available",
+                no_modules_public: "There is nothing to show here right now. Please check back later.",
+                no_modules_admin: "All modules are switched off. Use the visible tabs panel in the header to switch one on.",
                 admin_login_button: "Admin sign-in",
                 admin_label: "Admin",
                 admin_modules: "Admin-only modules",
@@ -2094,6 +2983,125 @@
                 tab_wedding: "Wedding Savings",
                 tab_daily_dividend: "Daily Dividend",
                 tab_dash_text: "Hypen Text",
+                tab_tasks: "Task Tracker",
+                task_title: "Task tracker",
+                task_subtitle: "Plan and track tasks and queries on a board or in a list.",
+                task_new: "New task",
+                task_new_placeholder: "What needs to be done?",
+                task_assignee: "Requested by",
+                task_assignee_placeholder: "Who asked?",
+                task_unassigned: "No name",
+                task_add: "Add task",
+                task_filter_status: "Status",
+                task_filter_status_label: "Filter by status",
+                task_filter_assignee_label: "Filter by requester",
+                task_filter_all_status: "All statuses",
+                task_filter_all_assignees: "Everyone",
+                task_status_todo: "pending",
+                task_status_doing: "on-going",
+                task_status_done: "completed",
+                task_view_label: "View",
+                task_view_board: "Board",
+                task_view_list: "List",
+                task_empty: "No tasks yet. Add your first task above.",
+                task_empty_filtered: "No tasks match these filters.",
+                task_column_empty: "No tasks",
+                task_delete: "Delete task",
+                task_title_label: "Task title",
+                task_progress_label: "Progress",
+                task_search: "Search tasks",
+                task_search_placeholder: "Search by task, requester or platform",
+                task_select_all: "Select all",
+                task_select_mode: "Select",
+                task_select_cancel: "Cancel",
+                task_select_one: "Select task",
+                task_clear_selected: "Clear selected ({count})",
+                task_clear_all: "Clear all",
+                task_confirm_title: "Delete tasks?",
+                task_confirm_selected: "Selected tasks to be deleted: {count}. This cannot be undone.",
+                task_confirm_all: "All tasks will be deleted: {count}. This cannot be undone.",
+                task_confirm_delete: "Delete",
+                task_page_info: "Showing {from}–{to} of {total}",
+                task_page_size: "Per page",
+                task_page_prev: "Previous page",
+                task_page_next: "Next page",
+                task_page_number: "Page {page}",
+                task_pager_label: "Task pages",
+                task_date: "Date",
+                task_platform: "Platform",
+                task_platform_none: "none",
+                task_platform_other: "other",
+                task_platform_custom: "Type a platform",
+                task_platform_custom_label: "Other platform",
+                task_period_label: "Group by",
+                task_period_daily: "Daily",
+                task_period_weekly: "Weekly",
+                task_period_monthly: "Monthly",
+                task_unit_daily: "days",
+                task_unit_weekly: "weeks",
+                task_unit_monthly: "months",
+                task_platform_title: "Platform breakdown",
+                task_platform_sub: "How your tasks are spread across platforms.",
+                task_platform_empty: "Add tasks to see the platform breakdown.",
+                task_platform_unset: "No platform",
+                task_platform_share_title: "Share of tasks",
+                task_platform_status_title: "Status by platform",
+                task_platform_kpi_used: "Platforms in use",
+                task_platform_kpi_used_note: "Tasks with no platform: {count}",
+                task_platform_kpi_top: "Most tasks",
+                task_platform_kpi_top_note: "{count} of {total} tasks ({pct}%)",
+                task_platform_kpi_open: "Most open tasks",
+                task_platform_kpi_open_note: "Still open: {count}",
+                task_platform_kpi_open_none: "Nothing open",
+                task_platform_kpi_best: "Highest completion",
+                task_platform_kpi_best_note: "{done} of {total} completed ({pct}%)",
+                task_platform_kpi_none: "No platform set yet",
+                task_chart_timeline_title: "Tasks by date",
+                task_chart_completion_title: "Completion rate",
+                task_widgets_help: "Choose which insight cards to show.",
+                task_widgets_summary: "{shown} of {total} cards shown",
+                task_widgets_button: "Choose insight cards",
+                task_widgets_menu_title: "Insight cards",
+                task_chart_completed: "Tasks completed",
+                task_chart_progress: "Average progress",
+                task_chart_empty: "Add a date to your tasks to see this chart.",
+                task_chart_capped: "Showing the latest {count} {unit}.",
+                task_chart_undated: "Tasks without a date are left out: {count}.",
+                task_week_of: "Week of {date}",
+                task_col_task: "Task",
+                task_storage_note: "Tasks are saved in this browser only.",
+                task_kpi_total: "Total tasks",
+                task_kpi_doing: "On-going",
+                task_kpi_done: "Completed",
+                task_kpi_progress: "Overall progress",
+                task_kpi_progress_daily: "Daily progress",
+                task_progress_overall_note: "Average across all {total} tasks",
+                task_progress_daily_note: "{done} of {total} tasks added today completed",
+                task_progress_daily_none: "No tasks added today",
+                task_progress_switch_daily: "Click to show today's progress",
+                task_progress_switch_overall: "Click to show overall progress",
+                task_note_open: "{count} still open",
+                task_note_todo: "{count} pending",
+                task_note_done_pct: "{pct}% of tasks",
+                task_analytics_title: "Progress analytics",
+                task_analytics_sub: "Updates automatically as tasks change.",
+                task_analytics_empty: "Add tasks to see progress analytics.",
+                task_radial_title: "Progress and status at a glance",
+                task_radial_status_title: "Progress and status",
+                task_radial_platform_title: "Progress by platform",
+                task_radial_platform_note: "{done} of {total} tasks completed",
+                task_radial_platform_more: "Showing the {count} platforms with the most tasks. The rest are in Platform breakdown.",
+                task_gauge_progress_note: "Average of every task's progress bar",
+                task_gauge_done_note: "{count} of {total} tasks are completed",
+                task_gauge_doing_note: "{count} of {total} tasks are on-going",
+                task_gauge_todo_note: "{count} of {total} tasks are pending",
+                task_by_status: "By status",
+                task_by_assignee: "By requester",
+                task_assignee_done: "{done}/{total} completed",
+                task_insight_remaining: "Tasks remaining: {open}, with {doing} on-going.",
+                task_insight_all_done: "All tasks are complete.",
+                task_insight_workload: "Most open tasks are from {name} ({count}).",
+                task_insight_unassigned: "Open tasks with no requester recorded: {count}.",
                 dash_text_title: "Remove dashes from text",
                 dash_text_help: "Dashes are removed automatically as you type; other characters are preserved.",
                 dash_text_input: "Enter dashed numbers",
@@ -2352,13 +3360,6 @@
                 .filter(input => input.checked)
                 .map(input => input.dataset.tabId);
 
-            // The public view always needs a public module to land on
-            const visiblePublicCount = visibleTabIds.filter(id => !isAdminTab(id)).length;
-            if (visiblePublicCount === 0) {
-                checkbox.checked = true;
-                return;
-            }
-
             const tabNumber = tabId.slice(3);
             document.getElementById(`btnTab${tabNumber}`).hidden = !isVisible;
             const moduleSelector = document.getElementById('moduleSelector');
@@ -2374,12 +3375,21 @@
                 moduleOption.remove();
             }
 
-            document.querySelectorAll('[data-tab-id]').forEach(input => {
-                input.disabled = input.checked && visiblePublicCount === 1 && !isAdminTab(input.dataset.tabId);
-            });
+            // Every module can be switched off; the notice then stands in for the navigation
+            const hasVisibleTabs = visibleTabIds.length > 0;
+            document.querySelector('.app-nav-shell').hidden = !hasVisibleTabs;
+            document.getElementById('noModulesNotice').hidden = hasVisibleTabs;
 
             if (!isVisible && activeTabId === tabId) {
-                switchTab(visibleTabIds[0]);
+                if (hasVisibleTabs) {
+                    switchTab(visibleTabIds[0]);
+                } else {
+                    activeTabId = null;
+                    document.getElementById(tabId).classList.add('hidden');
+                }
+            } else if (isVisible && activeTabId === null) {
+                // First module back after everything was off
+                switchTab(tabId);
             } else {
                 moduleSelector.value = activeTabId;
             }
@@ -2390,11 +3400,10 @@
             const inputs = [...document.querySelectorAll('[data-tab-id]')];
             try {
                 const stored = JSON.parse(localStorage.getItem(TAB_VISIBILITY_KEY));
-                // Ignore anything unusable, including a selection that leaves no public module
-                const hasPublicTab = Array.isArray(stored) && stored.some(id =>
-                    !isAdminTab(id) && inputs.some(input => input.dataset.tabId === id)
-                );
-                if (hasPublicTab) return stored;
+                // An empty list is a real choice (everything off); a list of nothing recognisable is not
+                const isUsable = Array.isArray(stored)
+                    && (stored.length === 0 || stored.some(id => inputs.some(input => input.dataset.tabId === id)));
+                if (isUsable) return stored;
             } catch (storageError) {
                 console.warn('Saved tab selection could not be read; using the defaults.', storageError);
             }
@@ -2419,7 +3428,7 @@
             const inputs = [...document.querySelectorAll('[data-tab-id]')];
             const shouldShow = input => visibleTabIds.includes(input.dataset.tabId)
                 && (isAdmin || !isAdminTab(input.dataset.tabId));
-            // Show before hiding so a public tab is always left to fall back to
+            // Show before hiding so the open tab has somewhere to fall back to
             inputs.filter(input => !input.checked && shouldShow(input))
                 .forEach(input => applyTabVisibility(input.dataset.tabId, true));
             inputs.filter(input => input.checked && !shouldShow(input))
@@ -2537,6 +3546,8 @@
             });
             updateDashFreeText();
             setAdminMode(false);
+            // Tasks stay saved, but leave the page once the admin is gone
+            renderTaskTracker();
             document.getElementById('btnAdminLogin').focus();
         };
 
@@ -2731,7 +3742,8 @@
                 tab4: calcWithdrawalLoss,
                 tab5: calcEmergencyFund,
                 tab6: calcWeddingSavings,
-                tab7: calcDailyDividend
+                tab7: calcDailyDividend,
+                tab9: renderTaskTracker
             };
             if (calculators[tabId]) calculators[tabId]();
         };
@@ -4296,6 +5308,995 @@
             document.getElementById('btnCopyDashFreeText').addEventListener('click', copyDashFreeText);
         };
 
+        // --- Task tracker: board/list views over tasks kept in this browser ---
+        const TASK_TAB_ID = 'tab9';
+        const TASKS_KEY = 'financialPlannerTasks';
+        // Insight cards the user has switched off. Only the hidden ones are stored, so a card
+        // added later starts out visible like the rest.
+        const TASK_WIDGETS_KEY = 'financialPlannerTaskWidgets';
+        const TASK_WIDGETS = ['progress', 'platform', 'timeline', 'completion'];
+        let hiddenTaskWidgets = new Set();
+        const TASK_STATUSES = ['todo', 'doing', 'done'];
+        let taskItems = [];
+        let taskView = 'list';
+        let taskPeriod = 'daily';
+        // List paging and the tasks ticked for batch clearing
+        let taskPage = 1;
+        let taskPageSize = 10;
+        let taskRevealId = null;
+        let taskMatchingIds = [];
+        let taskConfirmAction = null;
+        // Row checkboxes only exist while select mode is on
+        let taskSelectMode = false;
+        // What the progress card is showing: every task, or only the ones added today
+        let taskProgressMode = 'overall';
+        // Platform choices: fixed presets, then any custom names already used on a task
+        const TASK_PLATFORMS = ['hrmis', 'eP', 'mygpki', 'spmb'];
+        const TASK_PLATFORM_OTHER = '__other__';
+        let taskPlatformChoices = TASK_PLATFORMS;
+        const selectedTaskIds = new Set();
+        let chartTaskTimeline = null;
+        let chartTaskCompletion = null;
+        let chartTaskPlatformShare = null;
+        let chartTaskPlatformStatus = null;
+        // How many days, weeks or months the date charts show at most
+        const TASK_PERIOD_LIMITS = { daily: 14, weekly: 12, monthly: 12 };
+        const TASK_DATE_PATTERN = /^20\d{2}-\d{2}-\d{2}$/;
+
+        const newTaskId = () => `t${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+
+        const loadHiddenTaskWidgets = () => {
+            try {
+                const stored = JSON.parse(localStorage.getItem(TASK_WIDGETS_KEY));
+                return new Set(Array.isArray(stored) ? stored.filter(id => TASK_WIDGETS.includes(id)) : []);
+            } catch (storageError) {
+                console.warn('Saved insight layout could not be read; showing every card.', storageError);
+                return new Set();
+            }
+        };
+
+        // Shows or hides each insight card to match the checkboxes
+        const applyTaskWidgets = () => {
+            document.querySelectorAll('[data-task-widget]').forEach(card => {
+                card.hidden = hiddenTaskWidgets.has(card.dataset.taskWidget);
+            });
+            document.querySelectorAll('[data-task-widget-toggle]').forEach(toggle => {
+                toggle.checked = !hiddenTaskWidgets.has(toggle.dataset.taskWidgetToggle);
+            });
+            const dateCharts = ['timeline', 'completion'].filter(id => !hiddenTaskWidgets.has(id)).length;
+            const chartGrid = document.querySelector('.task-chart-grid');
+            chartGrid.hidden = !dateCharts;
+            chartGrid.classList.toggle('is-single', dateCharts === 1);
+            // The icon is all there is to see, so its tooltip says how many cards are on
+            const shownCount = TASK_WIDGETS.length - hiddenTaskWidgets.size;
+            const settingsButton = document.getElementById('btnTaskWidgets');
+            settingsButton.title = `${t('task_widgets_button')} (${tf('task_widgets_summary', { shown: shownCount, total: TASK_WIDGETS.length })})`;
+            settingsButton.classList.toggle('is-active', hiddenTaskWidgets.size > 0);
+        };
+
+        const toggleTaskWidgetMenu = (forceOpen) => toggleHeaderMenu('taskWidgetMenu', 'btnTaskWidgets', forceOpen);
+
+        const loadTasks = () => {
+            try {
+                const stored = JSON.parse(localStorage.getItem(TASKS_KEY));
+                if (!Array.isArray(stored)) return [];
+                return stored
+                    .filter(task => task && typeof task.title === 'string' && task.title.trim())
+                    .map(task => ({
+                        // Ids end up in selectors, so anything unexpected is replaced
+                        id: /^[\w-]+$/.test(task.id) ? task.id : newTaskId(),
+                        title: task.title.trim(),
+                        assignee: typeof task.assignee === 'string' ? task.assignee.trim() : '',
+                        status: TASK_STATUSES.includes(task.status) ? task.status : 'todo',
+                        progress: Math.min(99, Math.max(0, Math.round(Number(task.progress)) || 0)),
+                        date: TASK_DATE_PATTERN.test(task.date) ? task.date : '',
+                        time: /^\d{2}:\d{2}:\d{2}$/.test(task.time) ? task.time : '',
+                        platform: typeof task.platform === 'string' ? task.platform.trim().slice(0, 40) : ''
+                    }));
+            } catch (storageError) {
+                console.warn('Saved tasks could not be read; starting with an empty tracker.', storageError);
+                return [];
+            }
+        };
+
+        const saveTasks = () => {
+            try {
+                localStorage.setItem(TASKS_KEY, JSON.stringify(taskItems));
+            } catch (storageError) {
+                console.warn('Tasks could not be saved; they last until the page reloads.', storageError);
+            }
+        };
+
+        // Status wins at the ends: done is always 100% and to-do 0%. The stored figure is kept
+        // underneath, so reopening a finished task brings back where it stood.
+        const taskProgress = task => task.status === 'done' ? 100 : task.status === 'todo' ? 0 : task.progress;
+
+        const setTaskProgress = (task, progress) => {
+            if (progress >= 100) {
+                task.status = 'done';
+            } else if (progress <= 0) {
+                task.status = 'todo';
+                task.progress = 0;
+            } else {
+                task.status = 'doing';
+                task.progress = progress;
+            }
+        };
+
+        // The same name always gets the same tag colour
+        const taskAssigneeColor = name => {
+            if (!name) return chartTheme().other;
+            const palette = chartTheme().categorical;
+            const hash = [...name.toLowerCase()].reduce((total, char) => (total * 31 + char.codePointAt(0)) % 9973, 7);
+            return palette[hash % palette.length];
+        };
+
+        // Initials for a named assignee, a generic icon for unassigned work
+        const taskTagDot = name => {
+            const content = name
+                ? escapeHtml(name.split(/\s+/).slice(0, 2).map(part => [...part][0].toUpperCase()).join(''))
+                : '<i class="fa-solid fa-user"></i>';
+            return `<span class="task-tag-dot" aria-hidden="true">${content}</span>`;
+        };
+
+        // Task dates are plain YYYY-MM-DD strings, read and written in local time
+        const toIsoDate = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        const parseIsoDate = iso => {
+            const [year, month, day] = iso.split('-').map(Number);
+            return new Date(year, month - 1, day);
+        };
+
+        // Shown as DD/MM/YYYY; tasks saved before dates were logged have none
+        const formatTaskDate = iso => iso ? iso.split('-').reverse().join('/') : '–';
+
+        // Task names and requesters are kept in lowercase; the caret stays put while typing
+        const lowercaseInput = input => {
+            const lower = input.value.toLowerCase();
+            if (lower === input.value) return;
+            const { selectionStart, selectionEnd } = input;
+            input.value = lower;
+            input.setSelectionRange(selectionStart, selectionEnd);
+        };
+
+        // Earliest date and time first; tasks without a date go last
+        const byTaskDate = (a, b) => `${a.date || '9999'} ${a.time}`.localeCompare(`${b.date || '9999'} ${b.time}`);
+
+        // While the module is restricted, its content is only used for a signed-in admin
+        const accessibleTasks = () => isAdmin || !isAdminTab(TASK_TAB_ID) ? taskItems : [];
+
+        // Options for a platform dropdown; "Other…" leads to typing a name of your own
+        const taskPlatformOptionsHtml = selected => `<option value="">${t('task_platform_none')}</option>`
+            + taskPlatformChoices.map(name =>
+                `<option value="${escapeHtml(name)}"${name === selected ? ' selected' : ''}>${escapeHtml(name)}</option>`).join('')
+            + `<option value="${TASK_PLATFORM_OTHER}"${selected === TASK_PLATFORM_OTHER ? ' selected' : ''}>${t('task_platform_other')}</option>`;
+
+        const taskCardHtml = task => {
+            const progress = taskProgress(task);
+            const statusOptions = TASK_STATUSES.map(status =>
+                `<option value="${status}"${status === task.status ? ' selected' : ''}>${t(`task_status_${status}`)}</option>`
+            ).join('');
+            return `
+                <article class="task-card${task.status === 'done' ? ' is-done' : ''}${selectedTaskIds.has(task.id) ? ' is-selected' : ''}" data-task-id="${task.id}">
+                    ${taskSelectMode ? `<input type="checkbox" data-field="select"${selectedTaskIds.has(task.id) ? ' checked' : ''} aria-label="${t('task_select_one')}">` : ''}
+                    <input class="task-title" type="text" data-field="title" maxlength="120" value="${escapeHtml(task.title)}" aria-label="${t('task_title_label')}">
+                    <label class="task-tag" style="--tag: ${taskAssigneeColor(task.assignee)}">
+                        ${taskTagDot(task.assignee)}
+                        <input type="text" data-field="assignee" maxlength="40" list="taskAssigneeOptions" value="${escapeHtml(task.assignee)}" placeholder="${t('task_unassigned')}" aria-label="${t('task_assignee')}">
+                    </label>
+                    <span class="task-date" title="${t('task_date')}"><i class="fa-regular fa-calendar" aria-hidden="true"></i>${formatTaskDate(task.date)}${task.date && task.time ? ` <span class="task-time">${task.time.slice(0, 5)}</span>` : ''}</span>
+                    <select data-field="platform" aria-label="${t('task_platform')}">${taskPlatformOptionsHtml(task.platform)}</select>
+                    <select data-field="status" aria-label="${t('task_filter_status')}">${statusOptions}</select>
+                    <div class="task-progress">
+                        <input type="range" data-field="progress" min="0" max="100" step="5" value="${progress}" aria-label="${t('task_progress_label')}">
+                        <span class="task-progress-value">${progress}%</span>
+                    </div>
+                    <button type="button" class="icon-btn is-square task-remove" data-field="remove" aria-label="${t('task_delete')}"><i class="fa-solid fa-trash-can" aria-hidden="true"></i></button>
+                </article>`;
+        };
+
+        // Second radial chart: one ring per platform, filled to the average progress of its tasks.
+        // The rings are only rebuilt when the set of platforms changes, so a change in value animates.
+        const TASK_RADIAL_MAX_RINGS = 6;
+        const renderTaskPlatformRadial = tasks => {
+            const svg = document.getElementById('taskPlatformRadialChart');
+            const legend = document.getElementById('taskPlatformRadialLegend');
+            const more = document.getElementById('taskPlatformRadialMore');
+            if (!tasks.length) {
+                svg.innerHTML = legend.innerHTML = more.textContent = '';
+                delete svg.dataset.rings;
+                return;
+            }
+
+            const theme = chartTheme();
+            const groups = [
+                ...taskPlatformChoices.map((name, index) => ({ name, label: name, color: theme.categorical[index % theme.categorical.length] })),
+                { name: '', label: t('task_platform_unset').toLowerCase(), color: theme.other }
+            ].map((group, order) => {
+                const own = tasks.filter(task => task.platform === group.name);
+                return {
+                    ...group,
+                    order,
+                    total: own.length,
+                    done: own.filter(task => task.status === 'done').length,
+                    progress: own.length ? Math.round(own.reduce((sum, task) => sum + taskProgress(task), 0) / own.length) : 0
+                };
+            }).filter(group => group.total);
+            // Too many rings become unreadable, so the busiest platforms are kept, in dropdown order
+            const rings = [...groups].sort((a, b) => b.total - a.total).slice(0, TASK_RADIAL_MAX_RINGS).sort((a, b) => a.order - b.order);
+            more.textContent = groups.length > rings.length ? tf('task_radial_platform_more', { count: rings.length }) : '';
+
+            const step = rings.length > 4 ? 16 : 18;
+            const radius = index => 112 - index * step;
+            // Position on the scale: 0% is 12 o'clock, 100% is 9 o'clock, clockwise
+            const point = (r, percent) => {
+                const angle = percent * 2.7 * Math.PI / 180;
+                return [(150 + r * Math.sin(angle)).toFixed(1), (150 - r * Math.cos(angle)).toFixed(1)];
+            };
+            const signature = `${rings.map(ring => ring.label).join('\u0001')}|${currentLang}`;
+            if (svg.dataset.rings !== signature) {
+                const inner = radius(rings.length - 1) - 10;
+                svg.innerHTML = `
+                    <title id="taskPlatformRadial-title">${t('task_radial_platform_title')}</title>
+                    <g transform="rotate(-90 150 150)">${rings.map((ring, index) =>
+                        `<circle class="task-radial-track" cx="150" cy="150" r="${radius(index)}" pathLength="100" style="stroke-width: ${step - 5}"></circle>`).join('')}</g>
+                    <g class="task-radial-grid">${[0, 25, 50, 75, 100].map(percent => {
+                        const [x1, y1] = point(inner, percent), [x2, y2] = point(122, percent), [tx, ty] = point(133, percent);
+                        return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"></line>`
+                            + (percent ? `<text x="${tx}" y="${ty}">${percent}%</text>` : '');
+                    }).join('')}</g>
+                    <g transform="rotate(-90 150 150)">${rings.map((ring, index) =>
+                        `<circle class="task-radial-value" cx="150" cy="150" r="${radius(index)}" pathLength="100" style="stroke-width: ${step - 5}"></circle>`).join('')}</g>
+                    ${rings.map((ring, index) => `<text class="task-radial-label" x="141" y="${150 - radius(index)}"></text>`).join('')}`;
+                svg.dataset.rings = signature;
+                // Let the empty rings paint first so the bars sweep in from zero
+                void svg.getBoundingClientRect();
+            }
+
+            const bars = svg.querySelectorAll('.task-radial-value');
+            const labels = svg.querySelectorAll('.task-radial-label');
+            rings.forEach((ring, index) => {
+                const shortLabel = ring.label.length > 16 ? `${ring.label.slice(0, 15)}…` : ring.label;
+                bars[index].style.setProperty('--gauge', ring.color);
+                bars[index].style.strokeDashoffset = 75 * (1 - ring.progress / 100);
+                labels[index].innerHTML = `${escapeHtml(shortLabel)} <tspan class="is-value">${ring.progress}%</tspan>`;
+            });
+            legend.innerHTML = rings.map(ring => `
+                <li style="--gauge: ${ring.color}">
+                    <span class="task-radial-dot" aria-hidden="true"></span>
+                    <div>
+                        <p class="task-radial-name" title="${escapeHtml(ring.label)}">${escapeHtml(ring.label)}</p>
+                        <p class="task-radial-note">${tf('task_radial_platform_note', { done: ring.done, total: ring.total })}</p>
+                    </div>
+                    <strong>${ring.progress}%</strong>
+                </li>`).join('');
+        };
+
+        // Progress card: overall average, or the average of the tasks added today
+        const renderTaskProgressCard = tasks => {
+            const isDaily = taskProgressMode === 'daily';
+            const today = toIsoDate(new Date());
+            const scope = isDaily ? tasks.filter(task => task.date === today) : tasks;
+            const percent = scope.length ? Math.round(scope.reduce((sum, task) => sum + taskProgress(task), 0) / scope.length) : 0;
+            const card = document.getElementById('taskProgressCard');
+            card.classList.toggle('is-daily', isDaily);
+            card.setAttribute('aria-pressed', String(isDaily));
+            card.title = t(isDaily ? 'task_progress_switch_overall' : 'task_progress_switch_daily');
+            document.getElementById('lblTaskProgress').textContent = t(isDaily ? 'task_kpi_progress_daily' : 'task_kpi_progress');
+            document.getElementById('resTaskProgress').innerText = `${percent}%`;
+            document.getElementById('taskOverallBar').style.width = `${percent}%`;
+            document.getElementById('resTaskProgressNote').innerText = !isDaily
+                ? tf('task_progress_overall_note', { total: scope.length })
+                : scope.length
+                    ? tf('task_progress_daily_note', { done: scope.filter(task => task.status === 'done').length, total: scope.length })
+                    : t('task_progress_daily_none');
+        };
+
+        const toggleTaskProgressCard = () => {
+            taskProgressMode = taskProgressMode === 'daily' ? 'overall' : 'daily';
+            // Restart the fade so the label, figure and note ease into the new view
+            const card = document.getElementById('taskProgressCard');
+            card.classList.remove('is-switching');
+            void card.offsetWidth;
+            card.classList.add('is-switching');
+            renderTaskProgressCard(accessibleTasks());
+        };
+
+        const renderTaskAnalytics = tasks => {
+            const total = tasks.length;
+            const counts = Object.fromEntries(TASK_STATUSES.map(status => [status, tasks.filter(task => task.status === status).length]));
+            const average = list => list.length ? Math.round(list.reduce((sum, task) => sum + taskProgress(task), 0) / list.length) : 0;
+            const share = count => total ? Math.round((count / total) * 100) : 0;
+            const overall = average(tasks);
+            const open = counts.todo + counts.doing;
+
+            document.getElementById('resTaskTotal').innerText = total;
+            document.getElementById('resTaskTotalNote').innerText = tf('task_note_open', { count: open });
+            document.getElementById('resTaskDoing').innerText = counts.doing;
+            document.getElementById('resTaskDoingNote').innerText = tf('task_note_todo', { count: counts.todo });
+            document.getElementById('resTaskDone').innerText = counts.done;
+            document.getElementById('resTaskDoneNote').innerText = tf('task_note_done_pct', { pct: share(counts.done) });
+            renderTaskProgressCard(tasks);
+
+            // Radial bar chart: overall progress, then the share of tasks in each status
+            const setGauge = (id, labelKey, percent, note) => {
+                // A full bar is 75 of the ring's 100 units (three quarters of a circle)
+                document.getElementById(id).style.strokeDashoffset = 75 * (1 - percent / 100);
+                document.getElementById(`${id}Label`).innerHTML = `${t(labelKey).toLowerCase()} <tspan class="is-value">${percent}%</tspan>`;
+                document.getElementById(`${id}Text`).textContent = `${percent}%`;
+                document.getElementById(`${id}Note`).textContent = note;
+            };
+            document.getElementById('taskGauges').hidden = !total;
+            renderTaskPlatformRadial(tasks);
+            setGauge('gaugeTaskProgress', 'task_kpi_progress', overall, t('task_gauge_progress_note'));
+            TASK_STATUSES.forEach(status => {
+                const id = `gaugeTask${status[0].toUpperCase()}${status.slice(1)}`;
+                setGauge(id, `task_status_${status}`, share(counts[status]), tf(`task_gauge_${status}_note`, { count: counts[status], total }));
+            });
+
+            const analytics = document.getElementById('taskAnalytics');
+            if (!total) {
+                analytics.innerHTML = `<p class="report-empty">${t('task_analytics_empty')}</p>`;
+                return;
+            }
+
+            // Unassigned work is grouped last
+            const assignees = [...new Set(tasks.map(task => task.assignee))]
+                .sort((a, b) => !a - !b || a.localeCompare(b))
+                .map(name => {
+                    const own = tasks.filter(task => task.assignee === name);
+                    return { name, total: own.length, done: own.filter(task => task.status === 'done').length, progress: average(own) };
+                });
+            const busiest = assignees
+                .filter(row => row.name && row.total > row.done)
+                .sort((a, b) => (b.total - b.done) - (a.total - a.done))[0];
+            const unassignedOpen = tasks.filter(task => !task.assignee && task.status !== 'done').length;
+
+            const insights = [open
+                ? { icon: 'fa-list-check', tone: '', text: tf('task_insight_remaining', { open, doing: counts.doing }) }
+                : { icon: 'fa-circle-check', tone: 'is-good', text: t('task_insight_all_done') }];
+            if (busiest) insights.push({ icon: 'fa-user-clock', tone: '', text: tf('task_insight_workload', { name: escapeHtml(busiest.name), count: busiest.total - busiest.done }) });
+            if (unassignedOpen) insights.push({ icon: 'fa-user-plus', tone: 'is-warn', text: tf('task_insight_unassigned', { count: unassignedOpen }) });
+
+            analytics.innerHTML = `
+                <div class="task-analytics-grid">
+                    <div>
+                        <h3 class="task-subhead">${t('task_by_status')}</h3>
+                        <div class="task-split" aria-hidden="true">${TASK_STATUSES.filter(status => counts[status]).map(status =>
+                            `<span class="is-${status}" style="width: ${(counts[status] / total) * 100}%"></span>`).join('')}</div>
+                        <ul class="task-legend">${TASK_STATUSES.map(status =>
+                            `<li><span class="task-status-dot is-${status}"></span>${t(`task_status_${status}`)} <strong>${counts[status]}</strong> (${share(counts[status])}%)</li>`).join('')}</ul>
+                    </div>
+                    <div>
+                        <h3 class="task-subhead">${t('task_by_assignee')}</h3>
+                        <div class="task-assignee-rows">${assignees.map(row => `
+                            <div class="task-assignee-row">
+                                <span class="task-tag" style="--tag: ${taskAssigneeColor(row.name)}">${taskTagDot(row.name)}<span class="task-tag-name">${row.name ? escapeHtml(row.name) : t('task_unassigned')}</span></span>
+                                <span>${tf('task_assignee_done', { done: row.done, total: row.total })}</span>
+                                <div class="report-progress-track"><div class="report-progress-fill" style="width: ${row.progress}%"></div></div>
+                                <strong>${row.progress}%</strong>
+                            </div>`).join('')}</div>
+                    </div>
+                </div>
+                <ul class="report-insights" style="margin-top: 1.5rem">${insights.map(item =>
+                    `<li><span class="report-insight-icon ${item.tone}"><i class="fa-solid ${item.icon}" aria-hidden="true"></i></span><span>${item.text}</span></li>`).join('')}</ul>`;
+        };
+
+        // First day of the day, week (Monday) or month a date falls in
+        const taskPeriodStart = (date, period) => {
+            const start = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            if (period === 'weekly') start.setDate(start.getDate() - (start.getDay() + 6) % 7);
+            if (period === 'monthly') start.setDate(1);
+            return start;
+        };
+
+        const shiftTaskPeriod = (start, period, steps) => {
+            const shifted = new Date(start);
+            if (period === 'monthly') shifted.setMonth(shifted.getMonth() + steps);
+            else shifted.setDate(shifted.getDate() + steps * (period === 'weekly' ? 7 : 1));
+            return shifted;
+        };
+
+        // Platform breakdown: summary tiles, each platform's share of tasks, and status per platform
+        const renderTaskPlatformInsights = tasks => {
+            if (chartTaskPlatformShare) chartTaskPlatformShare.destroy();
+            if (chartTaskPlatformStatus) chartTaskPlatformStatus.destroy();
+            chartTaskPlatformShare = chartTaskPlatformStatus = null;
+
+            const total = tasks.length;
+            const tiles = document.getElementById('taskPlatformKpis');
+            const legend = document.getElementById('taskPlatformLegend');
+            document.getElementById('taskPlatformInsights').hidden = !total;
+            document.getElementById('taskPlatformEmpty').hidden = total > 0;
+            document.getElementById('taskPlatformTotal').textContent = total;
+            if (!total) {
+                tiles.innerHTML = legend.innerHTML = '';
+                return;
+            }
+
+            // Platforms in dropdown order, each keeping its own colour; tasks without one come last
+            const theme = chartTheme();
+            const percent = (part, whole) => whole ? Math.round((part / whole) * 100) : 0;
+            const groups = [
+                ...taskPlatformChoices.map((name, index) => ({ name, label: name, color: theme.categorical[index % theme.categorical.length] })),
+                { name: '', label: t('task_platform_unset'), color: theme.other }
+            ].map(group => {
+                const own = tasks.filter(task => task.platform === group.name);
+                const done = own.filter(task => task.status === 'done').length;
+                return { ...group, tasks: own, total: own.length, done, open: own.length - done };
+            }).filter(group => group.total);
+            const named = groups.filter(group => group.name);
+            const unset = total - named.reduce((sum, group) => sum + group.total, 0);
+
+            // Earlier platforms win ties, so the tiles do not jump about between equal counts
+            const leader = score => named.reduce((best, group) => !best || score(group) > score(best) ? group : best, null);
+            const top = leader(group => group.total);
+            const mostOpen = leader(group => group.open);
+            const best = leader(group => group.done / group.total);
+            const tile = (labelKey, value, note) => `
+                <div class="report-kpi">
+                    <p class="report-kpi-label">${t(labelKey)}</p>
+                    <p class="report-kpi-value" title="${escapeHtml(value)}">${escapeHtml(value)}</p>
+                    <p class="report-kpi-note">${note}</p>
+                </div>`;
+            const none = t('task_platform_kpi_none');
+            tiles.innerHTML = tile('task_platform_kpi_used', named.length, tf('task_platform_kpi_used_note', { count: unset }))
+                + tile('task_platform_kpi_top', top ? top.label : '–',
+                    top ? tf('task_platform_kpi_top_note', { count: top.total, total, pct: percent(top.total, total) }) : none)
+                + tile('task_platform_kpi_open', mostOpen && mostOpen.open ? mostOpen.label : '–',
+                    !mostOpen ? none : mostOpen.open ? tf('task_platform_kpi_open_note', { count: mostOpen.open }) : t('task_platform_kpi_open_none'))
+                + tile('task_platform_kpi_best', best ? best.label : '–',
+                    best ? tf('task_platform_kpi_best_note', { done: best.done, total: best.total, pct: percent(best.done, best.total) }) : none);
+
+            legend.innerHTML = groups.map(group => `
+                <li class="breakdown-legend-row">
+                    <span class="expense-swatch" style="background: ${group.color}" aria-hidden="true"></span>
+                    <span class="legend-name">${escapeHtml(group.label)}</span>
+                    <span class="legend-amount">${group.total}</span>
+                    <span class="legend-share">${percent(group.total, total)}%</span>
+                </li>`).join('');
+
+            const labels = groups.map(group => group.label);
+            chartTaskPlatformShare = new Chart(document.getElementById('taskPlatformShareChart').getContext('2d'), {
+                type: 'doughnut',
+                data: { labels, datasets: [{
+                    data: groups.map(group => group.total),
+                    backgroundColor: groups.map(group => group.color),
+                    borderColor: theme.surface,
+                    borderWidth: 2,
+                    hoverOffset: 4
+                }] },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '68%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: context => ` ${context.label}: ${context.parsed} (${percent(context.parsed, total)}%)` } }
+                    }
+                }
+            });
+
+            const statusColors = { todo: theme.other, doing: theme.secondary, done: theme.allocation[2] };
+            // The bar chart grows with the number of platforms so the rows keep their thickness
+            document.getElementById('taskPlatformStatusWrap').style.height = `${Math.max(200, groups.length * 44 + 80)}px`;
+            chartTaskPlatformStatus = new Chart(document.getElementById('taskPlatformStatusChart').getContext('2d'), {
+                type: 'bar',
+                data: { labels, datasets: TASK_STATUSES.map(status => ({
+                    label: t(`task_status_${status}`),
+                    data: groups.map(group => group.tasks.filter(task => task.status === status).length),
+                    backgroundColor: statusColors[status],
+                    borderRadius: 4,
+                    maxBarThickness: 26
+                })) },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false, axis: 'y' },
+                    plugins: { legend: { position: 'bottom', labels: { color: theme.text } } },
+                    scales: {
+                        x: { stacked: true, beginAtZero: true, grid: { color: theme.grid }, ticks: { color: theme.text, precision: 0 } },
+                        y: { stacked: true, grid: { display: false }, ticks: { color: theme.text } }
+                    }
+                }
+            });
+        };
+
+        // Charts of dated tasks, grouped by the chosen period
+        const renderTaskCharts = tasks => {
+            if (chartTaskTimeline) chartTaskTimeline.destroy();
+            if (chartTaskCompletion) chartTaskCompletion.destroy();
+            chartTaskTimeline = chartTaskCompletion = null;
+            document.querySelectorAll('[data-task-period]').forEach(button => {
+                button.setAttribute('aria-pressed', String(button.dataset.taskPeriod === taskPeriod));
+            });
+
+            const dated = tasks.filter(task => task.date);
+            document.querySelectorAll('#tab9 .task-chart').forEach(el => { el.hidden = !dated.length; });
+            document.querySelectorAll('#tab9 .task-chart-empty').forEach(el => { el.hidden = dated.length > 0; });
+            const note = document.getElementById('taskChartNote');
+            note.textContent = '';
+            if (!dated.length) return;
+
+            // An unbroken run of periods ending at the latest task date, trimmed to the most recent ones
+            const startOf = task => taskPeriodStart(parseIsoDate(task.date), taskPeriod).getTime();
+            const first = Math.min(...dated.map(startOf));
+            const last = Math.max(...dated.map(startOf));
+            const limit = TASK_PERIOD_LIMITS[taskPeriod];
+            const windowStart = Math.max(first, shiftTaskPeriod(new Date(last), taskPeriod, 1 - limit).getTime());
+            const periods = [];
+            for (let start = new Date(windowStart); start.getTime() <= last; start = shiftTaskPeriod(start, taskPeriod, 1)) {
+                periods.push({ start, tasks: [] });
+            }
+            dated.forEach(task => periods.find(period => period.start.getTime() === startOf(task))?.tasks.push(task));
+
+            const notes = [];
+            if (first < windowStart) notes.push(tf('task_chart_capped', { count: limit, unit: t(`task_unit_${taskPeriod}`) }));
+            if (dated.length < tasks.length) notes.push(tf('task_chart_undated', { count: tasks.length - dated.length }));
+            note.textContent = notes.join(' ');
+
+            const theme = chartTheme();
+            const dayLabel = new Intl.DateTimeFormat(dateLocale(), { day: 'numeric', month: 'short' });
+            const labels = periods.map(period => taskPeriod === 'monthly' ? formatMonthYear(period.start) : dayLabel.format(period.start));
+            const tooltipTitle = items => {
+                const { start } = periods[items[0].dataIndex];
+                if (taskPeriod === 'monthly') return formatMonthYear(start);
+                return taskPeriod === 'weekly' ? tf('task_week_of', { date: formatLongDate(start) }) : formatLongDate(start);
+            };
+            const shared = {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false }
+            };
+            const xTicks = { color: theme.text, maxTicksLimit: 8, maxRotation: 0 };
+
+            const statusColors = { todo: theme.other, doing: theme.secondary, done: theme.allocation[2] };
+            chartTaskTimeline = new Chart(document.getElementById('taskTimelineChart').getContext('2d'), {
+                type: 'bar',
+                data: { labels, datasets: TASK_STATUSES.map(status => ({
+                    label: t(`task_status_${status}`),
+                    data: periods.map(period => period.tasks.filter(task => task.status === status).length),
+                    backgroundColor: statusColors[status],
+                    borderRadius: 4,
+                    maxBarThickness: 36
+                })) },
+                options: {
+                    ...shared,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: theme.text } },
+                        tooltip: { callbacks: { title: tooltipTitle } }
+                    },
+                    scales: {
+                        y: { stacked: true, beginAtZero: true, grid: { color: theme.grid }, ticks: { color: theme.text, precision: 0 } },
+                        x: { stacked: true, grid: { display: false }, ticks: xTicks }
+                    }
+                }
+            });
+
+            // Periods with no tasks have nothing to average, so the lines skip over them
+            const percentOf = pick => periods.map(period => period.tasks.length
+                ? Math.round(period.tasks.reduce((sum, task) => sum + pick(task), 0) / period.tasks.length)
+                : null);
+            chartTaskCompletion = new Chart(document.getElementById('taskCompletionChart').getContext('2d'), {
+                type: 'line',
+                data: { labels, datasets: [
+                    { label: t('task_chart_progress'), data: percentOf(taskProgress), borderColor: theme.primary, backgroundColor: theme.primaryFill, fill: true, tension: 0.15, pointRadius: 3, spanGaps: true },
+                    { label: t('task_chart_completed'), data: percentOf(task => task.status === 'done' ? 100 : 0), borderColor: theme.secondary, borderDash: [5, 4], fill: false, tension: 0.15, pointRadius: 3, spanGaps: true }
+                ] },
+                options: {
+                    ...shared,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: theme.text } },
+                        tooltip: { callbacks: { title: tooltipTitle, label: context => `${context.dataset.label}: ${context.parsed.y}%` } }
+                    },
+                    scales: {
+                        y: { min: 0, max: 100, grid: { color: theme.grid }, ticks: { color: theme.text, callback: value => `${value}%` } },
+                        x: { grid: { display: false }, ticks: xTicks }
+                    }
+                }
+            });
+        };
+
+        // Selection controls follow the ticked tasks without rebuilding the cards
+        const updateTaskSelectionUi = () => {
+            const selectAll = document.getElementById('chkTaskSelectAll');
+            const selected = selectedTaskIds.size;
+            const selectToggle = document.getElementById('btnTaskSelectMode');
+            selectToggle.setAttribute('aria-pressed', String(taskSelectMode));
+            selectToggle.disabled = !taskSelectMode && !taskMatchingIds.length;
+            document.getElementById('lblTaskSelectMode').textContent = t(taskSelectMode ? 'task_select_cancel' : 'task_select_mode');
+            selectAll.closest('label').hidden = !taskSelectMode;
+            selectAll.disabled = !taskMatchingIds.length;
+            selectAll.checked = selected > 0 && selected === taskMatchingIds.length;
+            selectAll.indeterminate = selected > 0 && selected < taskMatchingIds.length;
+            const clearSelected = document.getElementById('btnTaskClearSelected');
+            const clearAll = document.getElementById('btnTaskClearAll');
+            const clearCount = document.getElementById('taskClearCount');
+            // The buttons are icons only, so the wording lives in the tooltip and the screen-reader label
+            document.getElementById('lblTaskClearSelected').textContent = tf('task_clear_selected', { count: selected });
+            clearSelected.title = tf('task_clear_selected', { count: selected });
+            clearSelected.disabled = !selected;
+            clearCount.textContent = selected;
+            clearCount.hidden = !selected;
+            clearAll.title = t('task_clear_all');
+            clearAll.disabled = !accessibleTasks().length;
+        };
+
+        // First, last and the pages around the current one; null marks a gap
+        const taskPageNumbers = pageCount => {
+            const wanted = [1, pageCount, taskPage - 1, taskPage, taskPage + 1].filter(page => page >= 1 && page <= pageCount);
+            return [...new Set(wanted)].sort((a, b) => a - b).flatMap((page, index, pages) =>
+                index && page - pages[index - 1] > 1 ? [null, page] : [page]);
+        };
+
+        const renderTaskPager = (total, pageCount) => {
+            const pager = document.getElementById('taskPager');
+            // Only the list is paged
+            pager.hidden = taskView !== 'list' || !total;
+            if (pager.hidden) return;
+            const from = (taskPage - 1) * taskPageSize + 1;
+            document.getElementById('taskPagerInfo').textContent = tf('task_page_info', { from, to: Math.min(total, taskPage * taskPageSize), total });
+            const pages = document.getElementById('taskPagerPages');
+            pages.setAttribute('aria-label', t('task_pager_label'));
+            pages.hidden = pageCount < 2;
+            pages.innerHTML = `
+                <button type="button" data-task-page="${taskPage - 1}" aria-label="${t('task_page_prev')}"${taskPage === 1 ? ' disabled' : ''}><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+                ${taskPageNumbers(pageCount).map(page => page === null
+                    ? '<span class="task-pager-gap" aria-hidden="true">…</span>'
+                    : `<button type="button" data-task-page="${page}" aria-label="${tf('task_page_number', { page })}"${page === taskPage ? ' aria-current="page"' : ''}>${page}</button>`).join('')}
+                <button type="button" data-task-page="${taskPage + 1}" aria-label="${t('task_page_next')}"${taskPage === pageCount ? ' disabled' : ''}><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>`;
+        };
+
+        const renderTaskTracker = () => {
+            const tasks = accessibleTasks();
+            const statusFilter = document.getElementById('selTaskStatusFilter');
+            const assigneeFilter = document.getElementById('selTaskAssigneeFilter');
+            const assignees = [...new Set(tasks.map(task => task.assignee).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+
+            document.getElementById('inpTaskTitle').placeholder = t('task_new_placeholder');
+            document.getElementById('inpTaskAssignee').placeholder = t('task_assignee_placeholder');
+            taskPlatformChoices = [...TASK_PLATFORMS, ...[...new Set(tasks.map(task => task.platform))]
+                .filter(name => name && !TASK_PLATFORMS.includes(name))
+                .sort((a, b) => a.localeCompare(b))];
+            const platformSelect = document.getElementById('selTaskPlatform');
+            platformSelect.innerHTML = taskPlatformOptionsHtml(platformSelect.value);
+            document.getElementById('taskPlatformCustomField').hidden = platformSelect.value !== TASK_PLATFORM_OTHER;
+            document.getElementById('inpTaskPlatform').placeholder = t('task_platform_custom');
+            const searchInput = document.getElementById('inpTaskSearch');
+            searchInput.placeholder = t('task_search_placeholder');
+            document.getElementById('taskAssigneeOptions').innerHTML = assignees.map(name => `<option value="${escapeHtml(name)}"></option>`).join('');
+
+            // Rebuild the assignee filter around the current names, keeping the choice when it still exists
+            const selectedAssignee = assigneeFilter.value;
+            assigneeFilter.innerHTML = `<option value="all">${t('task_filter_all_assignees')}</option>`
+                + assignees.map(name => `<option value="name:${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('')
+                + (tasks.some(task => !task.assignee) ? `<option value="none">${t('task_unassigned')}</option>` : '');
+            assigneeFilter.value = [...assigneeFilter.options].some(option => option.value === selectedAssignee) ? selectedAssignee : 'all';
+
+            const matchesAssignee = task => assigneeFilter.value === 'all'
+                || (assigneeFilter.value === 'none' ? !task.assignee : assigneeFilter.value === `name:${task.assignee}`);
+            const statuses = statusFilter.value === 'all' ? TASK_STATUSES : [statusFilter.value];
+            const query = searchInput.value.trim().toLowerCase();
+            const matchesSearch = task => !query || [task.title, task.assignee, task.platform].some(text => text.toLowerCase().includes(query));
+            const visibleTasks = tasks.filter(task => statuses.includes(task.status) && matchesAssignee(task) && matchesSearch(task));
+            const container = document.getElementById('taskItems');
+            // With nothing to pick from, select mode ends by itself
+            if (!tasks.length) taskSelectMode = false;
+            if (!taskSelectMode) selectedTaskIds.clear();
+            container.classList.toggle('is-selecting', taskSelectMode);
+
+            // Ticks only ever cover tasks that match the current search and filters, so a batch
+            // clear can never reach something that is not on screen for this view.
+            taskMatchingIds = visibleTasks.map(task => task.id);
+            [...selectedTaskIds].forEach(id => { if (!taskMatchingIds.includes(id)) selectedTaskIds.delete(id); });
+
+            // The list shows one page of the tasks in status-then-date order
+            const orderedTasks = statuses.flatMap(status => visibleTasks.filter(task => task.status === status).sort(byTaskDate));
+            const pageCount = Math.max(1, Math.ceil(orderedTasks.length / taskPageSize));
+            const revealIndex = orderedTasks.findIndex(task => task.id === taskRevealId);
+            if (revealIndex >= 0) taskPage = Math.floor(revealIndex / taskPageSize) + 1;
+            taskRevealId = null;
+            taskPage = Math.min(pageCount, Math.max(1, taskPage));
+
+            if (!visibleTasks.length) {
+                container.innerHTML = `<p class="task-empty">${t(tasks.length ? 'task_empty_filtered' : 'task_empty')}</p>`;
+            } else if (taskView === 'board') {
+                container.innerHTML = `<div class="task-board">${statuses.map(status => {
+                    const columnTasks = visibleTasks.filter(task => task.status === status).sort(byTaskDate);
+                    return `
+                        <section class="task-column">
+                            <header class="task-column-head">
+                                <span class="task-status-dot is-${status}" aria-hidden="true"></span>
+                                <h3>${t(`task_status_${status}`)}</h3>
+                                <span class="task-count">${columnTasks.length}</span>
+                            </header>
+                            <div class="task-column-list">${columnTasks.map(taskCardHtml).join('') || `<p class="task-empty">${t('task_column_empty')}</p>`}</div>
+                        </section>`;
+                }).join('')}</div>`;
+            } else {
+                container.innerHTML = `
+                    <div class="task-list">
+                        <div class="task-list-head" aria-hidden="true">
+                            ${taskSelectMode ? '<span></span>' : ''}<span>${t('task_col_task')}</span><span>${t('task_assignee')}</span><span>${t('task_platform')}</span><span>${t('task_date')}</span><span>${t('task_filter_status')}</span><span>${t('task_progress_label')}</span><span></span>
+                        </div>
+                        ${orderedTasks.slice((taskPage - 1) * taskPageSize, taskPage * taskPageSize).map(taskCardHtml).join('')}
+                    </div>`;
+            }
+            container.querySelectorAll('input[type="range"]').forEach(syncRangeFill);
+            document.querySelectorAll('[data-task-view]').forEach(button => {
+                button.setAttribute('aria-pressed', String(button.dataset.taskView === taskView));
+                button.title = t(`task_view_${button.dataset.taskView}`);
+            });
+            // Filter icons say what they are set to, and stay lit while they narrow the list
+            [[statusFilter, 'taskStatusTool', 'task_filter_status_label'], [assigneeFilter, 'taskAssigneeTool', 'task_filter_assignee_label']]
+                .forEach(([filter, toolId, labelKey]) => {
+                    const tool = document.getElementById(toolId);
+                    tool.title = `${t(labelKey)}: ${filter.selectedOptions[0].textContent}`;
+                    tool.classList.toggle('is-active', filter.value !== 'all');
+                });
+            renderTaskPager(orderedTasks.length, pageCount);
+            updateTaskSelectionUi();
+            renderTaskAnalytics(tasks);
+            renderTaskCharts(tasks);
+            renderTaskPlatformInsights(tasks);
+            // Keeps the insight summary in the current language
+            applyTaskWidgets();
+        };
+
+        // Rebuilds the cards without dropping keyboard focus from the field in use
+        const rerenderTasksKeepingFocus = () => {
+            const active = document.activeElement;
+            const card = active instanceof Element ? active.closest('[data-task-id]') : null;
+            const focusTarget = card && active.dataset.field
+                ? `[data-task-id="${card.dataset.taskId}"] [data-field="${active.dataset.field}"]`
+                : null;
+            renderTaskTracker();
+            if (focusTarget) document.querySelector(focusTarget)?.focus();
+        };
+
+        const initTaskTracker = () => {
+            const progressCard = document.getElementById('taskProgressCard');
+            progressCard.addEventListener('click', toggleTaskProgressCard);
+            progressCard.addEventListener('keydown', event => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                event.preventDefault();
+                toggleTaskProgressCard();
+            });
+            progressCard.addEventListener('animationend', () => progressCard.classList.remove('is-switching'));
+
+            taskItems = loadTasks();
+            hiddenTaskWidgets = loadHiddenTaskWidgets();
+            applyTaskWidgets();
+            const container = document.getElementById('taskItems');
+
+            document.getElementById('btnTaskWidgets').addEventListener('click', () => toggleTaskWidgetMenu());
+            document.addEventListener('click', event => {
+                if (event.target instanceof Element && event.target.closest('#taskWidgetMenu, #btnTaskWidgets')) return;
+                toggleTaskWidgetMenu(false);
+            });
+            document.addEventListener('keydown', event => {
+                if (event.key !== 'Escape' || document.getElementById('taskWidgetMenu').hidden) return;
+                toggleTaskWidgetMenu(false);
+                document.getElementById('btnTaskWidgets').focus();
+            });
+            document.querySelectorAll('[data-task-widget-toggle]').forEach(toggle => {
+                toggle.addEventListener('change', () => {
+                    if (toggle.checked) hiddenTaskWidgets.delete(toggle.dataset.taskWidgetToggle);
+                    else hiddenTaskWidgets.add(toggle.dataset.taskWidgetToggle);
+                    try {
+                        localStorage.setItem(TASK_WIDGETS_KEY, JSON.stringify([...hiddenTaskWidgets]));
+                    } catch (storageError) {
+                        console.warn('Insight layout could not be saved; it lasts until the page reloads.', storageError);
+                    }
+                    applyTaskWidgets();
+                    // Charts drawn while their card was hidden have no size, so they are drawn afresh
+                    renderTaskCharts(accessibleTasks());
+                    renderTaskPlatformInsights(accessibleTasks());
+                });
+            });
+
+            document.getElementById('taskAddForm').addEventListener('submit', event => {
+                event.preventDefault();
+                const titleInput = document.getElementById('inpTaskTitle');
+                const assigneeInput = document.getElementById('inpTaskAssignee');
+                const title = titleInput.value.trim().toLowerCase();
+                if (!title) {
+                    titleInput.focus();
+                    return;
+                }
+                const platformSelect = document.getElementById('selTaskPlatform');
+                const savedAt = new Date();
+                taskItems.push({
+                    id: newTaskId(),
+                    title,
+                    assignee: assigneeInput.value.trim().toLowerCase(),
+                    status: 'todo',
+                    progress: 0,
+                    // Logged automatically: the system date and time at the moment the task is saved
+                    date: toIsoDate(savedAt),
+                    time: savedAt.toTimeString().slice(0, 8),
+                    platform: platformSelect.value === TASK_PLATFORM_OTHER
+                        ? document.getElementById('inpTaskPlatform').value.trim()
+                        : platformSelect.value
+                });
+                // Turn to the page the new task lands on
+                taskRevealId = taskItems[taskItems.length - 1].id;
+                saveTasks();
+                titleInput.value = '';
+                renderTaskTracker();
+                titleInput.focus();
+            });
+
+            ['inpTaskTitle', 'inpTaskAssignee'].forEach(id => {
+                document.getElementById(id).addEventListener('input', event => {
+                    if (!event.isComposing) lowercaseInput(event.target);
+                });
+            });
+            document.getElementById('selTaskPlatform').addEventListener('change', event => {
+                const isOther = event.target.value === TASK_PLATFORM_OTHER;
+                document.getElementById('taskPlatformCustomField').hidden = !isOther;
+                if (isOther) document.getElementById('inpTaskPlatform').focus();
+            });
+            document.getElementById('btnTaskSelectMode').addEventListener('click', () => {
+                taskSelectMode = !taskSelectMode;
+                renderTaskTracker();
+            });
+
+            // Inline edits are committed when a field loses focus or its value is picked
+            container.addEventListener('change', event => {
+                const field = event.target.dataset.field;
+                const card = event.target.closest('[data-task-id]');
+                const task = card && taskItems.find(item => item.id === card.dataset.taskId);
+                if (!task || !field) return;
+                if (field === 'select') {
+                    if (event.target.checked) selectedTaskIds.add(task.id);
+                    else selectedTaskIds.delete(task.id);
+                    card.classList.toggle('is-selected', event.target.checked);
+                    updateTaskSelectionUi();
+                    return;
+                }
+                if (field === 'platform' && event.target.value === TASK_PLATFORM_OTHER) {
+                    // "Other…" swaps the dropdown for a box to type a platform into
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'task-platform-input';
+                    input.dataset.field = 'platform';
+                    input.maxLength = 40;
+                    input.placeholder = t('task_platform_custom');
+                    input.setAttribute('aria-label', t('task_platform'));
+                    event.target.replaceWith(input);
+                    input.focus();
+                    return;
+                }
+                // Names typed into a row are lowercased like the add form; a custom platform is kept as typed
+                const raw = event.target.value.trim();
+                const value = field === 'title' || field === 'assignee' ? raw.toLowerCase() : raw;
+                if (field === 'title') {
+                    // An emptied title falls back to the previous one
+                    task.title = value || task.title;
+                    event.target.value = task.title;
+                } else if (field === 'assignee') {
+                    task.assignee = value;
+                } else if (field === 'status' && TASK_STATUSES.includes(value)) {
+                    task.status = value;
+                } else if (field === 'platform') {
+                    task.platform = value;
+                } else if (field === 'progress') {
+                    setTaskProgress(task, Number(value));
+                }
+                saveTasks();
+                // A title edit changes nothing else on screen. The rest is deferred so focus has
+                // already moved on by the time the cards are rebuilt.
+                if (field !== 'title') window.setTimeout(rerenderTasksKeepingFocus, 0);
+            });
+            container.addEventListener('input', event => {
+                if (['title', 'assignee'].includes(event.target.dataset.field) && !event.isComposing) lowercaseInput(event.target);
+                if (event.target.dataset.field !== 'progress') return;
+                syncRangeFill(event.target);
+                event.target.nextElementSibling.textContent = `${event.target.value}%`;
+            });
+            // Leaving the "Other…" box empty puts the dropdown back
+            container.addEventListener('focusout', event => {
+                if (event.target.classList.contains('task-platform-input') && !event.target.value.trim()) {
+                    window.setTimeout(rerenderTasksKeepingFocus, 0);
+                }
+            });
+            container.addEventListener('keydown', event => {
+                if (event.key === 'Enter' && event.target.matches('input[type="text"]')) event.target.blur();
+            });
+            container.addEventListener('click', event => {
+                const removeButton = event.target instanceof Element && event.target.closest('.task-remove');
+                if (!removeButton) return;
+                taskItems = taskItems.filter(item => item.id !== removeButton.closest('[data-task-id]').dataset.taskId);
+                saveTasks();
+                renderTaskTracker();
+            });
+
+            // A new search, filter or page size starts again from the first page
+            const restartPaging = () => {
+                taskPage = 1;
+                renderTaskTracker();
+            };
+            ['selTaskStatusFilter', 'selTaskAssigneeFilter'].forEach(id => {
+                document.getElementById(id).addEventListener('change', restartPaging);
+            });
+            document.getElementById('inpTaskSearch').addEventListener('input', restartPaging);
+            document.getElementById('selTaskPageSize').addEventListener('change', event => {
+                taskPageSize = Number(event.target.value) || 10;
+                restartPaging();
+            });
+            document.getElementById('taskPagerPages').addEventListener('click', event => {
+                const button = event.target instanceof Element && event.target.closest('[data-task-page]');
+                if (!button || button.disabled) return;
+                taskPage = Number(button.dataset.taskPage);
+                renderTaskTracker();
+            });
+
+            document.getElementById('chkTaskSelectAll').addEventListener('change', event => {
+                selectedTaskIds.clear();
+                if (event.target.checked) taskMatchingIds.forEach(id => selectedTaskIds.add(id));
+                renderTaskTracker();
+            });
+
+            // Batch clearing always asks first: deleted tasks cannot be brought back
+            const confirmDialog = document.getElementById('taskConfirmDialog');
+            const askToDelete = (message, ids) => {
+                taskConfirmAction = () => {
+                    taskItems = taskItems.filter(item => !ids.includes(item.id));
+                    // The batch is done, so the checkboxes go away again
+                    taskSelectMode = false;
+                    saveTasks();
+                    renderTaskTracker();
+                };
+                document.getElementById('taskConfirmMessage').textContent = message;
+                confirmDialog.showModal();
+            };
+            document.getElementById('btnTaskClearSelected').addEventListener('click', () => {
+                if (!selectedTaskIds.size) return;
+                askToDelete(tf('task_confirm_selected', { count: selectedTaskIds.size }), [...selectedTaskIds]);
+            });
+            document.getElementById('btnTaskClearAll').addEventListener('click', () => {
+                if (!taskItems.length) return;
+                askToDelete(tf('task_confirm_all', { count: taskItems.length }), taskItems.map(item => item.id));
+            });
+            document.getElementById('taskConfirmForm').addEventListener('submit', event => {
+                event.preventDefault();
+                // Each request is used once, and only while its dialog is actually open
+                const action = taskConfirmAction;
+                taskConfirmAction = null;
+                if (!confirmDialog.open) return;
+                if (action) action();
+                confirmDialog.close();
+            });
+            document.getElementById('btnTaskConfirmCancel').addEventListener('click', () => confirmDialog.close());
+            confirmDialog.addEventListener('click', event => {
+                if (event.target === confirmDialog) confirmDialog.close();
+            });
+            document.querySelectorAll('[data-task-view]').forEach(button => {
+                button.addEventListener('click', () => {
+                    taskView = button.dataset.taskView;
+                    renderTaskTracker();
+                });
+            });
+            document.querySelectorAll('[data-task-period]').forEach(button => {
+                button.addEventListener('click', () => {
+                    taskPeriod = button.dataset.taskPeriod;
+                    renderTaskCharts(accessibleTasks());
+                });
+            });
+            // Keeps other open tabs of the site on the same task list
+            window.addEventListener('storage', event => {
+                if (event.key === TASK_WIDGETS_KEY) {
+                    hiddenTaskWidgets = loadHiddenTaskWidgets();
+                    applyTaskWidgets();
+                    return;
+                }
+                if (event.key !== TASKS_KEY) return;
+                taskItems = loadTasks();
+                renderTaskTracker();
+            });
+        };
+
         const initTabScroller = () => {
             const tabScroller = document.getElementById('tabScroller');
             let pointerStartX = 0;
@@ -4416,6 +6417,7 @@
             initWeddingSavingsListeners();
             initDailyDividendListeners();
             initDashFreeText();
+            initTaskTracker();
             renderLanguage();
             calcSalary(); 
             calcRetirement();
