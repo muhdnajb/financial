@@ -1948,6 +1948,7 @@
                 insight_empty_items: "{count} item perbelanjaan belum mempunyai amaun.",
                 wedding_no_contribution: "Masukkan peratusan melebihi 0 untuk anggaran masa",
                 wedding_months: "bulan",
+                chart_month_tooltip: "Bulan {month} - {date}",
                 wedding_chart_title: "Unjuran simpanan perkahwinan",
                 chart_wedding_savings: "Baki tabung kahwin",
                 chart_wedding_target: "Sasaran",
@@ -2189,6 +2190,7 @@
                 insight_empty_items: "{count} expense items have no amount yet.",
                 wedding_no_contribution: "Enter a percentage above 0 to estimate time",
                 wedding_months: "months",
+                chart_month_tooltip: "Month {month} - {date}",
                 wedding_chart_title: "Wedding savings projection",
                 chart_wedding_savings: "Wedding fund balance",
                 chart_wedding_target: "Target",
@@ -2611,6 +2613,12 @@
             return date;
         };
 
+        // Tooltip heading for month-indexed projections, e.g. "Month 16 - Feb 2028"
+        const projectionTooltipTitle = items => {
+            const month = items[0].dataIndex;
+            return tf('chart_month_tooltip', { month, date: formatMonthYear(monthsFromNow(month)) });
+        };
+
         // Renders "18 months" with a muted "Apr 2028" note, or a plain message when there is no estimate
         const setTimeToTarget = (el, months, monthsLabel, targetDate, message) => {
             if (message) {
@@ -2797,7 +2805,7 @@
                     interaction: { mode: 'index', intersect: false },
                     plugins: {
                         legend: { position: 'bottom', labels: { color: textColor } },
-                        tooltip: { callbacks: { label: context => `${context.dataset.label}: ${formatRM(context.parsed.y)}` } }
+                        tooltip: { callbacks: { title: projectionTooltipTitle, label: context => `${context.dataset.label}: ${formatRM(context.parsed.y)}` } }
                     },
                     scales: {
                         y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, callback: value => formatRM(value) } },
@@ -3154,7 +3162,7 @@
                     interaction: { mode: 'index', intersect: false },
                     plugins: {
                         legend: { position: 'bottom', labels: { color: textColor } },
-                        tooltip: { callbacks: { label: context => `${context.dataset.label}: ${formatRM(context.parsed.y)}` } }
+                        tooltip: { callbacks: { title: projectionTooltipTitle, label: context => `${context.dataset.label}: ${formatRM(context.parsed.y)}` } }
                     },
                     scales: {
                         y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, callback: value => formatRM(value) } },
