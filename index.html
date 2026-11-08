@@ -170,8 +170,6 @@
             color: var(--ink);
         }
 
-        .brand-title [data-i18n="title_main"] { color: var(--muted-2); font-weight: 500; }
-        .brand-title [data-i18n="title_main"]:empty { display: none; }
 
         .brand-subtitle {
             margin: 0.15rem 0 0;
@@ -1696,6 +1694,8 @@
             body { padding-top: 1.25rem; padding-inline: 1rem; }
             .page-header { margin-bottom: 1.25rem; }
             .brand-subtitle { display: none; }
+            /* A little smaller on a phone, so the name fits on two lines */
+            .brand-title { font-size: clamp(0.95rem, 4.4vw, 1.15rem); }
             /* Admins get a fourth header action, so the brand gives up some room */
             .is-admin .page-header { gap: 0.75rem; }
             .is-admin .brand { gap: 0.625rem; }
@@ -1754,6 +1754,10 @@
         @media (max-width: 350px) {
             .brand-mark { display: none; }
         }
+        /* Admins have a fourth header action, so the logo mark gives way sooner for them */
+        @media (max-width: 420px) {
+            .is-admin .brand-mark { display: none; }
+        }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
@@ -1776,10 +1780,9 @@
                 <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-chart-simple"></i></span>
                 <div class="min-w-0">
                     <h1 class="brand-title">
-                        <span data-i18n="title_main"></span>
-                        <span data-i18n="title_gradient">Pengurusan Berpusat</span>
+                        <span data-i18n="title_name">Centralised Management Portal</span>
                     </h1>
-                    <p class="brand-subtitle" data-i18n="subtitle">Rancang, pantau dan urus keperluan harian dalam satu platform.</p>
+                    <p class="brand-subtitle" data-i18n="subtitle">Plan, track and streamline your daily operations in one platform.</p>
                 </div>
             </div>
             <div class="header-actions">
@@ -1805,7 +1808,7 @@
                     <label class="tab-visibility-option" for="showTab10"><input id="showTab10" type="checkbox" data-tab-id="tab10" checked><span data-i18n="tab_expenses">Expenses</span></label>
                     <label class="tab-visibility-option" for="showTab11"><input id="showTab11" type="checkbox" data-tab-id="tab11" checked><span data-i18n="tab_instalment">EPP/FPP Credit Card</span></label>
                 </div>
-                <button id="btnTheme" type="button" onclick="toggleTheme()" class="icon-btn is-square" aria-label="Toggle theme">
+                <button id="btnTheme" type="button" onclick="toggleTheme()" class="icon-btn is-square" aria-label="Switch between light and dark mode">
                     <i class="fa-solid fa-moon" id="iconTheme" aria-hidden="true"></i>
                 </button>
                 <button id="btnLang" type="button" onclick="toggleLanguage()" class="icon-btn">EN</button>
@@ -3256,9 +3259,11 @@
         // Translation Dictionary
         const i18n = {
             bm: {
-                title_main: "Portal",
-                title_gradient: "Pengurusan Berpusat",
-                subtitle: "Rancang, pantau dan urus keperluan harian dalam satu platform.",
+                page_title: "Portal Pengurusan Berpusat",
+                title_name: "Portal Pengurusan Berpusat",
+                subtitle: "Rancang, pantau dan permudahkan operasi harian anda dalam satu platform.",
+                theme_toggle: "Tukar antara mod cerah dan gelap",
+                lang_toggle: "Tukar bahasa",
                 module_selector: "Pilih modul",
                 tab_visibility_button: "Sesuaikan tab yang dipaparkan",
                 tab_visibility_title: "Tab yang dipaparkan",
@@ -3790,9 +3795,11 @@
                 footer_credit: "© 2026 · Direka dan dibangunkan oleh @muhdnajb"
             },
             en: {
-                title_main: "Centralised",
-                title_gradient: "Management Portal",
-                subtitle: "Plan, track and manage everyday essentials on one platform.",
+                page_title: "Centralised Management Portal",
+                title_name: "Centralised Management Portal",
+                subtitle: "Plan, track and streamline your daily operations in one platform.",
+                theme_toggle: "Switch between light and dark mode",
+                lang_toggle: "Switch language",
                 module_selector: "Select module",
                 tab_visibility_button: "Customize visible tabs",
                 tab_visibility_title: "Visible tabs",
@@ -4782,7 +4789,13 @@
 
         const renderLanguage = () => {
             document.documentElement.lang = currentLang === 'bm' ? 'ms' : 'en';
+            document.title = t('page_title');
             document.getElementById('btnLang').innerText = currentLang === 'bm' ? 'BM' : 'EN';
+            document.getElementById('btnLang').title = t('lang_toggle');
+            // The spoken name keeps the visible code in it, e.g. "Switch language (EN)"
+            document.getElementById('btnLang').setAttribute('aria-label', `${t('lang_toggle')} (${currentLang === 'bm' ? 'BM' : 'EN'})`);
+            document.getElementById('btnTheme').title = t('theme_toggle');
+            document.getElementById('btnTheme').setAttribute('aria-label', t('theme_toggle'));
             document.getElementById('btnTabVisibility').title = t('tab_visibility_button');
             document.getElementById('btnAdminLogin').title = t('admin_login_button');
             document.getElementById('btnAdminMenu').title = t('admin_label');
