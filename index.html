@@ -1707,8 +1707,59 @@
         /* The dot stays beside the first line when a label wraps */
         .epf-tone-label { display: flex; align-items: flex-start; gap: 0.4rem; }
         .epf-tone-label::before { content: ''; flex: 0 0 auto; width: 0.5rem; height: 0.5rem; margin-top: 0.3rem; border-radius: 999px; background: var(--tone); }
+        /* Each forecast year opens its account split */
+        #epfForecastBody tr { cursor: pointer; transition: background-color 160ms ease; }
+        #epfForecastBody tr:hover { background: var(--surface-2); }
+        .epf-year-btn { display: block; border-radius: 4px; text-align: left; }
+        .epf-year-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
         .epf-age { display: block; color: var(--ink); font-weight: 600; }
         .epf-sub { display: block; margin-top: 0.125rem; color: var(--muted); font-size: 0.72rem; font-weight: 400; }
+        /* One year's contributions across the three EPF accounts. Violet, teal and amber keep the accounts
+           apart from the blue and green used for the employee's and employer's shares. */
+        .epf-year-dialog { width: min(32rem, calc(100vw - 2rem)); }
+        .epf-year-head { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1.25rem; }
+        .epf-year-head > div:first-child { flex: 1 1 auto; min-width: 0; }
+        .epf-year-nav { display: flex; flex: 0 0 auto; gap: 0.25rem; }
+        .epf-year-nav .icon-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        .epf-year-summary { padding: 0.875rem 1rem; border-radius: var(--radius-sm); background: var(--surface-2); color: var(--muted); font-size: 0.75rem; }
+        .epf-year-summary strong { display: block; margin-top: 0.125rem; color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 1.375rem; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+        /* What the savings are made of: the balance today, the contributions since, and the dividends on both */
+        .epf-year-build { display: grid; gap: 0.3rem; margin: 0.75rem 0 0; padding-top: 0.625rem; border-top: 1px solid var(--line-strong); }
+        .epf-year-build div { display: flex; justify-content: space-between; gap: 1rem; }
+        .epf-year-build dd { margin: 0; color: var(--ink-2); font-weight: 500; font-variant-numeric: tabular-nums; }
+        .epf-acct.is-persaraan { --tone: var(--c-violet); }
+        .epf-acct.is-sejahtera { --tone: var(--c-brand); }
+        .epf-acct.is-fleksibel { --tone: var(--c-amber); }
+        .epf-acct-bar { display: flex; gap: 2px; height: 0.625rem; margin: 1.25rem 0 0.25rem; overflow: hidden; border-radius: 999px; }
+        .epf-acct-bar span { height: 100%; background: var(--tone); }
+        .epf-acct-list { margin: 0; padding: 0; list-style: none; }
+        .epf-year-dialog h2:focus { outline: none; }
+        .epf-acct-list li {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            grid-template-areas: "name amount" "note amount";
+            align-items: center;
+            gap: 0 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--line);
+        }
+        .epf-acct-name, .epf-acct-label { grid-area: name; }
+        .epf-acct-note { grid-area: note; }
+        .epf-acct-amount { grid-area: amount; }
+        .epf-acct-list li.epf-acct-total { grid-template-areas: "name amount"; }
+        .epf-acct-name { display: flex; align-items: center; gap: 0.5rem; color: var(--ink); font-size: 0.875rem; font-weight: 600; }
+        .epf-acct-name::before { content: ''; flex: 0 0 auto; width: 0.625rem; height: 0.625rem; border-radius: 999px; background: var(--tone); }
+        .epf-acct-note { margin-top: 0.125rem; padding-left: 1.125rem; color: var(--muted); font-size: 0.72rem; line-height: 1.4; }
+        .epf-acct-amount { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .epf-acct-amount strong { display: block; color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 600; }
+        .epf-acct-amount span { display: block; color: var(--muted); font-size: 0.72rem; }
+        .epf-acct-list li.epf-acct-total { border-bottom: 0; color: var(--ink); font-size: 0.875rem; font-weight: 600; }
+        .epf-year-note { margin-top: 0.75rem; color: var(--muted); font-size: 0.75rem; line-height: 1.5; }
+        /* On a phone each description takes the full width under its name */
+        @media (max-width: 480px) {
+            .epf-acct-list li { grid-template-areas: "name amount" "note note"; gap: 0 0.75rem; }
+            .epf-acct-note { margin-top: 0.375rem; }
+        }
         /* Employee and employer shares under the salary field */
         .epf-split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; margin-top: 0.625rem; }
         .epf-split div { padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); }
@@ -3485,6 +3536,23 @@
             <div id="weddingReportBody" class="report-body"></div>
         </dialog>
 
+        <dialog id="epfYearDialog" class="admin-dialog epf-year-dialog" aria-labelledby="epfYearTitle" aria-describedby="epfYearSub">
+            <div class="glass-card shadow-soft">
+                <div class="epf-year-head">
+                    <div>
+                        <h2 id="epfYearTitle" tabindex="-1"></h2>
+                        <p id="epfYearSub"></p>
+                    </div>
+                    <div class="epf-year-nav">
+                        <button type="button" id="btnEpfYearPrev" class="icon-btn is-square"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+                        <button type="button" id="btnEpfYearNext" class="icon-btn is-square"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+                        <button type="button" id="btnCloseEpfYear" class="icon-btn is-square"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                    </div>
+                </div>
+                <div id="epfYearBody"></div>
+            </div>
+        </dialog>
+
         <dialog id="taskConfirmDialog" class="admin-dialog" aria-labelledby="taskConfirmTitle" aria-describedby="taskConfirmMessage">
             <form id="taskConfirmForm" class="glass-card shadow-soft">
                 <div class="flex items-center gap-3 mb-6">
@@ -3958,6 +4026,25 @@
                 epf_salary_month: "{amount} sebulan",
                 epf_badge_retire: "Bersara",
                 epf_forecast_total: "Jumlah hingga umur {age}",
+                epf_forecast_hint: "Pilih satu tahun untuk melihat agihan unjuran simpanannya ke tiga akaun KWSP.",
+                epf_year_open: "Lihat unjuran simpanan pada umur {age} mengikut akaun",
+                epf_year_title: "Umur {age} · {year}",
+                epf_year_sub: "Unjuran simpanan KWSP anda pada akhir tahun ini, diagihkan ke tiga akaun.",
+                epf_year_start: "Baki semasa",
+                epf_year_contributed: "Caruman, {years}",
+                epf_year_dividends: "Unjuran dividen",
+                epf_year_this_year: "{amount} daripada tahun ini",
+                epf_year_prev: "Tahun sebelumnya",
+                epf_year_next: "Tahun berikutnya",
+                epf_year_close: "Tutup",
+                epf_acct_persaraan: "Akaun Persaraan",
+                epf_acct_persaraan_note: "Simpanan persaraan; tidak boleh dikeluarkan sebelum umur 55.",
+                epf_acct_sejahtera: "Akaun Sejahtera",
+                epf_acct_sejahtera_note: "Untuk perumahan, pendidikan, kesihatan dan pengeluaran lain yang dibenarkan.",
+                epf_acct_fleksibel: "Akaun Fleksibel",
+                epf_acct_fleksibel_note: "Boleh dikeluarkan pada bila-bila masa.",
+                epf_year_note: "Simpanan ialah baki semasa anda, ditambah semua caruman hingga tahun ini dan unjuran dividen ke atasnya, diagihkan 75 / 15 / 10 seperti caruman ahli di bawah umur 55 sejak 11 Mei 2024. Simpanan sebelum tarikh itu diagihkan secara berbeza, jadi baki sebenar setiap akaun mungkin berlainan.",
+                epf_year_note_55: "Mulai umur 55, KWSP menyimpan simpanan dalam akaun yang berbeza, jadi agihan 75 / 15 / 10 bagi tahun ini hanya panduan.",
                 ret_exp: "Belanja Bersara / Bln (RM)",
                 today_val: "Nilai hari ini",
                 div_rate: "Anggaran Dividen (%)",
@@ -4607,6 +4694,25 @@
                 epf_salary_month: "{amount} a month",
                 epf_badge_retire: "Retire",
                 epf_forecast_total: "Total by age {age}",
+                epf_forecast_hint: "Select a year to see its projected savings split across the three EPF accounts.",
+                epf_year_open: "See projected savings at age {age} by account",
+                epf_year_title: "Age {age} · {year}",
+                epf_year_sub: "Your projected EPF savings at the end of this year, split across the three accounts.",
+                epf_year_start: "Current balance",
+                epf_year_contributed: "Contributions, {years}",
+                epf_year_dividends: "Projected dividends",
+                epf_year_this_year: "{amount} from this year",
+                epf_year_prev: "Previous year",
+                epf_year_next: "Next year",
+                epf_year_close: "Close",
+                epf_acct_persaraan: "Akaun Persaraan",
+                epf_acct_persaraan_note: "Retirement savings; can't be withdrawn before 55.",
+                epf_acct_sejahtera: "Akaun Sejahtera",
+                epf_acct_sejahtera_note: "For housing, education, health and other approved withdrawals.",
+                epf_acct_fleksibel: "Akaun Fleksibel",
+                epf_acct_fleksibel_note: "Can be withdrawn at any time.",
+                epf_year_note: "Savings are your current balance plus every contribution up to this year and the projected dividends on them, split 75 / 15 / 10 as contributions are for members below 55 since 11 May 2024. Savings from before then were divided differently, so your actual account balances may differ.",
+                epf_year_note_55: "From age 55, EPF holds savings in different accounts, so the 75 / 15 / 10 split for this year is only a guide.",
                 ret_exp: "Retirement Expenses / Mth (RM)",
                 today_val: "Today's value",
                 div_rate: "Est. Dividend Rate (%)",
@@ -6806,6 +6912,7 @@
             }));
             applyEpfMode();
             applyIncrementMode();
+            initEpfYearDialog();
         };
 
         // --- EPF contribution forecast: what goes in each year until retirement, and what it grows to ---
@@ -6901,9 +7008,9 @@
                 ['employer', tf('epf_employer_share', { rate: first.shares.employerRate }), first.shares.employer]
             ].map(([tone, label, amount]) => `<div class="epf-tone is-${tone}"><span class="epf-tone-label">${escapeHtml(label)}</span><strong>${formatRM(amount)}</strong></div>`).join('')
                 + (bandText ? `<p>${escapeHtml(bandText)}</p>` : '') : '';
-            document.getElementById('epfForecastSub').textContent = tf(subKey, {
+            document.getElementById('epfForecastSub').textContent = `${tf(subKey, {
                 age: last.age, rate: formatEppRate(growth), amount: formatRM(isAuto ? raise : first.monthly)
-            });
+            })} ${t('epf_forecast_hint')}`;
 
             // Each tile keeps its own colour: today, at retirement, what goes in, and what it grows to
             const tile = (tone, label, value, note) => `
@@ -6918,8 +7025,11 @@
                 tile('balance', tf('epf_kpi_balance', { age: last.age }), formatRM(last.balance), tf('epf_kpi_dividends', { amount: formatRM(Math.max(0, last.balance - startBalance - total)) }))
             ].join('');
 
-            document.getElementById('epfForecastBody').innerHTML = rows.map(row => `<tr>
-                <td><span class="epf-age">${row.age}${row === last ? `<span class="epp-badge">${t('epf_badge_retire')}</span>` : ''}</span><span class="epf-sub">${row.year}</span></td>
+            // Every year opens its split across the three accounts; the button gives keyboard users the same
+            epfForecastRows = rows;
+            epfForecastStart = startBalance;
+            document.getElementById('epfForecastBody').innerHTML = rows.map((row, index) => `<tr data-epf-index="${index}">
+                <td><button type="button" class="epf-year-btn" aria-haspopup="dialog" aria-label="${escapeHtml(tf('epf_year_open', { age: row.age }))}"><span class="epf-age">${row.age}${row === last ? `<span class="epp-badge">${t('epf_badge_retire')}</span>` : ''}</span><span class="epf-sub">${row.year}</span></button></td>
                 <td class="is-num">${isAuto ? `${formatRM(row.salary * 12)}<span class="epf-sub">${tf('epf_salary_month', { amount: formatRM(row.salary) })}</span>` : '–'}</td>
                 <td class="is-num">${formatRM(row.monthly)}${isAuto ? `<span class="epf-sub" title="${escapeHtml(epfBandText(row.salary, row.shares.band))}">${row.shares.employeeRate}% + ${row.shares.employerRate}%</span>` : ''}</td>
                 <td class="is-num">${formatRM(row.annual)}</td>
@@ -6928,6 +7038,106 @@
             document.getElementById('epfForecastTotalLabel').textContent = tf('epf_forecast_total', { age: last.age });
             document.getElementById('epfForecastTotalAnnual').textContent = formatRM(total);
             document.getElementById('epfForecastTotalBalance').textContent = formatRM(last.balance);
+        };
+
+        // --- A year's projected EPF savings across the three accounts, in a dialog opened from the forecast table ---
+        // The savings are the table's projected balance for that year: the current balance, every contribution up to
+        // and including it, and the dividends projected on them. Since 11 May 2024, contributions for members below 55
+        // go 75% to Akaun Persaraan, 15% to Akaun Sejahtera and 10% to Akaun Fleksibel, and the whole balance is split
+        // the same way here. Shares are worked out in sen and the last one takes the rounding.
+        const EPF_ACCOUNTS = [{ key: 'persaraan', share: 75 }, { key: 'sejahtera', share: 15 }, { key: 'fleksibel', share: 10 }];
+        let epfForecastRows = [];
+        let epfForecastStart = 0;
+        let epfYearIndex = 0;
+
+        const splitEpfAccounts = amount => {
+            const sen = Math.round(amount * 100);
+            let left = sen;
+            return EPF_ACCOUNTS.map((account, index) => {
+                const part = index === EPF_ACCOUNTS.length - 1 ? left : Math.round(sen * account.share / 100);
+                left -= part;
+                return part / 100;
+            });
+        };
+
+        const renderEpfYear = () => {
+            const row = epfForecastRows[epfYearIndex];
+            const [first] = epfForecastRows;
+            // The balance broken down in sen, so the three parts add back up to it exactly
+            const toSen = value => Math.round(value * 100);
+            const balanceSen = toSen(row.balance);
+            const startSen = toSen(epfForecastStart);
+            const contributedSen = toSen(epfForecastRows.slice(0, epfYearIndex + 1).reduce((sum, item) => sum + item.annual, 0));
+            const savings = splitEpfAccounts(balanceSen / 100);
+            const thisYear = splitEpfAccounts(row.annual);
+            const years = row.year === first.year ? String(row.year) : `${first.year}–${row.year}`;
+            document.getElementById('epfYearTitle').textContent = tf('epf_year_title', { age: row.age, year: row.year });
+            document.getElementById('epfYearSub').textContent = t('epf_year_sub');
+            const prev = document.getElementById('btnEpfYearPrev');
+            const next = document.getElementById('btnEpfYearNext');
+            const focused = document.activeElement;
+            prev.disabled = epfYearIndex === 0;
+            next.disabled = epfYearIndex === epfForecastRows.length - 1;
+            // Reaching the first or last year disables the button in use, so focus moves to the other one
+            if (focused === prev && prev.disabled) next.focus();
+            if (focused === next && next.disabled) prev.focus();
+
+            const accounts = EPF_ACCOUNTS.map((account, index) => `
+                <li class="epf-acct is-${account.key}">
+                    <p class="epf-acct-name">${t(`epf_acct_${account.key}`)}</p>
+                    <p class="epf-acct-note">${t(`epf_acct_${account.key}_note`)}</p>
+                    <p class="epf-acct-amount"><strong>${formatRM2(savings[index])}</strong><span>${tf('epf_year_this_year', { amount: formatRM2(thisYear[index]) })}</span></p>
+                </li>`).join('');
+            const build = [
+                [t('epf_year_start'), startSen],
+                [tf('epf_year_contributed', { years }), contributedSen],
+                [t('epf_year_dividends'), balanceSen - startSen - contributedSen]
+            ].map(([label, sen]) => `<div><dt>${escapeHtml(label)}</dt><dd>${formatRM2(sen / 100)}</dd></div>`).join('');
+            document.getElementById('epfYearBody').innerHTML = `
+                <div class="epf-year-summary">
+                    <p>${t('epf_col_balance')}</p>
+                    <strong>${formatRM2(balanceSen / 100)}</strong>
+                    <dl class="epf-year-build">${build}</dl>
+                </div>
+                <div class="epf-acct-bar" aria-hidden="true">${EPF_ACCOUNTS.map(account => `<span class="epf-acct is-${account.key}" style="width: ${account.share}%"></span>`).join('')}</div>
+                <ul class="epf-acct-list">${accounts}
+                    <li class="epf-acct-total">
+                        <p class="epf-acct-label">${t('report_table_total')}</p>
+                        <p class="epf-acct-amount"><strong>${formatRM2(balanceSen / 100)}</strong><span>${tf('epf_year_this_year', { amount: formatRM2(row.annual) })}</span></p>
+                    </li>
+                </ul>
+                <p class="epf-year-note">${t(row.age >= 55 ? 'epf_year_note_55' : 'epf_year_note')}</p>`;
+        };
+
+        const openEpfYear = index => {
+            epfYearIndex = index;
+            const dialog = document.getElementById('epfYearDialog');
+            ['btnEpfYearPrev', 'btnEpfYearNext', 'btnCloseEpfYear'].forEach((id, position) => {
+                const label = t(['epf_year_prev', 'epf_year_next', 'epf_year_close'][position]);
+                document.getElementById(id).setAttribute('aria-label', label);
+                document.getElementById(id).title = label;
+            });
+            renderEpfYear();
+            if (!dialog.open) {
+                dialog.showModal();
+                // The title takes focus, so it is read out first and no button starts out ringed
+                document.getElementById('epfYearTitle').focus();
+            }
+        };
+
+        const initEpfYearDialog = () => {
+            const dialog = document.getElementById('epfYearDialog');
+            document.getElementById('epfForecastBody').addEventListener('click', event => {
+                const row = event.target instanceof Element && event.target.closest('tr[data-epf-index]');
+                if (row) openEpfYear(Number(row.dataset.epfIndex));
+            });
+            document.getElementById('btnEpfYearPrev').addEventListener('click', () => openEpfYear(Math.max(0, epfYearIndex - 1)));
+            document.getElementById('btnEpfYearNext').addEventListener('click', () => openEpfYear(Math.min(epfForecastRows.length - 1, epfYearIndex + 1)));
+            document.getElementById('btnCloseEpfYear').addEventListener('click', () => dialog.close());
+            // Clicking the backdrop closes it, as with the other dialogs
+            dialog.addEventListener('click', event => {
+                if (event.target === dialog) dialog.close();
+            });
         };
 
         const calcRetirement = () => {
