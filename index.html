@@ -15,7 +15,7 @@
     <!-- Modern Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
@@ -1633,6 +1633,73 @@
         .epp-note { margin-top: 1rem; color: var(--muted); font-size: 0.8125rem; line-height: 1.55; }
         .epp-note:empty { display: none; }
         .epp-chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--stack); }
+        /* Chart tooltips: one HTML tooltip shared by every chart, so a label and its value can differ in weight */
+        .chart-tooltip {
+            position: fixed;
+            z-index: 60;
+            top: 0;
+            left: 0;
+            min-width: 9rem;
+            max-width: min(20rem, calc(100vw - 1rem));
+            padding: 0.625rem 0.75rem;
+            border-style: solid;
+            border-radius: 8px;
+            box-shadow: var(--shadow-pop);
+            font-family: 'Space Grotesk', system-ui, sans-serif;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.5;
+            font-variant-numeric: tabular-nums;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 120ms ease;
+        }
+        .chart-tooltip.is-visible { opacity: 1; }
+        .chart-tooltip-head { margin-bottom: 0.375rem; }
+        .chart-tooltip-row { display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
+        .chart-tooltip-dot { flex: none; width: 0.5rem; height: 0.5rem; border: 1px solid; border-radius: 999px; }
+        .chart-tooltip-label { overflow: hidden; text-overflow: ellipsis; opacity: 0.8; }
+        .chart-tooltip-value { margin-left: auto; padding-left: 1rem; font-weight: 600; }
+        .chart-tooltip-foot { margin-top: 0.375rem; padding-top: 0.375rem; border-top: 1px solid color-mix(in srgb, currentColor 18%, transparent); }
+
+        /* Retirement chart phase legend; swatch colours come from the chart theme */
+        .ret-phase-legend { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.375rem 0.875rem; color: var(--muted); font-size: 0.75rem; font-weight: 500; }
+        .ret-phase-legend span { display: inline-flex; align-items: center; gap: 0.375rem; }
+        .ret-phase-legend i { width: 0.5rem; height: 0.5rem; border-radius: 999px; }
+        /* On phones the legend takes its own row under the title */
+        @media (max-width: 640px) {
+            .ret-chart-head { flex-wrap: wrap; gap: 0.75rem; }
+            .ret-phase-legend { width: 100%; justify-content: flex-start; }
+        }
+
+        /* EPF forecast: four summary tiles over a year-by-year table */
+        .epf-kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 1.25rem; }
+        .epf-kpis .report-kpi-value { overflow-wrap: anywhere; }
+        /* Each tile is tinted with its own colour and marked with a dot of it, like the summary cards; the text stays in ink */
+        .epf-kpis .report-kpi {
+            --tone: var(--accent);
+            border: 1px solid color-mix(in srgb, var(--tone) 22%, transparent);
+            background: color-mix(in srgb, var(--tone) 9%, var(--surface));
+        }
+        .epf-kpis .report-kpi.is-now { --tone: var(--c-brand); }
+        .epf-kpis .report-kpi.is-final { --tone: var(--c-violet); }
+        .epf-kpis .report-kpi.is-total { --tone: var(--c-amber); }
+        .epf-kpis .report-kpi.is-balance { --tone: var(--c-green); }
+        /* The dot stays beside the first line when a label wraps */
+        .epf-kpis .report-kpi-label { display: flex; align-items: flex-start; gap: 0.4rem; }
+        .epf-kpis .report-kpi-label::before { content: ''; flex: 0 0 auto; width: 0.5rem; height: 0.5rem; margin-top: 0.3rem; border-radius: 999px; background: var(--tone); }
+        .epf-age { display: block; color: var(--ink); font-weight: 600; }
+        .epf-sub { display: block; margin-top: 0.125rem; color: var(--muted); font-size: 0.72rem; font-weight: 400; }
+        /* Employee and employer shares under the salary field */
+        .epf-split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; margin-top: 0.625rem; }
+        .epf-split div { padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); background: var(--surface-2); }
+        .epf-split span { display: block; color: var(--muted); font-size: 0.72rem; }
+        .epf-split p { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: 0.72rem; font-variant-numeric: tabular-nums; }
+        .epf-split strong { display: block; margin-top: 0.125rem; color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+        @media (max-width: 900px) {
+            .epf-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
         /* Car loan years run from the start date; finished years recede and the current one is marked */
         .car-year-name { display: block; color: var(--ink); font-weight: 600; }
         .car-year-range { display: block; margin-top: 0.125rem; color: var(--muted); font-size: 0.72rem; }
@@ -2017,21 +2084,80 @@
                                     <input type="number" id="inpRetSavings" value="15000" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
                                 </div>
                                 <input type="range" id="sldRetSavings" min="0" max="500000" step="1000" value="15000" class="slider-gold">
+                                <div class="epp-range-scale" aria-hidden="true"><span>RM 0</span><span>RM 500,000</span></div>
+                            </div>
+                            <div>
+                                <p id="retEpfModeLabel" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="epf_mode">EPF contribution</p>
+                                <div class="task-view-toggle epp-toggle" role="group" aria-labelledby="retEpfModeLabel">
+                                    <button type="button" data-epf-mode="auto" aria-pressed="true" data-i18n="epf_mode_auto">From salary</button>
+                                    <button type="button" data-epf-mode="manual" aria-pressed="false" data-i18n="epf_mode_manual">Fixed amount</button>
+                                </div>
+                            </div>
+                            <!-- From salary: the contribution follows the salary as it grows each year -->
+                            <div id="retEpfAuto" class="space-y-6">
+                                <div>
+                                    <div class="flex justify-between items-end mb-1">
+                                        <label id="lblRetSalary" for="inpRetSalary" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="epf_salary">Monthly salary (RM)</label>
+                                        <input type="number" id="inpRetSalary" value="3000" min="0" step="100" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                    </div>
+                                    <input type="range" id="sldRetSalary" min="0" max="30000" step="100" value="3000" class="slider-gold" aria-labelledby="lblRetSalary">
+                                    <div class="epp-range-scale" aria-hidden="true"><span>RM 0</span><span>RM 30,000</span></div>
+                                    <div id="retEpfSplit" class="epf-split" aria-live="polite"></div>
+                                </div>
+                                <div>
+                                    <p id="retIncrementModeLabel" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="epf_increment_mode">Salary increase by</p>
+                                    <div class="task-view-toggle epp-toggle" role="group" aria-labelledby="retIncrementModeLabel">
+                                        <button type="button" data-increment-mode="percent" aria-pressed="true" data-i18n="epf_increment_percent">Percentage (%)</button>
+                                        <button type="button" data-increment-mode="amount" aria-pressed="false" data-i18n="epf_increment_fixed">Fixed amount (RM)</button>
+                                    </div>
+                                </div>
+                                <!-- Each method keeps its own value, so switching back and forth loses nothing -->
+                                <div id="retIncrementPercent">
+                                    <div class="flex justify-between items-end mb-1">
+                                        <label id="lblRetSalaryGrowth" for="inpRetSalaryGrowth" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="epf_increment">Yearly salary increase (%)</label>
+                                        <input type="number" id="inpRetSalaryGrowth" value="3" min="0" max="15" step="0.5" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                    </div>
+                                    <input type="range" id="sldRetSalaryGrowth" min="0" max="15" step="0.5" value="3" class="slider-gold" aria-labelledby="lblRetSalaryGrowth">
+                                    <div class="epp-range-scale" aria-hidden="true"><span>0%</span><span>15%</span></div>
+                                </div>
+                                <div id="retIncrementAmount" hidden>
+                                    <div class="flex justify-between items-end mb-1">
+                                        <label id="lblRetSalaryRaise" for="inpRetSalaryRaise" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="epf_increment_amount">Yearly salary increase (RM)</label>
+                                        <input type="number" id="inpRetSalaryRaise" value="100" min="0" step="10" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                    </div>
+                                    <input type="range" id="sldRetSalaryRaise" min="0" max="2000" step="10" value="100" class="slider-gold" aria-labelledby="lblRetSalaryRaise">
+                                    <div class="epp-range-scale" aria-hidden="true"><span>RM 0</span><span>RM 2,000</span></div>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1" data-i18n="epf_increment_amount_help">Added to your monthly salary each year.</p>
+                                </div>
+                                <div>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400" data-i18n="epf_auto_rules">Amounts follow the KWSP Third Schedule: your wage is placed in its RM20 band (RM100 above RM 5,000, the exact wage above RM 20,000) and each share is worked out on the top of the band, rounded up to the ringgit. Rates: 11% from you; 13% from your employer up to RM 5,000, 12% above. From age 60 only your employer pays, at 4%.</p>
+                                </div>
+                            </div>
+                            <div id="retEpfManual" hidden>
+                                <div class="flex justify-between items-end mb-1">
+                                    <label id="lblRetEpfMonthly" for="inpRetEpfMonthly" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="epf_monthly">EPF monthly contribution (RM)</label>
+                                    <input type="number" id="inpRetEpfMonthly" value="1000" min="0" step="10" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                </div>
+                                <input type="range" id="sldRetEpfMonthly" min="0" max="5000" step="10" value="1000" class="slider-gold" aria-labelledby="lblRetEpfMonthly">
+                                <div class="epp-range-scale" aria-hidden="true"><span>RM 0</span><span>RM 5,000</span></div>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1" data-i18n="epf_monthly_help">Your share and your employer's together, e.g. 11% from you and 13% from your employer.</p>
                             </div>
                             <div>
                                 <div class="flex justify-between items-end mb-1">
-                                    <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="other_assets">Other assets (RM)</label>
-                                    <input type="number" id="inpRetOtherAssets" value="0" min="0" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                    <label id="lblRetOtherAssets" for="inpRetOtherAssets" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="other_assets">Other assets (RM)</label>
+                                    <input type="number" id="inpRetOtherAssets" value="0" min="0" step="1000" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
                                 </div>
-                                <input type="range" id="sldRetOtherAssets" min="0" max="2000000" step="5000" value="0" class="slider-gold">
+                                <input type="range" id="sldRetOtherAssets" min="0" max="2000000" step="5000" value="0" class="slider-gold" aria-labelledby="lblRetOtherAssets">
+                                <div class="epp-range-scale" aria-hidden="true"><span>RM 0</span><span>RM 2,000,000</span></div>
                                 <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1" data-i18n="other_assets_note">Cash and other assets earn 0%;</p>
                             </div>
                             <div>
                                 <div class="flex justify-between items-end mb-1">
-                                    <label class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="mth_savings">Simpanan Bulanan (RM)</label>
-                                    <input type="number" id="inpRetMonthlySave" value="1000" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                    <label id="lblRetMonthlySave" for="inpRetMonthlySave" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="mth_savings">Simpanan Bulanan (RM)</label>
+                                    <input type="number" id="inpRetMonthlySave" value="0" min="0" step="50" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
                                 </div>
-                                <input type="range" id="sldRetMonthlySave" min="0" max="10000" step="100" value="1000" class="slider-gold">
+                                <input type="range" id="sldRetMonthlySave" min="0" max="10000" step="50" value="0" class="slider-gold" aria-labelledby="lblRetMonthlySave">
+                                <div class="epp-range-scale" aria-hidden="true"><span>RM 0</span><span>RM 10,000</span></div>
                             </div>
 
                             <hr class="border-slate-100 dark:border-slate-700">
@@ -2094,14 +2220,42 @@
                     </div>
 
                     <div class="glass-card chart-panel shadow-soft p-6 flex-grow flex flex-col relative">
-                        <div class="flex justify-between items-center mb-6">
+                        <div class="ret-chart-head flex justify-between items-center mb-6">
                             <div>
                                 <h2 class="font-display text-lg font-bold text-slate-800 dark:text-white" data-i18n="traj_title">Trajektori Kitaran Hayat Dana</h2>
                                 <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="traj_sub">Fasa Pengumpulan (Naik) dan Fasa Pengeluaran (Turun)</p>
                             </div>
+                            <div id="retPhaseLegend" class="ret-phase-legend" aria-hidden="true"></div>
                         </div>
                         <div class="relative w-full flex-grow min-h-[350px]">
                             <canvas id="retirementChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card shadow-soft p-6">
+                        <h2 class="font-display text-lg font-bold" data-i18n="epf_forecast_title">EPF contribution forecast</h2>
+                        <p class="text-xs" id="epfForecastSub"></p>
+                        <div id="epfForecastKpis" class="report-kpis epf-kpis"></div>
+                        <div class="epp-table-wrap is-scroll">
+                            <table class="epp-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" data-i18n="epf_col_age">Age</th>
+                                        <th scope="col" class="is-num" data-i18n="epf_col_salary">Yearly salary</th>
+                                        <th scope="col" class="is-num" data-i18n="epf_col_monthly">Monthly EPF</th>
+                                        <th scope="col" class="is-num" data-i18n="epf_col_annual">Yearly EPF</th>
+                                        <th scope="col" class="is-num" data-i18n="epf_col_balance">Projected EPF savings</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="epfForecastBody"></tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th scope="row" colspan="3" id="epfForecastTotalLabel">Total</th>
+                                        <td class="is-num" id="epfForecastTotalAnnual"></td>
+                                        <td class="is-num" id="epfForecastTotalBalance"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -3747,6 +3901,44 @@
                 other_assets: "Aset persaraan lain (RM)",
                 other_assets_note: "Tunai dan aset lain tiada pulangan",
                 mth_savings: "Simpanan Bulanan (RM)",
+                epf_monthly: "Caruman KWSP bulanan (RM)",
+                epf_monthly_help: "Bahagian anda dan majikan bersama, cth. 11% daripada anda dan 13% daripada majikan.",
+                epf_mode: "Caruman KWSP",
+                epf_mode_auto: "Ikut gaji",
+                epf_mode_manual: "Amaun tetap",
+                epf_salary: "Gaji bulanan (RM)",
+                epf_employee_share: "KWSP pekerja ({rate}%)",
+                epf_employer_share: "KWSP majikan ({rate}%)",
+                epf_band: "Julat jadual {from} – {to}",
+                epf_band_exact: "Upah melebihi RM 20,000: dikira pada upah sebenar",
+                epf_band_nil: "Tiada caruman bagi upah RM 10 dan ke bawah",
+                epf_increment: "Kenaikan gaji tahunan (%)",
+                epf_increment_mode: "Kenaikan gaji mengikut",
+                epf_increment_percent: "Peratusan (%)",
+                epf_increment_fixed: "Amaun tetap (RM)",
+                epf_increment_amount: "Kenaikan gaji tahunan (RM)",
+                epf_increment_amount_help: "Ditambah kepada gaji bulanan anda setiap tahun.",
+                epf_auto_rules: "Amaun mengikut Jadual Ketiga KWSP: Kadar: 11% daripada anda; 13% daripada majikan sehingga RM 5,000, 12% jika melebihi. Mulai umur 60 hanya majikan mencarum, pada 4%.",
+                epf_forecast_title: "Unjuran caruman KWSP",
+                epf_forecast_sub_auto: "Tahun demi tahun sehingga anda bersara pada umur {age}, dengan gaji meningkat {rate} setahun. Simpanan termasuk baki semasa dan kadar dividen di atas.",
+                epf_forecast_sub_auto_amount: "Tahun demi tahun sehingga anda bersara pada umur {age}, dengan gaji bulanan meningkat {amount} setiap tahun. Simpanan termasuk baki semasa dan kadar dividen di atas.",
+                epf_forecast_sub_manual: "Tahun demi tahun sehingga anda bersara pada umur {age}, dengan caruman tetap {amount} sebulan. Simpanan termasuk baki semasa dan kadar dividen di atas.",
+                epf_kpi_now: "KWSP sebulan kini",
+                epf_kpi_split: "Anda {employee} · majikan {employer}",
+                epf_kpi_final: "KWSP sebulan pada umur {age}",
+                epf_kpi_salary: "Gaji {amount} sebulan",
+                epf_kpi_total: "Jumlah caruman",
+                epf_kpi_years: "Dalam {count} tahun",
+                epf_kpi_balance: "Simpanan KWSP pada umur {age}",
+                epf_kpi_dividends: "Termasuk dividen {amount}",
+                epf_col_age: "Umur",
+                epf_col_salary: "Gaji setahun",
+                epf_col_monthly: "KWSP sebulan",
+                epf_col_annual: "KWSP setahun",
+                epf_col_balance: "Unjuran simpanan KWSP",
+                epf_salary_month: "{amount} sebulan",
+                epf_badge_retire: "Bersara",
+                epf_forecast_total: "Jumlah hingga umur {age}",
                 ret_exp: "Belanja Bersara / Bln (RM)",
                 today_val: "Nilai hari ini",
                 div_rate: "Anggaran Dividen (%)",
@@ -3770,10 +3962,14 @@
                 ret_phase_saving: "Menyimpan",
                 ret_phase_retired: "Bersara",
                 ret_phase_depleted: "Dana habis",
+                ret_phase_low: "Hampir habis",
+                ret_marker_retire: "Bersara · umur {age}",
+                ret_marker_depleted: "Dana habis · umur {age}",
                 ret_chart_age: "Umur {age} · {year}",
-                ret_chart_contributed: "Caruman setakat ini: {amount}",
-                ret_chart_withdrawn: "Dikeluarkan setakat ini: {amount}",
-                ret_chart_change: "Perubahan dari tahun lepas: {amount}",
+                ret_tip_fund: "Dana",
+                ret_tip_contributed: "Caruman",
+                ret_tip_withdrawn: "Dikeluarkan",
+                ret_tip_change: "Perubahan tahunan",
                 tab_expenses: "Perbelanjaan",
                 expense_title: "Perbelanjaan",
                 expense_subtitle: "Catat perbelanjaan anda dan lihat ke mana wang pergi setiap bulan.",
@@ -4356,6 +4552,44 @@
                 other_assets: "Other retirement assets (RM)",
                 other_assets_note: "Cash and other assets earn 0%",
                 mth_savings: "Monthly Savings (RM)",
+                epf_monthly: "EPF monthly contribution (RM)",
+                epf_monthly_help: "Your share and your employer's together, e.g. 11% from you and 13% from your employer.",
+                epf_mode: "EPF contribution",
+                epf_mode_auto: "From salary",
+                epf_mode_manual: "Fixed amount",
+                epf_salary: "Monthly salary (RM)",
+                epf_employee_share: "Employee EPF ({rate}%)",
+                epf_employer_share: "Employer EPF ({rate}%)",
+                epf_band: "Schedule band {from} – {to}",
+                epf_band_exact: "Over RM 20,000: worked out on the wage itself",
+                epf_band_nil: "No contribution on wages of RM 10 or less",
+                epf_increment: "Yearly salary increase (%)",
+                epf_increment_mode: "Salary increase by",
+                epf_increment_percent: "Percentage (%)",
+                epf_increment_fixed: "Fixed amount (RM)",
+                epf_increment_amount: "Yearly salary increase (RM)",
+                epf_increment_amount_help: "Added to your monthly salary each year.",
+                epf_auto_rules: "Amounts follow the KWSP Third Schedule: Rates: 11% from you; 13% from your employer up to RM 5,000, 12% above. From age 60 only your employer pays, at 4%.",
+                epf_forecast_title: "EPF contribution forecast",
+                epf_forecast_sub_auto: "Year by year until you retire at {age}, with your salary rising {rate} a year. Savings include your current balance and the dividend rate above.",
+                epf_forecast_sub_auto_amount: "Year by year until you retire at {age}, with your monthly salary rising {amount} each year. Savings include your current balance and the dividend rate above.",
+                epf_forecast_sub_manual: "Year by year until you retire at {age}, at a fixed {amount} a month. Savings include your current balance and the dividend rate above.",
+                epf_kpi_now: "Monthly EPF now",
+                epf_kpi_split: "You {employee} · employer {employer}",
+                epf_kpi_final: "Monthly EPF at {age}",
+                epf_kpi_salary: "Salary {amount} a month",
+                epf_kpi_total: "Total contributed",
+                epf_kpi_years: "Over {count} years",
+                epf_kpi_balance: "EPF savings at {age}",
+                epf_kpi_dividends: "Includes {amount} in dividends",
+                epf_col_age: "Age",
+                epf_col_salary: "Yearly salary",
+                epf_col_monthly: "Monthly EPF",
+                epf_col_annual: "Yearly EPF",
+                epf_col_balance: "Projected EPF savings",
+                epf_salary_month: "{amount} a month",
+                epf_badge_retire: "Retire",
+                epf_forecast_total: "Total by age {age}",
                 ret_exp: "Retirement Expenses / Mth (RM)",
                 today_val: "Today's value",
                 div_rate: "Est. Dividend Rate (%)",
@@ -4379,10 +4613,14 @@
                 ret_phase_saving: "Saving",
                 ret_phase_retired: "In retirement",
                 ret_phase_depleted: "Fund depleted",
+                ret_phase_low: "Running low",
+                ret_marker_retire: "Retire · age {age}",
+                ret_marker_depleted: "Runs out · age {age}",
                 ret_chart_age: "Age {age} · {year}",
-                ret_chart_contributed: "Contributed so far: {amount}",
-                ret_chart_withdrawn: "Withdrawn so far: {amount}",
-                ret_chart_change: "Change from last year: {amount}",
+                ret_tip_fund: "Fund",
+                ret_tip_contributed: "Contributed",
+                ret_tip_withdrawn: "Withdrawn",
+                ret_tip_change: "Yearly change",
                 tab_expenses: "Expenses",
                 expense_title: "Expenses",
                 expense_subtitle: "Log your spending and see where the money goes each month.",
@@ -4974,9 +5212,86 @@
             tooltipText: '#fafafa'
         };
 
+        // --- Chart tooltip: titles and labels in regular weight, values in semi-bold ---
+        let chartTooltipOwner = null;
+        const chartTooltipElement = () => {
+            let element = document.getElementById('chartTooltip');
+            if (!element) {
+                element = document.createElement('div');
+                element.id = 'chartTooltip';
+                element.className = 'chart-tooltip';
+                element.setAttribute('aria-hidden', 'true');
+                document.body.appendChild(element);
+            }
+            return element;
+        };
+        const hideChartTooltip = () => {
+            chartTooltipOwner = null;
+            document.getElementById('chartTooltip')?.classList.remove('is-visible');
+        };
+
+        // "Fund: RM 447,905" becomes a label and a value; a line that is only an amount is all value
+        const splitTooltipLine = line => {
+            const text = String(line).trim();
+            const colon = text.lastIndexOf(': ');
+            if (colon > -1) return { label: text.slice(0, colon), value: text.slice(colon + 2) };
+            return /^[−+-]?(RM|\d)/.test(text) ? { label: '', value: text } : { label: text, value: '' };
+        };
+
+        const tooltipRowHtml = (line, colour) => {
+            const { label, value } = splitTooltipLine(line);
+            const dot = colour ? `<span class="chart-tooltip-dot" style="background: ${colour.backgroundColor}; border-color: ${colour.borderColor}"></span>` : '';
+            return `<div class="chart-tooltip-row">${dot}${label ? `<span class="chart-tooltip-label">${escapeHtml(label)}</span>` : ''}${value ? `<span class="chart-tooltip-value">${escapeHtml(value)}</span>` : ''}</div>`;
+        };
+
+        const renderChartTooltip = ({ chart, tooltip }) => {
+            const element = chartTooltipElement();
+            if (tooltip.opacity === 0) {
+                if (chartTooltipOwner === chart) hideChartTooltip();
+                return;
+            }
+            chartTooltipOwner = chart;
+            const options = tooltip.options;
+            // A colour given as a function is worked out here, once the hovered point is known
+            const colourOption = key => {
+                const raw = chart.config.options.plugins?.tooltip?.[key];
+                return typeof raw === 'function' ? raw({ chart, tooltip }) : options[key];
+            };
+            const showDots = options.displayColors !== false;
+            const title = (tooltip.title || []).map(line => `<div>${escapeHtml(line)}</div>`).join('');
+            const plain = lines => (lines || []).map(line => tooltipRowHtml(line)).join('');
+            const body = tooltip.body.map((item, index) => [
+                plain(item.before),
+                item.lines.map((line, lineIndex) => tooltipRowHtml(line, showDots && lineIndex === 0 ? tooltip.labelColors[index] : null)).join(''),
+                plain(item.after)
+            ].join('')).join('');
+            const footer = plain(tooltip.footer);
+            element.innerHTML = `${title ? `<div class="chart-tooltip-head">${title}</div>` : ''}${plain(tooltip.beforeBody)}${body}${plain(tooltip.afterBody)}${footer ? `<div class="chart-tooltip-foot">${footer}</div>` : ''}`;
+            element.style.background = colourOption('backgroundColor');
+            element.style.color = colourOption('bodyColor');
+            element.style.borderColor = colourOption('borderColor');
+            element.style.borderWidth = `${options.borderWidth || 0}px`;
+
+            // Beside the point it describes, flipped to the other side and kept on screen near an edge
+            const canvas = chart.canvas.getBoundingClientRect();
+            const x = canvas.left + tooltip.caretX;
+            const y = canvas.top + tooltip.caretY;
+            const { width, height } = element.getBoundingClientRect();
+            const gap = 12;
+            const left = x + gap + width <= window.innerWidth - 8 ? x + gap : Math.max(8, x - gap - width);
+            const top = Math.min(window.innerHeight - height - 8, Math.max(8, y - height / 2));
+            element.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
+            element.classList.add('is-visible');
+        };
+
+        // A chart that is redrawn or scrolled away takes its tooltip with it
+        Chart.register({ id: 'chartTooltipCleanup', beforeDestroy: chart => { if (chartTooltipOwner === chart) hideChartTooltip(); } });
+        window.addEventListener('scroll', hideChartTooltip, { passive: true, capture: true });
+
         const applyChartDefaults = () => {
             const theme = chartTheme();
-            Chart.defaults.font.family = "'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif";
+            Chart.defaults.font.family = "'Space Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif";
+            Chart.defaults.font.weight = '400';
             Chart.defaults.font.size = 12;
             Chart.defaults.color = theme.text;
             Chart.defaults.animation.duration = 450;
@@ -4985,17 +5300,19 @@
             Chart.defaults.elements.point.hoverRadius = 4;
             if (Chart.defaults.scale.border) Chart.defaults.scale.border.display = false;
             Chart.defaults.scale.ticks.padding = 8;
-            Chart.defaults.scale.ticks.font = { family: "'Space Grotesk', sans-serif", size: 11 };
+            Chart.defaults.scale.ticks.font = { family: "'Space Grotesk', sans-serif", size: 11, weight: '400' };
             Object.assign(Chart.defaults.plugins.legend.labels, {
                 usePointStyle: true, pointStyle: 'circle', boxWidth: 7, boxHeight: 7, padding: 18,
-                font: { size: 12, weight: '500' }
+                font: { size: 12, weight: '400' }
             });
             Object.assign(Chart.defaults.plugins.tooltip, {
                 backgroundColor: theme.tooltipBg,
                 titleColor: theme.tooltipText,
                 bodyColor: theme.tooltipText,
-                titleFont: { family: "'Space Grotesk', sans-serif", weight: '500', size: 12 },
-                bodyFont: { family: "'Space Grotesk', sans-serif", size: 12 },
+                footerColor: theme.tooltipText,
+                // Drawn as HTML by renderChartTooltip; a chart that wants none sets external to null as well
+                enabled: false,
+                external: renderChartTooltip,
                 padding: 10,
                 cornerRadius: 8,
                 caretSize: 5,
@@ -5135,6 +5452,8 @@
         };
 
         const switchTab = (tabId) => {
+            // A tooltip from the module being left would otherwise stay on screen
+            hideChartTooltip();
             let targetTab = document.getElementById(tabId);
             if (!targetTab || !targetTab.classList.contains('tab-content')) return;
             const visibilityInput = document.querySelector(`[data-tab-id="${tabId}"]`);
@@ -5411,7 +5730,7 @@
                         maintainAspectRatio: false,
                         cutout: '70%',
                         layout: { padding: 10 },
-                        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                        plugins: { legend: { display: false }, tooltip: { enabled: false, external: null } },
                         onHover: (event, elements) => {
                             const key = segmentKeyAt(elements);
                             event.native.target.style.cursor = key ? 'pointer' : 'default';
@@ -6427,6 +6746,10 @@
             { n: 'inpRetireAge', s: 'sldRetireAge' },
             { n: 'inpDeathAge', s: 'sldDeathAge' },
             { n: 'inpRetSavings', s: 'sldRetSavings' },
+            { n: 'inpRetSalary', s: 'sldRetSalary' },
+            { n: 'inpRetSalaryGrowth', s: 'sldRetSalaryGrowth' },
+            { n: 'inpRetSalaryRaise', s: 'sldRetSalaryRaise' },
+            { n: 'inpRetEpfMonthly', s: 'sldRetEpfMonthly' },
             { n: 'inpRetOtherAssets', s: 'sldRetOtherAssets' },
             { n: 'inpRetMonthlySave', s: 'sldRetMonthlySave' },
             { n: 'inpRetExpense', s: 'sldRetExpense' },
@@ -6449,8 +6772,146 @@
                     syncRangeFill(elSld);
                     calcRetirement();
                 });
+                elSld.value = elNum.value || 0;
                 syncRangeFill(elSld);
             });
+            document.querySelectorAll('[data-epf-mode]').forEach(button => button.addEventListener('click', () => {
+                if (button.dataset.epfMode === epfMode) return;
+                epfMode = button.dataset.epfMode;
+                applyEpfMode();
+                calcRetirement();
+            }));
+            document.querySelectorAll('[data-increment-mode]').forEach(button => button.addEventListener('click', () => {
+                if (button.dataset.incrementMode === salaryIncrementMode) return;
+                salaryIncrementMode = button.dataset.incrementMode;
+                applyIncrementMode();
+                calcRetirement();
+            }));
+            applyEpfMode();
+            applyIncrementMode();
+        };
+
+        // --- EPF contribution forecast: what goes in each year until retirement, and what it grows to ---
+        // Contributions follow the Third Schedule of the EPF Act 1991. A wage is placed in a band, RM20 wide up to
+        // RM 5,000 and RM100 wide up to RM 20,000, and each share is the rate on the top of that band, rounded up
+        // to the next ringgit. Above RM 20,000 the rate applies to the wage itself, rounded up the same way, and
+        // nothing is due on RM 10 or less. Employees pay 11%; employers 13% on wages up to RM 5,000 and 12% above
+        // (Part A). From 60 only the employer pays, at 4% (Part E).
+        const EPF_EMPLOYER_THRESHOLD = 5000;
+        // Band widths in sen, each up to its limit
+        const EPF_BANDS = [{ upTo: 500000, width: 2000 }, { upTo: 2000000, width: 10000 }];
+        let epfMode = 'auto';
+        // A yearly raise as a percentage of the salary, or as a fixed ringgit amount
+        let salaryIncrementMode = 'percent';
+
+        // The band a wage in sen falls in, from and to in sen
+        const epfWageBand = wageSen => {
+            if (wageSen <= 1000) return { from: 1, to: 1000, nil: true };
+            const band = EPF_BANDS.find(item => wageSen <= item.upTo);
+            if (!band) return { from: wageSen, to: wageSen, exact: true };
+            const to = Math.ceil(wageSen / band.width) * band.width;
+            return { from: Math.max(1001, to - band.width + 1), to };
+        };
+
+        const epfShares = (salary, age) => {
+            const wageSen = Math.round(Math.max(0, salary) * 100);
+            const band = epfWageBand(wageSen);
+            const employeeRate = age >= 60 ? 0 : 11;
+            const employerRate = age >= 60 ? 4 : wageSen <= EPF_EMPLOYER_THRESHOLD * 100 ? 13 : 12;
+            // Sen times a whole percentage, back to ringgit: exact until the final rounding up
+            const share = rate => band.nil ? 0 : Math.ceil(band.to * rate / 10000);
+            return { employeeRate, employerRate, band, employee: share(employeeRate), employer: share(employerRate) };
+        };
+
+        const epfBandText = (salary, band) => {
+            if (!salary) return '';
+            if (band.nil) return t('epf_band_nil');
+            if (band.exact) return t('epf_band_exact');
+            return tf('epf_band', { from: formatRM2(band.from / 100), to: formatRM2(band.to / 100) });
+        };
+
+        const applyEpfMode = () => {
+            document.querySelectorAll('[data-epf-mode]').forEach(button => {
+                button.setAttribute('aria-pressed', String(button.dataset.epfMode === epfMode));
+            });
+            document.getElementById('retEpfAuto').hidden = epfMode !== 'auto';
+            document.getElementById('retEpfManual').hidden = epfMode !== 'manual';
+        };
+
+        const applyIncrementMode = () => {
+            document.querySelectorAll('[data-increment-mode]').forEach(button => {
+                button.setAttribute('aria-pressed', String(button.dataset.incrementMode === salaryIncrementMode));
+            });
+            document.getElementById('retIncrementPercent').hidden = salaryIncrementMode !== 'percent';
+            document.getElementById('retIncrementAmount').hidden = salaryIncrementMode !== 'amount';
+        };
+
+        // One row per working year, from now to the retirement year. The balance grows the same way as the
+        // fund in the retirement chart: the year's contributions go in, then the dividend is added.
+        const buildEpfForecast = (currentAge, retireAge, startBalance, dividendRate) => {
+            const isAuto = epfMode === 'auto';
+            const salary = Math.max(0, parseFloat(document.getElementById('inpRetSalary').value) || 0);
+            const growth = Math.max(0, parseFloat(document.getElementById('inpRetSalaryGrowth').value) || 0) / 100;
+            const raise = Math.max(0, parseFloat(document.getElementById('inpRetSalaryRaise').value) || 0);
+            const fixed = Math.max(0, parseFloat(document.getElementById('inpRetEpfMonthly').value) || 0);
+            const startYear = new Date().getFullYear();
+            let balance = startBalance;
+            return Array.from({ length: retireAge - currentAge + 1 }, (_, index) => {
+                const age = currentAge + index;
+                // A raise lands once a year: compounding by a percentage, or the same ringgit amount each time
+                const raised = salaryIncrementMode === 'amount' ? salary + raise * index : salary * Math.pow(1 + growth, index);
+                const monthlySalary = isAuto ? Math.round(raised) : null;
+                const shares = isAuto ? epfShares(monthlySalary, age) : null;
+                const monthly = isAuto ? shares.employee + shares.employer : fixed;
+                balance = (balance + monthly * 12) * (1 + dividendRate);
+                return { age, year: startYear + index, salary: monthlySalary, shares, monthly, annual: monthly * 12, balance };
+            });
+        };
+
+        const renderEpfForecast = (rows, startBalance) => {
+            const isAuto = epfMode === 'auto';
+            const [first] = rows;
+            const last = rows[rows.length - 1];
+            const total = rows.reduce((sum, row) => sum + row.annual, 0);
+            const growth = Math.max(0, parseFloat(document.getElementById('inpRetSalaryGrowth').value) || 0);
+            const raise = Math.max(0, parseFloat(document.getElementById('inpRetSalaryRaise').value) || 0);
+            const subKey = !isAuto ? 'epf_forecast_sub_manual' : salaryIncrementMode === 'amount' ? 'epf_forecast_sub_auto_amount' : 'epf_forecast_sub_auto';
+
+            // This year's shares of the salary as typed, and the band of the schedule they come from
+            const bandText = isAuto ? epfBandText(first.salary, first.shares.band) : '';
+            document.getElementById('retEpfSplit').innerHTML = isAuto ? [
+                [tf('epf_employee_share', { rate: first.shares.employeeRate }), first.shares.employee],
+                [tf('epf_employer_share', { rate: first.shares.employerRate }), first.shares.employer]
+            ].map(([label, amount]) => `<div><span>${escapeHtml(label)}</span><strong>${formatRM(amount)}</strong></div>`).join('')
+                + (bandText ? `<p>${escapeHtml(bandText)}</p>` : '') : '';
+            document.getElementById('epfForecastSub').textContent = tf(subKey, {
+                age: last.age, rate: formatEppRate(growth), amount: formatRM(isAuto ? raise : first.monthly)
+            });
+
+            // Each tile keeps its own colour: today, at retirement, what goes in, and what it grows to
+            const tile = (tone, label, value, note) => `
+                <div class="report-kpi is-${tone}">
+                    <p class="report-kpi-label">${escapeHtml(label)}</p>
+                    <p class="report-kpi-value">${escapeHtml(value)}</p>
+                    ${note ? `<p class="report-kpi-note">${escapeHtml(note)}</p>` : ''}
+                </div>`;
+            document.getElementById('epfForecastKpis').innerHTML = [
+                tile('now', t('epf_kpi_now'), formatRM(first.monthly), isAuto ? tf('epf_kpi_split', { employee: formatRM(first.shares.employee), employer: formatRM(first.shares.employer) }) : ''),
+                tile('final', tf('epf_kpi_final', { age: last.age }), formatRM(last.monthly), isAuto ? tf('epf_kpi_salary', { amount: formatRM(last.salary) }) : ''),
+                tile('total', t('epf_kpi_total'), formatRM(total), tf('epf_kpi_years', { count: rows.length })),
+                tile('balance', tf('epf_kpi_balance', { age: last.age }), formatRM(last.balance), tf('epf_kpi_dividends', { amount: formatRM(Math.max(0, last.balance - startBalance - total)) }))
+            ].join('');
+
+            document.getElementById('epfForecastBody').innerHTML = rows.map(row => `<tr>
+                <td><span class="epf-age">${row.age}${row === last ? `<span class="epp-badge">${t('epf_badge_retire')}</span>` : ''}</span><span class="epf-sub">${row.year}</span></td>
+                <td class="is-num">${isAuto ? `${formatRM(row.salary * 12)}<span class="epf-sub">${tf('epf_salary_month', { amount: formatRM(row.salary) })}</span>` : '–'}</td>
+                <td class="is-num">${formatRM(row.monthly)}${isAuto ? `<span class="epf-sub" title="${escapeHtml(epfBandText(row.salary, row.shares.band))}">${row.shares.employeeRate}% + ${row.shares.employerRate}%</span>` : ''}</td>
+                <td class="is-num">${formatRM(row.annual)}</td>
+                <td class="is-num is-strong">${formatRM(row.balance)}</td>
+            </tr>`).join('');
+            document.getElementById('epfForecastTotalLabel').textContent = tf('epf_forecast_total', { age: last.age });
+            document.getElementById('epfForecastTotalAnnual').textContent = formatRM(total);
+            document.getElementById('epfForecastTotalBalance').textContent = formatRM(last.balance);
         };
 
         const calcRetirement = () => {
@@ -6463,11 +6924,12 @@
 
             const epfSavings = parseFloat(document.getElementById('inpRetSavings').value) || 0;
             const otherAssets = parseFloat(document.getElementById('inpRetOtherAssets').value) || 0;
-            const monthlySave = parseFloat(document.getElementById('inpRetMonthlySave').value) || 0;
+            const monthlySave = Math.max(0, parseFloat(document.getElementById('inpRetMonthlySave').value) || 0);
             const expenseToday = parseFloat(document.getElementById('inpRetExpense').value) || 0;
             
             const dividendRate = parseFloat(document.getElementById('inpRetDividend').value) / 100 || 0;
             const inflationRate = parseFloat(document.getElementById('inpRetInflation').value) / 100 || 0;
+            const epfForecast = buildEpfForecast(currentAge, retireAge, epfSavings, dividendRate);
 
             let labels = [];
             let chartData = [];
@@ -6487,12 +6949,16 @@
                 labels.push(`${age}`); // Simplified label for better chart display
                 
                 if (age < retireAge) {
-                    epfFund = (epfFund + (monthlySave * 12)) * (1 + dividendRate);
-                    contributed += monthlySave * 12;
+                    // That year's EPF contribution and other monthly savings both earn the dividend rate
+                    const yearIn = (epfForecast[age - currentAge].monthly + monthlySave) * 12;
+                    epfFund = (epfFund + yearIn) * (1 + dividendRate);
+                    contributed += yearIn;
                     chartData.push(epfFund + otherAssetsBalance);
                 } else if (age === retireAge) {
-                    epfFund = (epfFund + (monthlySave * 12)) * (1 + dividendRate);
-                    contributed += monthlySave * 12;
+                    // That year's EPF contribution and other monthly savings both earn the dividend rate
+                    const yearIn = (epfForecast[age - currentAge].monthly + monthlySave) * 12;
+                    epfFund = (epfFund + yearIn) * (1 + dividendRate);
+                    contributed += yearIn;
                     chartData.push(epfFund + otherAssetsBalance);
                     
                     fundAtRetire = epfFund + otherAssetsBalance;
@@ -6542,24 +7008,100 @@
                 depSub.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400"><i class="fa-solid fa-circle-check"></i> ${t('safe')}</span>`;
             }
 
+            renderEpfForecast(epfForecast, epfSavings);
             drawRetirementChart(labels, chartData, currentAge, retireAge, depletionAge, yearDetails);
         };
 
         // --- STREAMING_CHUNK: Rendering Dynamic Retirement Chart ---
+        // Each phase keeps one colour across the line, fill, hover dot, tooltip and legend
+        const RET_PHASE_COLOURS = { saving: 'primary', retired: 'secondary', low: 'danger' };
+
+        // Vertical markers at retirement and where the fund runs out, labelled above the plot
+        const retirementMarkers = {
+            id: 'retirementMarkers',
+            afterDatasetsDraw(chart) {
+                const { ctx, chartArea } = chart;
+                const theme = chartTheme();
+                ctx.save();
+                ctx.font = "400 11px 'Space Grotesk', system-ui, sans-serif";
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+                let previousRight = -Infinity;
+                (chart.options.plugins.retirementMarkers.markers || []).forEach(marker => {
+                    const x = chart.scales.x.getPixelForValue(marker.index);
+                    ctx.strokeStyle = theme.text;
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([3, 3]);
+                    ctx.beginPath();
+                    ctx.moveTo(x, chartArea.top);
+                    ctx.lineTo(x, chartArea.bottom);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    // Kept within the plot's width; a label that would touch the one before drops below it
+                    const halfWidth = ctx.measureText(marker.label).width / 2;
+                    const labelX = Math.min(chartArea.right - halfWidth, Math.max(chartArea.left + halfWidth, x));
+                    const isLower = labelX - halfWidth < previousRight + 8;
+                    const labelY = isLower ? chartArea.top + 14 : chartArea.top - 4;
+                    if (isLower) {
+                        // A halo in the card colour keeps it readable over the line
+                        ctx.lineWidth = 4;
+                        ctx.lineJoin = 'round';
+                        ctx.strokeStyle = theme.surface;
+                        ctx.strokeText(marker.label, labelX, labelY);
+                    }
+                    ctx.fillStyle = theme.text;
+                    ctx.fillText(marker.label, labelX, labelY);
+                    previousRight = labelX + halfWidth;
+                });
+                ctx.restore();
+            }
+        };
+
         const drawRetirementChart = (labels, data, startAge, retireAge, depletionAge, yearDetails) => {
             const ctx = document.getElementById('retirementChart').getContext('2d');
             if (chartRetirement) chartRetirement.destroy();
 
-            // Theme adapted colors
             const theme = chartTheme();
             const gridColor = theme.grid;
             const textColor = theme.text;
-            const accentColor = theme.primary;
-            const dangerColor = theme.danger;
 
-            let gradientFill = ctx.createLinearGradient(0, 0, 0, 400);
-            gradientFill.addColorStop(0, theme.primaryFillStrong);
-            gradientFill.addColorStop(1, theme.primaryFillFade);
+            // Saving, in retirement, or running low: the five years before the fund runs out and after
+            const phaseAt = index => {
+                const age = startAge + index;
+                if (yearDetails[index].phase === 'saving') return 'saving';
+                return depletionAge && depletionAge - age <= 5 ? 'low' : 'retired';
+            };
+            const colourAt = index => theme[RET_PHASE_COLOURS[phaseAt(index)]];
+            // Fills fade downwards, as before, in each phase's colour
+            const fills = {};
+            Object.entries(RET_PHASE_COLOURS).forEach(([phase, key]) => {
+                const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                gradient.addColorStop(0, hexWithAlpha(theme[key], 0.2));
+                gradient.addColorStop(1, hexWithAlpha(theme[key], 0));
+                fills[phase] = gradient;
+            });
+            // The tooltip is tinted with the colour of the phase it describes
+            const tooltipIndex = context => context.tooltip && context.tooltip.dataPoints && context.tooltip.dataPoints.length
+                ? context.tooltip.dataPoints[0].dataIndex : 0;
+
+            const phases = [...new Set(labels.map((_, index) => phaseAt(index)))];
+            document.getElementById('retPhaseLegend').innerHTML = phases.map(phase =>
+                `<span><i style="background: ${theme[RET_PHASE_COLOURS[phase]]}"></i>${escapeHtml(t(`ret_phase_${phase}`))}</span>`
+            ).join('');
+
+            // Shown only in the tooltip, each with a bullet of its own; a hidden axis keeps them off the chart
+            const movedSoFar = yearDetails.map(detail => detail.phase === 'saving' ? detail.contributed : detail.withdrawn);
+            const yearlyChange = data.map((value, index) => index ? Math.round(value - data[index - 1]) : null);
+            const tooltipOnly = { yAxisID: 'tooltipOnly', borderWidth: 0, pointRadius: 0, pointHoverRadius: 0, fill: false, showLine: false };
+            const changeColour = change => change > 0 ? theme.allocation[2] : change < 0 ? theme.danger : theme.other;
+            const metricColour = context => [
+                colourAt(context.dataIndex),
+                theme.categorical[yearDetails[context.dataIndex].phase === 'saving' ? 0 : 6],
+                changeColour(yearlyChange[context.dataIndex])
+            ][context.datasetIndex];
+
+            const markers = [{ index: retireAge - startAge, label: tf('ret_marker_retire', { age: retireAge }) }];
+            if (depletionAge) markers.push({ index: depletionAge - startAge, label: tf('ret_marker_depleted', { age: depletionAge }) });
 
             chartRetirement = new Chart(ctx, {
                 type: 'line',
@@ -6568,58 +7110,67 @@
                     datasets: [{
                         label: t('chart_fund'),
                         data: data,
-                        borderColor: accentColor,
-                        backgroundColor: gradientFill,
+                        yAxisID: 'y',
+                        borderColor: theme.primary,
+                        backgroundColor: fills.saving,
                         borderWidth: 2.5,
-                        pointBackgroundColor: theme.surface,
-                        pointBorderColor: accentColor,
                         pointRadius: 0,
                         pointHoverRadius: 6,
+                        pointHoverBackgroundColor: context => colourAt(context.dataIndex),
+                        pointHoverBorderColor: theme.surface,
+                        pointHoverBorderWidth: 2,
                         fill: true,
                         tension: 0.3,
                         segment: {
-                            borderColor: context => {
-                                const ageAtPoint = startAge + context.p0DataIndex;
-                                if (ageAtPoint >= retireAge) {
-                                    if (depletionAge && (depletionAge - ageAtPoint) <= 5) return dangerColor;
-                                    return theme.muted;
-                                }
-                                return accentColor;
-                            }
+                            borderColor: context => colourAt(context.p1DataIndex),
+                            backgroundColor: context => fills[phaseAt(context.p1DataIndex)]
                         }
-                    }]
+                    },
+                    { ...tooltipOnly, label: 'moved', data: movedSoFar },
+                    { ...tooltipOnly, label: 'change', data: yearlyChange }]
                 },
+                plugins: [retirementMarkers],
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: { padding: { top: 18 } },
                     interaction: { mode: 'index', intersect: false },
                     plugins: {
                         legend: { display: false },
+                        retirementMarkers: { markers },
                         tooltip: {
+                            backgroundColor: context => mixHex(theme.tooltipBg, colourAt(tooltipIndex(context)), 0.2),
+                            borderColor: context => colourAt(tooltipIndex(context)),
+                            borderWidth: 1,
                             callbacks: {
-                                // Saving, retired or depleted heads the tooltip, above the age and its year
+                                // The phase heads the tooltip, above the age and its year
                                 title: items => {
-                                    const detail = yearDetails[items[0].dataIndex];
-                                    return [t(`ret_phase_${detail.phase}`), tf('ret_chart_age', { age: items[0].label, year: detail.year })];
-                                },
-                                label: context => ` ${context.dataset.label}: ${formatRM(context.parsed.y)}`,
-                                footer: items => {
                                     const index = items[0].dataIndex;
                                     const detail = yearDetails[index];
-                                    const lines = [detail.phase === 'saving'
-                                        ? tf('ret_chart_contributed', { amount: formatRM(detail.contributed) })
-                                        : tf('ret_chart_withdrawn', { amount: formatRM(detail.withdrawn) })];
-                                    if (index > 0) {
-                                        const change = Math.round(data[index] - data[index - 1]);
-                                        const sign = change < 0 ? '−' : change > 0 ? '+' : '';
-                                        lines.push(tf('ret_chart_change', { amount: `${sign}${formatRM(Math.abs(change))}` }));
+                                    const phase = detail.phase === 'depleted' ? 'depleted' : phaseAt(index);
+                                    return [t(`ret_phase_${phase}`), tf('ret_chart_age', { age: items[0].label, year: detail.year })];
+                                },
+                                label: context => {
+                                    const value = context.parsed.y;
+                                    if (context.datasetIndex === 0) return ` ${t('ret_tip_fund')}: ${formatRM(value)}`;
+                                    if (context.datasetIndex === 1) {
+                                        const key = yearDetails[context.dataIndex].phase === 'saving' ? 'ret_tip_contributed' : 'ret_tip_withdrawn';
+                                        return ` ${t(key)}: ${formatRM(value)}`;
                                     }
-                                    return lines;
+                                    const sign = value < 0 ? '−' : value > 0 ? '+' : '';
+                                    return ` ${t('ret_tip_change')}: ${sign}${formatRM(Math.abs(value))}`;
+                                },
+                                labelColor: context => {
+                                    const colour = metricColour(context);
+                                    return { borderColor: colour, backgroundColor: colour };
                                 }
-                            }
+                            },
+                            // The first year has no year before it to compare with
+                            filter: item => item.parsed.y !== null
                         }
                     },
                     scales: {
+                        tooltipOnly: { display: false },
                         y: {
                             beginAtZero: true,
                             grid: { color: gridColor },
@@ -8634,7 +9185,7 @@
                         maintainAspectRatio: false,
                         cutout: '70%',
                         layout: { padding: 10 },
-                        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                        plugins: { legend: { display: false }, tooltip: { enabled: false, external: null } },
                         onHover: (event, elements) => setExpenseHover(keyAt(elements))
                     }
                 });
@@ -9054,7 +9605,7 @@
                     animation: false,
                     devicePixelRatio: 3,
                     indexAxis: 'y',
-                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                    plugins: { legend: { display: false }, tooltip: { enabled: false, external: null } },
                     scales: {
                         x: { beginAtZero: true, grid: { color: theme.grid }, ticks: { color: theme.text, maxTicksLimit: 5, maxRotation: 0, callback: value => formatRM(value) } },
                         y: { grid: { display: false }, ticks: { color: theme.text } }
@@ -9089,7 +9640,7 @@
                     responsive: false,
                     animation: false,
                     devicePixelRatio: 3,
-                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                    plugins: { legend: { display: false }, tooltip: { enabled: false, external: null } },
                     scales: {
                         y: { beginAtZero: true, grid: { color: theme.grid }, ticks: { color: theme.text, maxTicksLimit: 5, callback: value => formatRM(value) } },
                         x: { grid: { display: false }, ticks: { color: theme.text, maxRotation: 0 } }
@@ -9600,7 +10151,7 @@
                 const { ctx } = chart;
                 const theme = chartTheme();
                 ctx.save();
-                ctx.font = "500 11px 'Geist', system-ui, sans-serif";
+                ctx.font = "400 11px 'Space Grotesk', system-ui, sans-serif";
                 // To the right of each end point, clear of the lines; the layout leaves room for the last one
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'bottom';
@@ -9853,6 +10404,13 @@
             return `rgba(${value >> 16}, ${(value >> 8) & 255}, ${value & 255}, ${alpha})`;
         };
 
+        // `weight` of the second "#rrggbb" colour mixed into the first, for tinted surfaces
+        const mixHex = (base, tint, weight) => {
+            const [a, b] = [base, tint].map(hex => parseInt(hex.slice(1), 16));
+            const channel = shift => Math.round(((a >> shift) & 255) * (1 - weight) + ((b >> shift) & 255) * weight);
+            return `rgb(${channel(16)}, ${channel(8)}, ${channel(0)})`;
+        };
+
         // Instalments fall due monthly from a month after the start date. The number of the next one
         // due on or after today; those before it count as paid.
         const carNextInstalment = (start, today) => {
@@ -9932,7 +10490,7 @@
                 ctx.stroke();
                 // Above the plot with the number of instalments paid, kept within the plot's width
                 const label = tf('car_chart_today_paid', { paid: carTodayIndex, total: carChartPoints.length - 1 });
-                ctx.font = "500 11px 'Geist', system-ui, sans-serif";
+                ctx.font = "400 11px 'Space Grotesk', system-ui, sans-serif";
                 const halfWidth = ctx.measureText(label).width / 2;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'bottom';
