@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Planner</title>
+    <title>Centralised Management Portal</title>
     
     <!-- Favicon (Ikon Tab Pelayar) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath fill='%2316a34a' d='M160 80c0-26.5 21.5-48 48-48l32 0c26.5 0 48 21.5 48 48l0 352c0 26.5-21.5 48-48 48l-32 0c-26.5 0-48-21.5-48-48L160 80zM0 272c0-26.5 21.5-48 48-48l32 0c26.5 0 48 21.5 48 48l0 160c0 26.5-21.5 48-48 48l-32 0c-26.5 0-48-21.5-48-48L0 272zM320 176c0-26.5 21.5-48 48-48l32 0c26.5 0 48 21.5 48 48l0 256c0 26.5-21.5 48-48 48l-32 0c-26.5 0-48-21.5-48-48l0-256z'/%3E%3C/svg%3E">
@@ -1608,6 +1608,42 @@
             .app-shell .spend-kpis { grid-template-columns: minmax(0, 1fr); }
         }
 
+        /* ---------- Instalment plans (EPP / FPP) ---------- */
+        .epp-toggle { display: flex; width: 100%; }
+        .epp-toggle button { flex: 1 1 0; justify-content: center; padding: 0 0.5rem; white-space: nowrap; }
+        .epp-range-scale { display: flex; justify-content: space-between; margin-top: 0.375rem; color: var(--muted-2); font-size: 0.72rem; font-variant-numeric: tabular-nums; }
+        .epp-rate-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+        .app-shell .glass-card .epp-rate-grid input { text-align: right; }
+        .epp-kpis h3 { overflow-wrap: anywhere; }
+        /* Tables scroll inside their card, so the page itself never scrolls sideways */
+        .epp-table-wrap { overflow-x: auto; margin-top: 1.25rem; }
+        .epp-table-wrap.is-scroll { max-height: 26rem; overflow-y: auto; }
+        .epp-table { width: 100%; min-width: 34rem; border-collapse: collapse; font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
+        .epp-table th, .epp-table td { padding: 0.625rem 0.75rem; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+        .epp-table thead th { position: sticky; top: 0; z-index: 1; background: var(--surface); color: var(--muted); font-size: 0.72rem; font-weight: 500; }
+        .epp-table tbody td { color: var(--ink-2); }
+        .epp-table tfoot th, .epp-table tfoot td { position: sticky; bottom: 0; border-bottom: 0; background: var(--surface); color: var(--ink); font-weight: 700; }
+        .epp-table .is-num { text-align: right; }
+        .epp-table .is-strong { color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-weight: 600; }
+        /* Comparison rows pick the plan shown in detail */
+        #eppCompareBody tr { cursor: pointer; transition: background-color 160ms ease; }
+        #eppCompareBody tr:hover { background: var(--surface-2); }
+        #eppCompareBody tr.is-selected { background: var(--accent-soft); }
+        .epp-plan-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--ink); font-weight: 600; }
+        .epp-plan-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+        .epp-badge { margin-left: 0.5rem; padding: 0.125rem 0.5rem; border-radius: 999px; background: color-mix(in srgb, var(--c-green) 14%, transparent); color: var(--c-green); font-size: 0.68rem; font-weight: 600; }
+        .epp-note { margin-top: 1rem; color: var(--muted); font-size: 0.8125rem; line-height: 1.55; }
+        .epp-note:empty { display: none; }
+        .epp-chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--stack); }
+        @media (max-width: 1100px) {
+            .epp-chart-grid { grid-template-columns: minmax(0, 1fr); }
+        }
+        @media (max-width: 640px) {
+            .epp-rate-grid { gap: 0.5rem; }
+            .epp-toggle button { font-size: 0.78rem; }
+            .app-shell .glass-card.shadow-card h3.epp-kpi-value { font-size: clamp(1rem, 5vw, 1.375rem); }
+        }
+
         /* ---------- Footer ---------- */
         .app-footer {
             position: fixed;
@@ -1741,9 +1777,9 @@
                 <div class="min-w-0">
                     <h1 class="brand-title">
                         <span data-i18n="title_main"></span>
-                        <span data-i18n="title_gradient">Perancangan Kewangan</span>
+                        <span data-i18n="title_gradient">Pengurusan Berpusat</span>
                     </h1>
-                    <p class="brand-subtitle" data-i18n="subtitle">Urus aliran tunai hari ini dan rancang kebebasan kewangan masa depan.</p>
+                    <p class="brand-subtitle" data-i18n="subtitle">Rancang, pantau dan urus keperluan harian dalam satu platform.</p>
                 </div>
             </div>
             <div class="header-actions">
@@ -1767,6 +1803,7 @@
                     <label class="tab-visibility-option" for="showTab8"><input id="showTab8" type="checkbox" data-tab-id="tab8"><span data-i18n="tab_dash_text">Hypen Text</span></label>
                     <label class="tab-visibility-option" for="showTab9"><input id="showTab9" type="checkbox" data-tab-id="tab9"><span data-i18n="tab_tasks">Task Tracker</span></label>
                     <label class="tab-visibility-option" for="showTab10"><input id="showTab10" type="checkbox" data-tab-id="tab10" checked><span data-i18n="tab_expenses">Expenses</span></label>
+                    <label class="tab-visibility-option" for="showTab11"><input id="showTab11" type="checkbox" data-tab-id="tab11" checked><span data-i18n="tab_instalment">EPP/FPP Credit Card</span></label>
                 </div>
                 <button id="btnTheme" type="button" onclick="toggleTheme()" class="icon-btn is-square" aria-label="Toggle theme">
                     <i class="fa-solid fa-moon" id="iconTheme" aria-hidden="true"></i>
@@ -1804,6 +1841,7 @@
                     <option value="tab8" data-i18n="tab_dash_text" hidden>Hypen Text</option>
                     <option value="tab9" data-i18n="tab_tasks" hidden>Task Tracker</option>
                     <option value="tab10" data-i18n="tab_expenses" hidden>Expenses</option>
+                    <option value="tab11" data-i18n="tab_instalment" hidden>EPP/FPP Credit Card</option>
                 </select>
                 <button type="button" onclick="switchTab('tab1')" id="btnTab1" class="nav-tab is-active" aria-current="page">
                     <i class="fa-solid fa-wallet" aria-hidden="true"></i><span data-i18n="tab_salary">Agihan Gaji</span>
@@ -1834,6 +1872,9 @@
                 </button>
                 <button type="button" onclick="switchTab('tab10')" id="btnTab10" class="nav-tab" hidden>
                     <i class="fa-solid fa-receipt" aria-hidden="true"></i><span data-i18n="tab_expenses">Expenses</span>
+                </button>
+                <button type="button" onclick="switchTab('tab11')" id="btnTab11" class="nav-tab" hidden>
+                    <i class="fa-solid fa-credit-card" aria-hidden="true"></i><span data-i18n="tab_instalment">EPP/FPP Credit Card</span>
                 </button>
             </div>
         </nav>
@@ -2968,6 +3009,158 @@
             </div>
         </div>
 
+        <div id="tab11" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-4 flex flex-col gap-6">
+                    <div class="glass-card shadow-soft p-6 md:p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center border border-brand-100 dark:border-brand-800">
+                                <i class="fa-solid fa-credit-card text-lg"></i>
+                            </div>
+                            <h2 class="font-display text-xl font-bold text-slate-800 dark:text-slate-100" data-i18n="epp_params">Instalment plan</h2>
+                        </div>
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between items-end gap-3 mb-1">
+                                    <label id="lblEppAmount" for="inpEppAmount" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="epp_amount">Purchase amount (RM)</label>
+                                    <input type="number" id="inpEppAmount" value="5000" min="0" step="100" class="w-28 px-2 py-1 text-right font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg outline-none">
+                                </div>
+                                <input type="range" id="sldEppAmount" min="500" max="50000" step="100" value="5000" aria-labelledby="lblEppAmount">
+                                <div class="epp-range-scale" aria-hidden="true"><span>RM 500</span><span>RM 50,000</span></div>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1" data-i18n="epp_amount_help">Drag the slider, or type an exact amount above.</p>
+                            </div>
+
+                            <div>
+                                <p id="eppTypeLabel" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="epp_type">Plan type</p>
+                                <div class="task-view-toggle epp-toggle" role="group" aria-labelledby="eppTypeLabel">
+                                    <button type="button" data-epp-type="epp" aria-pressed="true">EPP</button>
+                                    <button type="button" data-epp-type="fpp" aria-pressed="false">FPP</button>
+                                </div>
+                                <p id="eppTypeHelp" class="text-xs text-slate-500 dark:text-slate-400 mt-2"></p>
+                            </div>
+
+                            <div id="eppRateField" class="space-y-4 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700" hidden>
+                                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="epp_rate_heading">Interest rate (% p.a.)</p>
+                                <div class="epp-rate-grid">
+                                    <div>
+                                        <label for="inpEppRate6" class="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1 block" data-i18n="epp_tenor_6">6 months</label>
+                                        <input type="number" id="inpEppRate6" data-epp-rate="6" value="6" min="0" max="36" step="0.01" class="w-full px-3 py-2 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                    </div>
+                                    <div>
+                                        <label for="inpEppRate12" class="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1 block" data-i18n="epp_tenor_12">12 months</label>
+                                        <input type="number" id="inpEppRate12" data-epp-rate="12" value="5.5" min="0" max="36" step="0.01" class="w-full px-3 py-2 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                    </div>
+                                    <div>
+                                        <label for="inpEppRate18" class="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1 block" data-i18n="epp_tenor_18">18 months</label>
+                                        <input type="number" id="inpEppRate18" data-epp-rate="18" value="5.25" min="0" max="36" step="0.01" class="w-full px-3 py-2 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                    </div>
+                                    <div>
+                                        <label for="inpEppRate24" class="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1 block" data-i18n="epp_tenor_24">24 months</label>
+                                        <input type="number" id="inpEppRate24" data-epp-rate="24" value="5" min="0" max="36" step="0.01" class="w-full px-3 py-2 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                    </div>
+                                </div>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400" data-i18n="epp_rate_help">The starting rates are examples only. Use the rates in your bank's offer.</p>
+                            </div>
+
+                            <div>
+                                <p id="eppTenorLabel" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="epp_view_plan">Plan shown in detail</p>
+                                <div class="task-view-toggle epp-toggle" role="group" aria-labelledby="eppTenorLabel">
+                                    <button type="button" data-epp-tenor="6" aria-pressed="false"><span aria-hidden="true">6m</span><span class="sr-only" data-i18n="epp_tenor_6">6 months</span></button>
+                                    <button type="button" data-epp-tenor="12" aria-pressed="true"><span aria-hidden="true">12m</span><span class="sr-only" data-i18n="epp_tenor_12">12 months</span></button>
+                                    <button type="button" data-epp-tenor="18" aria-pressed="false"><span aria-hidden="true">18m</span><span class="sr-only" data-i18n="epp_tenor_18">18 months</span></button>
+                                    <button type="button" data-epp-tenor="24" aria-pressed="false"><span aria-hidden="true">24m</span><span class="sr-only" data-i18n="epp_tenor_24">24 months</span></button>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="epp_note">Each instalment is rounded down to the sen and the last one takes up the difference. FPP interest is charged on the original amount for the whole term, so the EIR (the effective yearly rate, given that you owe less every month) is higher than the quoted rate.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-8 flex flex-col gap-6">
+                    <div class="epp-kpis grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-brand-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="epp_kpi_monthly">Monthly payout</p>
+                            <h3 class="epp-kpi-value font-display text-2xl font-extrabold" id="resEppMonthly">RM 0.00</h3>
+                            <p id="resEppMonthlyNote">-</p>
+                        </div>
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-gold-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" id="lblEppFeeKpi">Processing fee</p>
+                            <h3 class="epp-kpi-value font-display text-2xl font-extrabold" id="resEppFee">RM 0.00</h3>
+                            <p id="resEppFeeNote">-</p>
+                        </div>
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-purple-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="epp_kpi_total">Total payable</p>
+                            <h3 class="epp-kpi-value font-display text-2xl font-extrabold" id="resEppTotal">RM 0.00</h3>
+                            <p id="resEppTotalNote">-</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card shadow-soft p-6">
+                        <h2 class="font-display text-lg font-bold" data-i18n="epp_compare_title">Compare plans</h2>
+                        <p class="text-xs" data-i18n="epp_compare_sub">The same purchase over 6, 12, 18 and 24 months. Select a plan to see its schedule.</p>
+                        <div class="epp-table-wrap">
+                            <table class="epp-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" data-i18n="epp_col_plan">Plan</th>
+                                        <th scope="col" class="is-num" data-i18n="epp_col_rate">Rate</th>
+                                        <th scope="col" class="is-num" id="lblEppFeeCol">Processing fee</th>
+                                        <th scope="col" class="is-num" data-i18n="epp_kpi_monthly">Monthly payout</th>
+                                        <th scope="col" class="is-num" data-i18n="epp_kpi_total">Total payable</th>
+                                        <th scope="col" class="is-num" data-i18n="epp_col_eir">EIR (p.a.)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="eppCompareBody"></tbody>
+                            </table>
+                        </div>
+                        <p id="eppCompareNote" class="epp-note"></p>
+                    </div>
+
+                    <div class="epp-chart-grid">
+                        <div class="glass-card chart-panel shadow-soft p-6 flex flex-col">
+                            <h2 class="font-display text-lg font-bold" data-i18n="epp_chart_cost_title">Principal and fees by plan</h2>
+                            <p class="text-xs mb-6" data-i18n="epp_chart_cost_sub">What each plan costs in total.</p>
+                            <div class="relative w-full flex-grow min-h-[300px]"><canvas id="eppCostChart" role="img"></canvas></div>
+                        </div>
+                        <div class="glass-card chart-panel shadow-soft p-6 flex flex-col">
+                            <h2 class="font-display text-lg font-bold" data-i18n="epp_chart_balance_title">Balance still owed</h2>
+                            <p class="text-xs mb-6" data-i18n="epp_chart_balance_sub">How quickly each plan is paid off.</p>
+                            <div class="relative w-full flex-grow min-h-[300px]"><canvas id="eppBalanceChart" role="img"></canvas></div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card shadow-soft p-6">
+                        <h2 class="font-display text-lg font-bold" id="eppScheduleTitle">Payment schedule</h2>
+                        <p class="text-xs" id="eppScheduleSub"></p>
+                        <div class="epp-table-wrap is-scroll">
+                            <table class="epp-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" data-i18n="epp_col_month">Month</th>
+                                        <th scope="col" data-i18n="epp_col_due">Due</th>
+                                        <th scope="col" class="is-num" data-i18n="epp_col_principal">Principal</th>
+                                        <th scope="col" class="is-num" id="lblEppScheduleFee">Fee</th>
+                                        <th scope="col" class="is-num" data-i18n="epp_col_payment">Payment</th>
+                                        <th scope="col" class="is-num" data-i18n="epp_col_owed">Still owed</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="eppScheduleBody"></tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th scope="row" colspan="2" data-i18n="epp_schedule_total">Total</th>
+                                        <td class="is-num" id="eppScheduleTotalPrincipal"></td>
+                                        <td class="is-num" id="eppScheduleTotalFee"></td>
+                                        <td class="is-num" id="eppScheduleTotalPayment"></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <dialog id="weddingReportDialog" class="report-dialog" aria-labelledby="weddingReportTitle">
             <div class="report-head">
                 <div class="report-head-copy">
@@ -3039,7 +3232,7 @@
         // Role-based access: these modules are reachable only after an admin signs in.
         // The page is static, so the passcode only keeps them out of the public UI;
         // their markup still ships to every browser. Do not rely on it to protect real secrets.
-        const ADMIN_TAB_IDS = ['tab4', 'tab7', 'tab8', 'tab9', 'tab10'];
+        const ADMIN_TAB_IDS = ['tab4', 'tab7', 'tab8', 'tab9', 'tab10', 'tab11'];
         const ADMIN_PASSCODE_HASH = 'a35c5f63916fff41369754c7a01cc4a82e9e3e5f1e05628791b5f5770435d6b0'; // SHA-256 of the passcode
         const ADMIN_SESSION_KEY = 'financialPlannerAdmin';
         // The admin's tab selection. It is kept in this browser's localStorage, so it drives the
@@ -3064,8 +3257,8 @@
         const i18n = {
             bm: {
                 title_main: "Portal",
-                title_gradient: "Perancangan Kewangan",
-                subtitle: "Urus aliran tunai hari ini dan rancang kebebasan kewangan masa depan.",
+                title_gradient: "Pengurusan Berpusat",
+                subtitle: "Rancang, pantau dan urus keperluan harian dalam satu platform.",
                 module_selector: "Pilih modul",
                 tab_visibility_button: "Sesuaikan tab yang dipaparkan",
                 tab_visibility_title: "Tab yang dipaparkan",
@@ -3475,7 +3668,7 @@
                 expense_report_daily: "Perbelanjaan harian",
                 expense_report_list: "Semua perbelanjaan",
                 expense_report_entries: "Rekod",
-                expense_report_footer: "Dieksport daripada Portal Perancangan Kewangan. Angka diambil daripada perbelanjaan yang disimpan dalam pelayar ini.",
+                expense_report_footer: "Dieksport daripada Portal Pengurusan Berpusat. Angka diambil daripada perbelanjaan yang disimpan dalam pelayar ini.",
                 expense_copy_image: "Salin imej",
                 expense_copy_done: "Disalin",
                 expense_copy_report: "Salin imej laporan",
@@ -3483,7 +3676,7 @@
                 expense_copy_hint: "Salin pecahan ini sebagai imej untuk ditampal dalam sembang atau dokumen",
                 expense_copy_downloaded: "Pelayar ini tidak dapat menyalin imej, jadi ia dimuat turun.",
                 expense_copy_failed: "Imej tidak dapat dihasilkan. Cuba lagi.",
-                expense_copy_footer: "Portal Perancangan Kewangan · {date}",
+                expense_copy_footer: "Portal Pengurusan Berpusat · {date}",
                 expense_split_each: "Setiap penyewa bayar",
                 expense_split_formula: "{total} ÷ {count} penyewa",
                 expense_split_per_tenant: "Setiap penyewa",
@@ -3541,12 +3734,65 @@
                 expense_cat_family: "Keluarga",
                 expense_cat_debt: "Pinjaman & hutang",
                 expense_cat_other: "Lain-lain",
+                tab_instalment: "Kad Kredit EPP/FPP",
+                epp_params: "Pelan ansuran",
+                epp_amount: "Jumlah pembelian (RM)",
+                epp_amount_help: "Seret gelangsar, atau taip jumlah tepat di atas.",
+                epp_type: "Jenis pelan",
+                epp_type_help_epp: "EPP (Pelan Bayaran Mudah): faedah 0% tanpa caj. Pembelian hanya dibahagikan kepada ansuran bulanan yang sama.",
+                epp_type_help_fpp: "FPP (Pelan Bayaran Fleksibel): faedah pada kadar tahunan atas jumlah asal, dicaj sama rata bersama setiap ansuran.",
+                epp_rate_heading: "Kadar faedah (% setahun)",
+                epp_rate_help: "Kadar permulaan hanyalah contoh. Gunakan kadar dalam tawaran bank anda.",
+                epp_tenor_6: "6 bulan",
+                epp_tenor_12: "12 bulan",
+                epp_tenor_18: "18 bulan",
+                epp_tenor_24: "24 bulan",
+                epp_view_plan: "Pelan yang diperincikan",
+                epp_note: "Setiap ansuran dibundarkan ke bawah hingga sen dan ansuran terakhir menampung bakinya. Faedah FPP dikira atas jumlah asal sepanjang tempoh, jadi EIR (kadar tahunan berkesan, kerana baki hutang berkurang setiap bulan) lebih tinggi daripada kadar yang ditetapkan.",
+                epp_kpi_monthly: "Bayaran bulanan",
+                epp_kpi_fee_epp: "Caj pemprosesan",
+                epp_kpi_fee_fpp: "Jumlah faedah",
+                epp_kpi_total: "Jumlah perlu dibayar",
+                epp_for_months: "Selama {months} bulan",
+                epp_last_month: "bulan terakhir {amount}",
+                epp_eir_note: "EIR {rate} setahun",
+                epp_fee_free: "Tiada caj untuk pelan ini",
+                epp_last_due: "Bayaran terakhir {date}",
+                epp_compare_title: "Bandingkan pelan",
+                epp_compare_sub: "Pembelian yang sama selama 6, 12, 18 dan 24 bulan. Pilih pelan untuk melihat jadualnya.",
+                epp_col_plan: "Pelan",
+                epp_col_rate: "Kadar",
+                epp_col_eir: "EIR (setahun)",
+                epp_rate_pa: "{rate} setahun",
+                epp_badge_cheapest: "Kos terendah",
+                epp_compare_note: "{plan} membayar {less} kurang setiap bulan berbanding {base}, tetapi kosnya {more} lebih tinggi secara keseluruhan.",
+                epp_compare_note_less: "{plan} membayar {less} kurang setiap bulan berbanding {base}, dan kosnya {more} lebih rendah secara keseluruhan.",
+                epp_compare_note_free: "Tanpa caj, pelan lebih panjang hanya mengagihkan jumlah yang sama: {plan} membayar {less} kurang setiap bulan berbanding {base}.",
+                epp_chart_cost_title: "Prinsipal dan caj mengikut pelan",
+                epp_chart_cost_sub: "Jumlah kos setiap pelan.",
+                epp_chart_balance_title: "Baki yang masih terhutang",
+                epp_chart_balance_sub: "Seberapa cepat setiap pelan dilunaskan.",
+                epp_chart_principal: "Prinsipal",
+                epp_chart_fee: "Caj",
+                epp_chart_monthly: "Bayaran bulanan: {amount}",
+                epp_chart_total: "Jumlah: {amount}",
+                epp_months_axis: "Bulan",
+                epp_schedule_title: "Jadual bayaran · {plan}",
+                epp_schedule_sub: "Bulan demi bulan, bermula {date}.",
+                epp_col_month: "Bulan",
+                epp_col_due: "Tarikh",
+                epp_col_principal: "Prinsipal",
+                epp_col_fee_epp: "Caj",
+                epp_col_fee_fpp: "Faedah",
+                epp_col_payment: "Bayaran",
+                epp_col_owed: "Baki terhutang",
+                epp_schedule_total: "Jumlah",
                 footer_credit: "© 2026 · Direka dan dibangunkan oleh @muhdnajb"
             },
             en: {
-                title_main: "Financial",
-                title_gradient: "Planning Portal",
-                subtitle: "Manage cash flow today and plan for financial freedom tomorrow.",
+                title_main: "Centralised",
+                title_gradient: "Management Portal",
+                subtitle: "Plan, track and manage everyday essentials on one platform.",
                 module_selector: "Select module",
                 tab_visibility_button: "Customize visible tabs",
                 tab_visibility_title: "Visible tabs",
@@ -3956,7 +4202,7 @@
                 expense_report_daily: "Daily spending",
                 expense_report_list: "All expenses",
                 expense_report_entries: "Entries",
-                expense_report_footer: "Exported from the Financial Planning Portal. Figures come from the expenses saved in this browser.",
+                expense_report_footer: "Exported from the Centralised Management Portal. Figures come from the expenses saved in this browser.",
                 expense_copy_image: "Copy image",
                 expense_copy_done: "Copied",
                 expense_copy_report: "Copy report image",
@@ -3964,7 +4210,7 @@
                 expense_copy_hint: "Copy this breakdown as an image to paste into a chat or document",
                 expense_copy_downloaded: "This browser can't copy images, so it was downloaded instead.",
                 expense_copy_failed: "Couldn't create the image. Try again.",
-                expense_copy_footer: "Financial Planning Portal · {date}",
+                expense_copy_footer: "Centralised Management Portal · {date}",
                 expense_split_each: "Each tenant pays",
                 expense_split_formula: "{total} ÷ {count} tenants",
                 expense_split_per_tenant: "Per tenant",
@@ -4022,6 +4268,59 @@
                 expense_cat_family: "Family",
                 expense_cat_debt: "Loans & debt",
                 expense_cat_other: "Other",
+                tab_instalment: "EPP/FPP Credit Card",
+                epp_params: "Instalment plan",
+                epp_amount: "Purchase amount (RM)",
+                epp_amount_help: "Drag the slider, or type an exact amount above.",
+                epp_type: "Plan type",
+                epp_type_help_epp: "EPP (Easy Payment Plan): 0% interest and no fees. The purchase is simply split into equal monthly instalments.",
+                epp_type_help_fpp: "FPP (Flexible Payment Plan): interest at a yearly rate on the original amount, charged in equal parts with every instalment.",
+                epp_rate_heading: "Interest rate (% p.a.)",
+                epp_rate_help: "The starting rates are examples only. Use the rates in your bank's offer.",
+                epp_tenor_6: "6 months",
+                epp_tenor_12: "12 months",
+                epp_tenor_18: "18 months",
+                epp_tenor_24: "24 months",
+                epp_view_plan: "Plan shown in detail",
+                epp_note: "Each instalment is rounded down to the sen and the last one takes up the difference. FPP interest is charged on the original amount for the whole term, so the EIR (the effective yearly rate, given that you owe less every month) is higher than the quoted rate.",
+                epp_kpi_monthly: "Monthly payout",
+                epp_kpi_fee_epp: "Processing fee",
+                epp_kpi_fee_fpp: "Total interest",
+                epp_kpi_total: "Total payable",
+                epp_for_months: "For {months} months",
+                epp_last_month: "last month {amount}",
+                epp_eir_note: "EIR {rate} a year",
+                epp_fee_free: "No fee on this plan",
+                epp_last_due: "Last payment {date}",
+                epp_compare_title: "Compare plans",
+                epp_compare_sub: "The same purchase over 6, 12, 18 and 24 months. Select a plan to see its schedule.",
+                epp_col_plan: "Plan",
+                epp_col_rate: "Rate",
+                epp_col_eir: "EIR (p.a.)",
+                epp_rate_pa: "{rate} p.a.",
+                epp_badge_cheapest: "Lowest cost",
+                epp_compare_note: "{plan} pays {less} less each month than {base}, but costs {more} more in total.",
+                epp_compare_note_less: "{plan} pays {less} less each month than {base}, and costs {more} less in total.",
+                epp_compare_note_free: "With no fees, a longer plan only spreads the same amount: {plan} pays {less} less each month than {base}.",
+                epp_chart_cost_title: "Principal and fees by plan",
+                epp_chart_cost_sub: "What each plan costs in total.",
+                epp_chart_balance_title: "Balance still owed",
+                epp_chart_balance_sub: "How quickly each plan is paid off.",
+                epp_chart_principal: "Principal",
+                epp_chart_fee: "Fees",
+                epp_chart_monthly: "Monthly payout: {amount}",
+                epp_chart_total: "Total: {amount}",
+                epp_months_axis: "Months",
+                epp_schedule_title: "Payment schedule · {plan}",
+                epp_schedule_sub: "Month by month, starting {date}.",
+                epp_col_month: "Month",
+                epp_col_due: "Due",
+                epp_col_principal: "Principal",
+                epp_col_fee_epp: "Fee",
+                epp_col_fee_fpp: "Interest",
+                epp_col_payment: "Payment",
+                epp_col_owed: "Still owed",
+                epp_schedule_total: "Total",
                 footer_credit: "© 2026 · Designed and developed by @muhdnajb"
             }
         };
@@ -4469,7 +4768,8 @@
                 tab6: calcWeddingSavings,
                 tab7: calcDailyDividend,
                 tab9: renderTaskTracker,
-                tab10: renderExpenses
+                tab10: renderExpenses,
+                tab11: calcInstalmentPlans
             };
             if (calculators[tabId]) calculators[tabId]();
         };
@@ -8811,6 +9111,337 @@
             });
         };
 
+        // --- Instalment plans: one purchase compared over 6, 12, 18 and 24 months ---
+        // EPP is fixed at 0%: the purchase is only split into instalments. FPP charges interest at a
+        // yearly rate on the original amount for the whole term, in equal parts with each instalment.
+        const EPP_TENORS = [6, 12, 18, 24];
+        const EPP_MAX_AMOUNT = 1000000;
+        const EPP_MAX_RATE = 36;
+        let eppPlanType = 'epp';
+        let eppTenor = 12;
+        let eppPlans = [];
+        let chartEppCost = null;
+        let chartEppBalance = null;
+        // The charts follow the inputs in place; a theme or language change rebuilds them
+        let eppChartKey = '';
+
+        const eppPlanName = months => t(`epp_tenor_${months}`);
+        // Each plan keeps its colour slot in every chart and table
+        const eppPlanColor = (months, theme) => theme.categorical[EPP_TENORS.indexOf(months)];
+        const formatEppRate = value => `${new Intl.NumberFormat(dateLocale(), { maximumFractionDigits: 2 }).format(value)}%`;
+
+        // Shares an amount in sen over the months: each rounded down, the last one takes the rest
+        const spreadSen = (sen, months) => {
+            const base = Math.floor(sen / months);
+            return Array.from({ length: months }, (_, index) => index === months - 1 ? sen - base * (months - 1) : base);
+        };
+
+        // The yearly rate (monthly IRR × 12) at which the payments are worth the amount borrowed
+        const instalmentEir = (amount, payments) => {
+            const paid = payments.reduce((total, payment) => total + payment, 0);
+            if (amount <= 0 || paid <= amount) return 0;
+            const presentValue = rate => payments.reduce((total, payment, index) => total + payment / Math.pow(1 + rate, index + 1), 0);
+            let low = 0;
+            let high = 1;
+            for (let step = 0; step < 60; step++) {
+                const mid = (low + high) / 2;
+                if (presentValue(mid) > amount) low = mid;
+                else high = mid;
+            }
+            return (low + high) / 2 * 12 * 100;
+        };
+
+        // `rate` is the yearly rate in %; a % of an amount in RM comes out in sen
+        const buildInstalmentPlan = (amount, months, rate) => {
+            const principalSen = Math.round(amount * 100);
+            const feeSen = Math.round(amount * rate / 12) * months;
+            const principal = spreadSen(principalSen, months);
+            const fees = spreadSen(feeSen, months);
+            let owedSen = principalSen + feeSen;
+            const rows = principal.map((principalPart, index) => {
+                const paymentSen = principalPart + fees[index];
+                owedSen -= paymentSen;
+                return { month: index + 1, principal: principalPart / 100, fee: fees[index] / 100, payment: paymentSen / 100, owed: owedSen / 100 };
+            });
+            return {
+                months,
+                rate,
+                rows,
+                principal: principalSen / 100,
+                fee: feeSen / 100,
+                total: (principalSen + feeSen) / 100,
+                // Every month but the last, which takes the rounding
+                monthly: rows[0].payment,
+                last: rows[months - 1].payment,
+                eir: instalmentEir(amount, rows.map(row => row.payment))
+            };
+        };
+
+        // Only FPP has rates to enter; they stay as typed while EPP is shown
+        const applyInstalmentType = () => {
+            document.querySelectorAll('[data-epp-type]').forEach(button => {
+                button.setAttribute('aria-pressed', String(button.dataset.eppType === eppPlanType));
+            });
+            document.getElementById('eppRateField').hidden = eppPlanType !== 'fpp';
+        };
+
+        const renderInstalmentCompare = (plans, amount, theme) => {
+            const lowestTotal = Math.min(...plans.map(plan => plan.total));
+            const totalsDiffer = plans.some(plan => plan.total !== lowestTotal);
+            document.getElementById('eppCompareBody').innerHTML = plans.map(plan => {
+                const isSelected = plan.months === eppTenor;
+                const rate = tf('epp_rate_pa', { rate: formatEppRate(plan.rate) });
+                const badge = totalsDiffer && plan.total === lowestTotal ? `<span class="epp-badge">${t('epp_badge_cheapest')}</span>` : '';
+                return `<tr data-epp-row="${plan.months}"${isSelected ? ' class="is-selected"' : ''}>
+                    <td><button type="button" class="epp-plan-btn" aria-pressed="${isSelected}"><span class="expense-swatch" style="background: ${eppPlanColor(plan.months, theme)}"></span>${eppPlanName(plan.months)}</button>${badge}</td>
+                    <td class="is-num">${rate}</td>
+                    <td class="is-num">${formatRM2(plan.fee)}</td>
+                    <td class="is-num is-strong">${formatRM2(plan.monthly)}</td>
+                    <td class="is-num">${formatRM2(plan.total)}</td>
+                    <td class="is-num">${formatEppRate(plan.eir)}</td>
+                </tr>`;
+            }).join('');
+
+            // The trade-off between the shortest and the longest plan
+            const shortest = plans[0];
+            const longest = plans[plans.length - 1];
+            const key = shortest.fee === 0 && longest.fee === 0 ? 'epp_compare_note_free'
+                : longest.total < shortest.total ? 'epp_compare_note_less' : 'epp_compare_note';
+            document.getElementById('eppCompareNote').textContent = amount > 0 ? tf(key, {
+                plan: eppPlanName(longest.months),
+                base: eppPlanName(shortest.months),
+                less: formatRM2(roundSen(shortest.monthly - longest.monthly)),
+                more: formatRM2(Math.abs(roundSen(longest.total - shortest.total)))
+            }) : '';
+        };
+
+        const renderInstalmentSchedule = plan => {
+            document.getElementById('eppScheduleTitle').textContent = tf('epp_schedule_title', { plan: eppPlanName(plan.months) });
+            document.getElementById('eppScheduleSub').textContent = tf('epp_schedule_sub', { date: formatMonthYear(monthsFromNow(1)) });
+            document.getElementById('eppScheduleBody').innerHTML = plan.rows.map(row => `<tr>
+                <td>${row.month}</td>
+                <td>${formatMonthYear(monthsFromNow(row.month))}</td>
+                <td class="is-num">${formatRM2(row.principal)}</td>
+                <td class="is-num">${formatRM2(row.fee)}</td>
+                <td class="is-num is-strong">${formatRM2(row.payment)}</td>
+                <td class="is-num">${formatRM2(row.owed)}</td>
+            </tr>`).join('');
+            document.getElementById('eppScheduleTotalPrincipal').textContent = formatRM2(plan.principal);
+            document.getElementById('eppScheduleTotalFee').textContent = formatRM2(plan.fee);
+            document.getElementById('eppScheduleTotalPayment').textContent = formatRM2(plan.total);
+        };
+
+        // Labels each balance line where it reaches zero, so the plans read without the legend
+        const eppEndLabels = {
+            id: 'eppEndLabels',
+            afterDatasetsDraw(chart) {
+                const { ctx } = chart;
+                const theme = chartTheme();
+                ctx.save();
+                ctx.font = "500 11px 'Geist', system-ui, sans-serif";
+                // To the right of each end point, clear of the lines; the layout leaves room for the last one
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'bottom';
+                chart.data.datasets.forEach((dataset, index) => {
+                    const point = chart.getDatasetMeta(index).data[dataset.endIndex];
+                    if (!chart.isDatasetVisible(index) || !point) return;
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = dataset.borderColor;
+                    ctx.fill();
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = theme.surface;
+                    ctx.stroke();
+                    // A halo in the card colour keeps the label readable where a longer plan's line passes behind it
+                    ctx.lineWidth = 4;
+                    ctx.lineJoin = 'round';
+                    ctx.strokeText(dataset.endLabel, point.x + 7, point.y - 4);
+                    ctx.fillStyle = theme.text;
+                    ctx.fillText(dataset.endLabel, point.x + 7, point.y - 4);
+                });
+                ctx.restore();
+            }
+        };
+
+        const drawInstalmentCharts = plans => {
+            const theme = chartTheme();
+            const key = `${isDarkMode}|${currentLang}`;
+            if (key !== eppChartKey) {
+                if (chartEppCost) chartEppCost.destroy();
+                if (chartEppBalance) chartEppBalance.destroy();
+                chartEppCost = null;
+                chartEppBalance = null;
+                eppChartKey = key;
+            }
+            const costData = [plans.map(plan => plan.principal), plans.map(plan => plan.fee)];
+            const balanceLabels = Array.from({ length: EPP_TENORS[EPP_TENORS.length - 1] + 1 }, (_, month) => String(month));
+            // What is still owed after each month's payment; a plan's line stops once it is paid off
+            const balanceData = plans.map(plan => balanceLabels.map((_, month) => month === 0 ? plan.total : month <= plan.months ? plan.rows[month - 1].owed : null));
+            const lineWidth = plan => plan.months === eppTenor ? 2.5 : 1.5;
+            const costCanvas = document.getElementById('eppCostChart');
+            const balanceCanvas = document.getElementById('eppBalanceChart');
+            costCanvas.setAttribute('aria-label', t('epp_chart_cost_title'));
+            balanceCanvas.setAttribute('aria-label', t('epp_chart_balance_title'));
+            const amountAxis = { beginAtZero: true, grid: { color: theme.grid }, ticks: { color: theme.text, callback: value => formatRM(value) } };
+
+            if (chartEppCost) {
+                chartEppCost.data.datasets.forEach((dataset, index) => { dataset.data = costData[index]; });
+                chartEppCost.update();
+            } else {
+                chartEppCost = new Chart(costCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: plans.map(plan => eppPlanName(plan.months)),
+                        datasets: [
+                            { label: t('epp_chart_principal'), data: costData[0], backgroundColor: theme.other, borderRadius: 4, maxBarThickness: 56 },
+                            { label: t('epp_chart_fee'), data: costData[1], backgroundColor: theme.secondary, borderRadius: 4, maxBarThickness: 56 }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                            legend: { position: 'bottom', labels: { color: theme.text } },
+                            tooltip: {
+                                callbacks: {
+                                    label: context => ` ${context.dataset.label}: ${formatRM2(context.parsed.y)}`,
+                                    footer: points => {
+                                        const plan = eppPlans[points[0].dataIndex];
+                                        return [tf('epp_chart_total', { amount: formatRM2(plan.total) }), tf('epp_chart_monthly', { amount: formatRM2(plan.monthly) })];
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: { ...amountAxis, stacked: true },
+                            x: { stacked: true, grid: { display: false }, ticks: { color: theme.text } }
+                        }
+                    }
+                });
+            }
+
+            if (chartEppBalance) {
+                chartEppBalance.data.datasets.forEach((dataset, index) => {
+                    dataset.data = balanceData[index];
+                    dataset.borderWidth = lineWidth(plans[index]);
+                });
+                chartEppBalance.update();
+            } else {
+                chartEppBalance = new Chart(balanceCanvas, {
+                    type: 'line',
+                    data: {
+                        labels: balanceLabels,
+                        datasets: plans.map((plan, index) => ({
+                            label: eppPlanName(plan.months),
+                            endLabel: `${plan.months}m`,
+                            endIndex: plan.months,
+                            data: balanceData[index],
+                            borderColor: eppPlanColor(plan.months, theme),
+                            backgroundColor: eppPlanColor(plan.months, theme),
+                            borderWidth: lineWidth(plan),
+                            pointRadius: 0,
+                            tension: 0
+                        }))
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: { padding: { top: 8, right: 40 } },
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                            legend: { position: 'bottom', labels: { color: theme.text } },
+                            tooltip: {
+                                filter: context => context.parsed.y !== null,
+                                callbacks: { title: projectionTooltipTitle, label: context => ` ${context.dataset.label}: ${formatRM2(context.parsed.y)}` }
+                            }
+                        },
+                        scales: {
+                            y: amountAxis,
+                            x: {
+                                title: { display: true, text: t('epp_months_axis'), color: theme.text },
+                                grid: { display: false },
+                                ticks: { color: theme.text, maxRotation: 0, autoSkip: false, callback: (value, index) => index % 6 === 0 ? balanceLabels[index] : '' }
+                            }
+                        }
+                    },
+                    plugins: [eppEndLabels]
+                });
+            }
+        };
+
+        const calcInstalmentPlans = () => {
+            const theme = chartTheme();
+            const amount = Math.min(EPP_MAX_AMOUNT, Math.max(0, parseFloat(document.getElementById('inpEppAmount').value) || 0));
+            eppPlans = EPP_TENORS.map(months => {
+                const rate = eppPlanType === 'fpp'
+                    ? Math.min(EPP_MAX_RATE, Math.max(0, parseFloat(document.getElementById(`inpEppRate${months}`).value) || 0))
+                    : 0;
+                return buildInstalmentPlan(amount, months, rate);
+            });
+            const plan = eppPlans.find(item => item.months === eppTenor);
+
+            document.getElementById('eppTypeHelp').textContent = t(`epp_type_help_${eppPlanType}`);
+            document.getElementById('lblEppFeeKpi').textContent = t(`epp_kpi_fee_${eppPlanType}`);
+            document.getElementById('lblEppFeeCol').textContent = t(`epp_kpi_fee_${eppPlanType}`);
+            document.getElementById('lblEppScheduleFee').textContent = t(`epp_col_fee_${eppPlanType}`);
+
+            const monthlyNotes = [tf('epp_for_months', { months: plan.months })];
+            if (plan.last !== plan.monthly) monthlyNotes.push(tf('epp_last_month', { amount: formatRM2(plan.last) }));
+            document.getElementById('resEppMonthly').textContent = formatRM2(plan.monthly);
+            document.getElementById('resEppMonthlyNote').textContent = monthlyNotes.join(' · ');
+            document.getElementById('resEppFee').textContent = formatRM2(plan.fee);
+            document.getElementById('resEppFeeNote').textContent = plan.fee > 0 ? tf('epp_eir_note', { rate: formatEppRate(plan.eir) }) : t('epp_fee_free');
+            document.getElementById('resEppTotal').textContent = formatRM2(plan.total);
+            document.getElementById('resEppTotalNote').textContent = tf('epp_last_due', { date: formatMonthYear(monthsFromNow(plan.months)) });
+
+            renderInstalmentCompare(eppPlans, amount, theme);
+            renderInstalmentSchedule(plan);
+            drawInstalmentCharts(eppPlans);
+        };
+
+        const selectInstalmentTenor = months => {
+            // The comparison rows are rebuilt, so a plan picked from the keyboard keeps its focus
+            const hadRowFocus = document.activeElement instanceof Element && document.activeElement.closest('#eppCompareBody');
+            eppTenor = months;
+            document.querySelectorAll('[data-epp-tenor]').forEach(button => {
+                button.setAttribute('aria-pressed', String(Number(button.dataset.eppTenor) === months));
+            });
+            calcInstalmentPlans();
+            if (hadRowFocus) document.querySelector(`#eppCompareBody tr[data-epp-row="${months}"] button`).focus();
+        };
+
+        const initInstalmentPlans = () => {
+            const amountInput = document.getElementById('inpEppAmount');
+            const amountSlider = document.getElementById('sldEppAmount');
+            amountSlider.addEventListener('input', () => {
+                amountInput.value = amountSlider.value;
+                syncRangeFill(amountSlider);
+                calcInstalmentPlans();
+            });
+            amountInput.addEventListener('input', () => {
+                amountSlider.value = amountInput.value || 0;
+                syncRangeFill(amountSlider);
+                calcInstalmentPlans();
+            });
+            syncRangeFill(amountSlider);
+            document.querySelectorAll('[data-epp-rate]').forEach(input => input.addEventListener('input', calcInstalmentPlans));
+            document.querySelectorAll('[data-epp-type]').forEach(button => button.addEventListener('click', () => {
+                if (button.dataset.eppType === eppPlanType) return;
+                eppPlanType = button.dataset.eppType;
+                applyInstalmentType();
+                calcInstalmentPlans();
+            }));
+            document.querySelectorAll('[data-epp-tenor]').forEach(button => {
+                button.addEventListener('click', () => selectInstalmentTenor(Number(button.dataset.eppTenor)));
+            });
+            document.getElementById('eppCompareBody').addEventListener('click', event => {
+                const row = event.target instanceof Element && event.target.closest('tr[data-epp-row]');
+                if (row) selectInstalmentTenor(Number(row.dataset.eppRow));
+            });
+            applyInstalmentType();
+        };
+
         window.onload = () => {
             const startMonthInput = document.getElementById('inpDivStartMonth');
             const now = new Date();
@@ -8829,6 +9460,7 @@
             initDashFreeText();
             initTaskTracker();
             initExpenses();
+            initInstalmentPlans();
             renderLanguage();
             calcSalary(); 
             calcRetirement();
