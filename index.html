@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centralised Management Portal</title>
+    <title>Centralised Management Portalt ra</title>
     
     <!-- Favicon (Ikon Tab Pelayar) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath fill='%2316a34a' d='M160 80c0-26.5 21.5-48 48-48l32 0c26.5 0 48 21.5 48 48l0 352c0 26.5-21.5 48-48 48l-32 0c-26.5 0-48-21.5-48-48L160 80zM0 272c0-26.5 21.5-48 48-48l32 0c26.5 0 48 21.5 48 48l0 160c0 26.5-21.5 48-48 48l-32 0c-26.5 0-48-21.5-48-48L0 272zM320 176c0-26.5 21.5-48 48-48l32 0c26.5 0 48 21.5 48 48l0 256c0 26.5-21.5 48-48 48l-32 0c-26.5 0-48-21.5-48-48l0-256z'/%3E%3C/svg%3E">
@@ -1633,6 +1633,15 @@
         .epp-note { margin-top: 1rem; color: var(--muted); font-size: 0.8125rem; line-height: 1.55; }
         .epp-note:empty { display: none; }
         .epp-chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--stack); }
+        /* Car loan years run from the start date; finished years recede and the current one is marked */
+        .car-year-name { display: block; color: var(--ink); font-weight: 600; }
+        .car-year-range { display: block; margin-top: 0.125rem; color: var(--muted); font-size: 0.72rem; }
+        #carYearBody tr.is-past td { color: var(--muted); }
+        #carYearBody tr.is-current { background: var(--accent-soft); }
+        .epp-badge.car-badge-paid { background: var(--surface-2); color: var(--muted); }
+        /* Two summary rows, so the whole footer sticks rather than each cell */
+        .car-year-table tfoot { position: sticky; bottom: 0; z-index: 1; background: var(--surface); box-shadow: 0 -1px 0 var(--line); }
+        .car-year-table tfoot th, .car-year-table tfoot td { position: static; padding-block: 0.5rem; }
         @media (max-width: 1100px) {
             .epp-chart-grid { grid-template-columns: minmax(0, 1fr); }
         }
@@ -1807,6 +1816,7 @@
                     <label class="tab-visibility-option" for="showTab9"><input id="showTab9" type="checkbox" data-tab-id="tab9"><span data-i18n="tab_tasks">Task Tracker</span></label>
                     <label class="tab-visibility-option" for="showTab10"><input id="showTab10" type="checkbox" data-tab-id="tab10"><span data-i18n="tab_expenses">Expenses</span></label>
                     <label class="tab-visibility-option" for="showTab11"><input id="showTab11" type="checkbox" data-tab-id="tab11"><span data-i18n="tab_instalment">Credit Card</span></label>
+                    <label class="tab-visibility-option" for="showTab12"><input id="showTab12" type="checkbox" data-tab-id="tab12"><span data-i18n="tab_car_loan">Car Loan</span></label>
                 </div>
                 <button id="btnTheme" type="button" onclick="toggleTheme()" class="icon-btn is-square" aria-label="Switch between light and dark mode">
                     <i class="fa-solid fa-moon" id="iconTheme" aria-hidden="true"></i>
@@ -1845,6 +1855,7 @@
                     <option value="tab9" data-i18n="tab_tasks" hidden>Task Tracker</option>
                     <option value="tab10" data-i18n="tab_expenses" hidden>Expenses</option>
                     <option value="tab11" data-i18n="tab_instalment" hidden>Credit Card</option>
+                    <option value="tab12" data-i18n="tab_car_loan" hidden>Car Loan</option>
                 </select>
                 <button type="button" onclick="switchTab('tab1')" id="btnTab1" class="nav-tab is-active" aria-current="page">
                     <i class="fa-solid fa-wallet" aria-hidden="true"></i><span data-i18n="tab_salary">Agihan Gaji</span>
@@ -1878,6 +1889,9 @@
                 </button>
                 <button type="button" onclick="switchTab('tab11')" id="btnTab11" class="nav-tab" hidden>
                     <i class="fa-solid fa-credit-card" aria-hidden="true"></i><span data-i18n="tab_instalment">Credit Card</span>
+                </button>
+                <button type="button" onclick="switchTab('tab12')" id="btnTab12" class="nav-tab" hidden>
+                    <i class="fa-solid fa-car" aria-hidden="true"></i><span data-i18n="tab_car_loan">Car Loan</span>
                 </button>
             </div>
         </nav>
@@ -3164,6 +3178,123 @@
             </div>
         </div>
 
+        <div id="tab12" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-4 flex flex-col gap-6">
+                    <div class="glass-card shadow-soft p-6 md:p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center border border-brand-100 dark:border-brand-800">
+                                <i class="fa-solid fa-car text-lg"></i>
+                            </div>
+                            <h2 class="font-display text-xl font-bold text-slate-800 dark:text-slate-100" data-i18n="car_params">Loan details</h2>
+                        </div>
+                        <div class="space-y-5">
+                            <div>
+                                <p id="carTypeLabel" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="car_rate_type">Interest type</p>
+                                <div class="task-view-toggle epp-toggle" role="group" aria-labelledby="carTypeLabel">
+                                    <button type="button" data-car-type="flat" aria-pressed="true" data-i18n="car_type_flat">Flat rate</button>
+                                    <button type="button" data-car-type="reducing" aria-pressed="false" data-i18n="car_type_reducing">Reducing balance</button>
+                                </div>
+                                <p id="carTypeHelp" class="text-xs text-slate-500 dark:text-slate-400 mt-2"></p>
+                            </div>
+                            <div>
+                                <label for="inpCarAmount" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="car_amount">Original loan amount (RM)</label>
+                                <input type="number" id="inpCarAmount" value="38900" min="0" step="100" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2" data-i18n="car_amount_help">The total amount borrowed from the bank, as in your loan agreement.</p>
+                            </div>
+                            <div>
+                                <label for="inpCarMonthly" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="car_monthly">Monthly instalment (RM)</label>
+                                <input type="number" id="inpCarMonthly" value="467" min="0" step="10" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                            </div>
+                            <div>
+                                <label id="lblCarRate" for="inpCarRate" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block">Flat rate (% p.a.)</label>
+                                <input type="number" id="inpCarRate" value="3.29" min="0" max="30" step="0.01" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                <p id="carRateHelp" class="text-xs text-slate-500 dark:text-slate-400 mt-2"></p>
+                            </div>
+                            <div>
+                                <label for="inpCarStart" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="car_start">Loan start date</label>
+                                <input type="date" id="inpCarStart" value="2024-12-08" min="1990-01-01" max="2100-12-31" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2" data-i18n="car_start_help">Each instalment is due on this day of the month, from the month after.</p>
+                            </div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="car_note">The projection takes every instalment as paid on its due date and the rate unchanged. Late charges, insurance and other fees are left out. For flat-rate loans, the interest still to pay and the early settlement amount follow the Rule of 78 in the Hire Purchase Act 1967. Ask your bank for the exact settlement figure.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-8 flex flex-col gap-6">
+                    <div class="epp-kpis grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-emerald-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="car_kpi_settled">Fully settled by</p>
+                            <h3 class="kpi-compact font-display font-extrabold leading-tight" id="resCarEnd">-</h3>
+                        </div>
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-brand-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="car_kpi_remaining">Still to pay</p>
+                            <h3 class="epp-kpi-value font-display text-2xl font-extrabold" id="resCarRemaining">RM 0.00</h3>
+                            <p id="resCarRemainingNote">-</p>
+                        </div>
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-gold-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="car_kpi_interest">Interest still to pay</p>
+                            <h3 class="epp-kpi-value font-display text-2xl font-extrabold" id="resCarInterest">RM 0.00</h3>
+                            <p id="resCarInterestNote">-</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card shadow-soft p-6">
+                        <h2 id="carProgressTitle" class="font-display text-lg font-bold" data-i18n="car_progress_title">Loan progress</h2>
+                        <div class="report-progress">
+                            <div class="report-progress-row"><span id="carProgressLabel">-</span><strong id="carProgressPercent"></strong></div>
+                            <div id="carProgressTrack" class="report-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-labelledby="carProgressTitle"><div id="carProgressFill" class="report-progress-fill" style="width: 0%"></div></div>
+                            <p id="carProgressNote" class="report-progress-note"></p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card chart-panel shadow-soft p-6 flex flex-col">
+                        <h2 class="font-display text-lg font-bold" data-i18n="car_chart_title">Repayment timeline</h2>
+                        <p class="text-xs mb-6" data-i18n="car_chart_sub">What is still owed from the loan start date to the final instalment, as principal and interest. Paid instalments are solid; the projection is dashed.</p>
+                        <div class="relative w-full flex-grow min-h-[320px]"><canvas id="carBalanceChart" role="img"></canvas></div>
+                    </div>
+
+                    <div class="glass-card shadow-soft p-6">
+                        <h2 class="font-display text-lg font-bold" data-i18n="car_year_title">Yearly breakdown</h2>
+                        <p class="text-xs" id="carYearSub"></p>
+                        <div class="epp-table-wrap is-scroll">
+                            <table class="epp-table car-year-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" data-i18n="car_col_year">Loan year</th>
+                                        <th scope="col" class="is-num" data-i18n="car_col_count">Instalments</th>
+                                        <th scope="col" class="is-num" data-i18n="car_col_principal">Principal</th>
+                                        <th scope="col" class="is-num" data-i18n="car_col_interest">Interest</th>
+                                        <th scope="col" class="is-num" data-i18n="car_col_paid">Paid</th>
+                                        <th scope="col" class="is-num" id="lblCarColBalance">Balance outstanding</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="carYearBody"></tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th scope="row" data-i18n="car_total_paid">Paid to date</th>
+                                        <td class="is-num" id="carYearPaidCount"></td>
+                                        <td class="is-num" id="carYearPaidPrincipal"></td>
+                                        <td class="is-num" id="carYearPaidInterest"></td>
+                                        <td class="is-num" id="carYearPaidPaid"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" data-i18n="car_total_left">Still to pay</th>
+                                        <td class="is-num" id="carYearLeftCount"></td>
+                                        <td class="is-num" id="carYearLeftPrincipal"></td>
+                                        <td class="is-num" id="carYearLeftInterest"></td>
+                                        <td class="is-num" id="carYearLeftPaid"></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <dialog id="weddingReportDialog" class="report-dialog" aria-labelledby="weddingReportTitle">
             <div class="report-head">
                 <div class="report-head-copy">
@@ -3236,7 +3367,7 @@
         // and like every other module the public sees one once the admin ticks it. The page is static, so
         // an unticked module is only kept out of the public UI; its markup still ships to every browser.
         // Do not rely on it to protect real secrets.
-        const ADMIN_TAB_IDS = ['tab4', 'tab7', 'tab8', 'tab9', 'tab10', 'tab11'];
+        const ADMIN_TAB_IDS = ['tab4', 'tab7', 'tab8', 'tab9', 'tab10', 'tab11', 'tab12'];
         // Only a salted PBKDF2-SHA-256 hash of the passcode ships with the page. The many rounds make
         // each guess slow to test, but a short passcode can still be found by trying common ones.
         const ADMIN_PASSCODE = {
@@ -3803,6 +3934,71 @@
                 epp_col_payment: "Bayaran",
                 epp_col_owed: "Baki terhutang",
                 epp_schedule_total: "Jumlah",
+                tab_car_loan: "Pinjaman Kereta",
+                car_params: "Butiran pinjaman",
+                car_rate_type: "Jenis faedah",
+                car_type_flat: "Kadar rata",
+                car_type_reducing: "Baki berkurangan",
+                car_type_help_flat: "Kebanyakan pinjaman kereta konvensional (sewa beli) di Malaysia. Faedah dikira atas jumlah yang dibiayai untuk seluruh tempoh dan diagihkan kepada setiap ansuran.",
+                car_type_help_reducing: "Faedah dicaj setiap bulan atas prinsipal yang masih terhutang, seperti pembiayaan kadar berubah.",
+                car_amount: "Jumlah pinjaman asal (RM)",
+                car_amount_help: "Jumlah keseluruhan yang dipinjam daripada bank, seperti dalam perjanjian pinjaman anda.",
+                car_monthly: "Ansuran bulanan (RM)",
+                car_rate_flat: "Kadar rata (% setahun)",
+                car_rate_reducing: "Kadar faedah (% setahun)",
+                car_rate_help_flat: "Kadar dalam perjanjian sewa beli anda.",
+                car_rate_help_reducing: "Kadar tahunan semasa bagi pembiayaan anda.",
+                car_start: "Tarikh mula pinjaman",
+                car_start_help: "Setiap ansuran perlu dibayar pada hari ini setiap bulan, bermula bulan berikutnya.",
+                car_note: "Unjuran ini mengambil setiap ansuran dibayar pada tarikh matang dan kadar tidak berubah. Caj lewat, insurans dan fi lain tidak dimasukkan. Bagi pinjaman kadar rata, faedah yang belum dibayar dan jumlah penyelesaian awal mengikut Peraturan 78 dalam Akta Sewa Beli 1967. Dapatkan jumlah penyelesaian tepat daripada bank anda.",
+                car_kpi_settled: "Selesai sepenuhnya pada",
+                car_kpi_remaining: "Baki perlu dibayar",
+                car_kpi_interest: "Faedah belum dibayar",
+                car_in_duration: "dalam {duration}",
+                car_this_month: "bulan ini",
+                car_instalments_left: "{count} ansuran · seterusnya {date}",
+                car_instalment_left_one: "1 ansuran · perlu dibayar {date}",
+                car_last_amount: "terakhir {amount}",
+                car_settle_today: "Selesaikan sepenuhnya hari ini dengan kira-kira {amount}",
+                car_settled: "Pinjaman ini sudah selesai.",
+                car_need_amount: "Masukkan jumlah pinjaman asal untuk melihat bila pinjaman selesai.",
+                car_need_instalment: "Masukkan ansuran bulanan untuk melihat bila pinjaman selesai.",
+                car_need_start: "Masukkan tarikh mula pinjaman untuk melihat tarikh bayaran.",
+                car_never: "Ansuran tidak menampung faedah bulanan, jadi baki tidak akan berkurang.",
+                car_too_long: "Dengan ansuran ini, pinjaman mengambil masa lebih 50 tahun untuk selesai.",
+                car_year: "tahun",
+                car_years: "tahun",
+                car_month: "bulan",
+                car_months: "bulan",
+                car_progress_title: "Kemajuan pinjaman",
+                car_progress_paid: "{paid} daripada {total} ansuran dibayar",
+                car_progress_note: "Bermula {start} · ansuran terakhir {end} · tempoh {term}",
+                car_chart_title: "Garis masa bayaran balik",
+                car_chart_sub: "Baki terhutang dari tarikh mula pinjaman hingga ansuran terakhir, mengikut prinsipal dan faedah. Ansuran yang telah dibayar bergaris penuh; unjuran bergaris putus-putus.",
+                car_chart_principal: "Prinsipal",
+                car_chart_interest: "Faedah",
+                car_chart_total: "Baki perlu dibayar: {amount}",
+                car_chart_paid_so_far: "Dibayar setakat ini: {amount}",
+                car_chart_paid_by_then: "Dibayar menjelang tarikh itu: {amount}",
+                car_chart_today_paid: "Hari ini · {paid} daripada {total} dibayar",
+                car_chart_tooltip: "Ansuran {count} · {date}",
+                car_chart_start: "Mula pinjaman · {date}",
+                car_chart_status_paid: "Dibayar",
+                car_chart_status_projected: "Unjuran",
+                car_year_title: "Pecahan tahunan",
+                car_year_sub: "Setiap tahun pinjaman ialah 12 ansuran, bermula dari tarikh mula {date}.",
+                car_year_label: "Tahun {year}",
+                car_year_current: "Semasa",
+                car_year_paid: "Dibayar",
+                car_col_year: "Tahun pinjaman",
+                car_col_count: "Ansuran",
+                car_col_principal: "Prinsipal",
+                car_col_interest: "Faedah",
+                car_col_paid: "Dibayar",
+                car_col_balance_flat: "Baki tertunggak",
+                car_col_balance_reducing: "Prinsipal terhutang",
+                car_total_paid: "Dibayar setakat ini",
+                car_total_left: "Baki perlu dibayar",
                 footer_credit: "© 2026 · Direka dan dibangunkan oleh @muhdnajb"
             },
             en: {
@@ -4340,6 +4536,71 @@
                 epp_col_payment: "Payment",
                 epp_col_owed: "Still owed",
                 epp_schedule_total: "Total",
+                tab_car_loan: "Car Loan",
+                car_params: "Loan details",
+                car_rate_type: "Interest type",
+                car_type_flat: "Flat rate",
+                car_type_reducing: "Reducing balance",
+                car_type_help_flat: "Most conventional car loans (hire purchase) in Malaysia. Interest is worked out on the amount financed for the whole term and spread across the instalments.",
+                car_type_help_reducing: "Interest is charged each month on the principal still owed, as with variable-rate financing.",
+                car_amount: "Original loan amount (RM)",
+                car_amount_help: "The total amount borrowed from the bank, as in your loan agreement.",
+                car_monthly: "Monthly instalment (RM)",
+                car_rate_flat: "Flat rate (% p.a.)",
+                car_rate_reducing: "Interest rate (% p.a.)",
+                car_rate_help_flat: "The rate in your hire purchase agreement.",
+                car_rate_help_reducing: "The current yearly rate on your financing.",
+                car_start: "Loan start date",
+                car_start_help: "Each instalment is due on this day of the month, from the month after.",
+                car_note: "The projection takes every instalment as paid on its due date and the rate unchanged. Late charges, insurance and other fees are left out. For flat-rate loans, the interest still to pay and the early settlement amount follow the Rule of 78 in the Hire Purchase Act 1967. Ask your bank for the exact settlement figure.",
+                car_kpi_settled: "Fully settled by",
+                car_kpi_remaining: "Still to pay",
+                car_kpi_interest: "Interest still to pay",
+                car_in_duration: "in {duration}",
+                car_this_month: "this month",
+                car_instalments_left: "{count} instalments · next on {date}",
+                car_instalment_left_one: "1 instalment · due {date}",
+                car_last_amount: "last one {amount}",
+                car_settle_today: "Settle in full today for about {amount}",
+                car_settled: "This loan is already settled.",
+                car_need_amount: "Enter the original loan amount to see when the loan ends.",
+                car_need_instalment: "Enter the monthly instalment to see when the loan ends.",
+                car_need_start: "Enter the loan start date to see the payment dates.",
+                car_never: "The instalment does not cover the monthly interest, so the balance never goes down.",
+                car_too_long: "At this instalment the loan would take more than 50 years to settle.",
+                car_year: "year",
+                car_years: "years",
+                car_month: "month",
+                car_months: "months",
+                car_progress_title: "Loan progress",
+                car_progress_paid: "{paid} of {total} instalments paid",
+                car_progress_note: "Started {start} · final instalment {end} · {term} term",
+                car_chart_title: "Repayment timeline",
+                car_chart_sub: "What is still owed from the loan start date to the final instalment, as principal and interest. Paid instalments are solid; the projection is dashed.",
+                car_chart_principal: "Principal",
+                car_chart_interest: "Interest",
+                car_chart_total: "Still to pay: {amount}",
+                car_chart_paid_so_far: "Paid so far: {amount}",
+                car_chart_paid_by_then: "Paid by then: {amount}",
+                car_chart_today_paid: "Today · {paid} of {total} instalments paid",
+                car_chart_tooltip: "Instalment {count} · {date}",
+                car_chart_start: "Loan start · {date}",
+                car_chart_status_paid: "Paid",
+                car_chart_status_projected: "Projected",
+                car_year_title: "Yearly breakdown",
+                car_year_sub: "Each loan year is 12 instalments, counted from the start date of {date}.",
+                car_year_label: "Year {year}",
+                car_year_current: "Current",
+                car_year_paid: "Paid",
+                car_col_year: "Loan year",
+                car_col_count: "Instalments",
+                car_col_principal: "Principal",
+                car_col_interest: "Interest",
+                car_col_paid: "Paid",
+                car_col_balance_flat: "Balance outstanding",
+                car_col_balance_reducing: "Principal owed",
+                car_total_paid: "Paid to date",
+                car_total_left: "Still to pay",
                 footer_credit: "© 2026 · Designed and developed by @muhdnajb"
             }
         };
@@ -4824,7 +5085,8 @@
                 tab7: calcDailyDividend,
                 tab9: renderTaskTracker,
                 tab10: renderExpenses,
-                tab11: calcInstalmentPlans
+                tab11: calcInstalmentPlans,
+                tab12: calcCarLoan
             };
             if (calculators[tabId]) calculators[tabId]();
         };
@@ -9503,6 +9765,388 @@
             applyInstalmentType();
         };
 
+        // --- Car loan: when the loan will be fully settled, from the original amount borrowed ---
+        // Flat rate (hire purchase): the interest is fixed up front on the amount financed for the whole term
+        // and earned by the Rule of 78. Reducing balance: each month's interest is charged on the principal
+        // still owed.
+        const CAR_MAX_MONTHS = 600;
+        const CAR_MAX_AMOUNT = 10000000;
+        const CAR_MAX_RATE = 30;
+        let carRateType = 'flat';
+        let carChartPoints = [];
+        // The chart point for today (after the last paid instalment), or null before the loan starts
+        let carTodayIndex = null;
+        let chartCarBalance = null;
+        // The chart follows the inputs in place; a theme or language change rebuilds it
+        let carChartKey = '';
+
+        // A date input's "2024-03-15" as a local date; null when empty or not a real day
+        const parseDateInput = value => {
+            const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+            if (!match) return null;
+            const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+            return date.getDate() === Number(match[3]) ? date : null;
+        };
+
+        // The same day `months` later, or that month's last day when it is shorter (31 Jan -> 28 Feb)
+        const addMonthsClamped = (date, months) => {
+            const result = new Date(date.getFullYear(), date.getMonth() + months, 1);
+            const lastDay = new Date(result.getFullYear(), result.getMonth() + 1, 0).getDate();
+            result.setDate(Math.min(date.getDate(), lastDay));
+            return result;
+        };
+
+        const formatShortDate = date => new Intl.DateTimeFormat(dateLocale(), { day: 'numeric', month: 'short', year: 'numeric' }).format(date);
+
+        // e.g. "4 years 4 months"
+        const formatDuration = months => {
+            const years = Math.floor(months / 12);
+            const rest = months % 12;
+            const parts = [];
+            if (years) parts.push(`${years} ${t(years === 1 ? 'car_year' : 'car_years')}`);
+            if (rest || !years) parts.push(`${rest} ${t(rest === 1 ? 'car_month' : 'car_months')}`);
+            return parts.join(' ');
+        };
+
+        // "#rrggbb" with an alpha, for chart fills
+        const hexWithAlpha = (hex, alpha) => {
+            const value = parseInt(hex.slice(1), 16);
+            return `rgba(${value >> 16}, ${(value >> 8) & 255}, ${value & 255}, ${alpha})`;
+        };
+
+        // Instalments fall due monthly from a month after the start date. The number of the next one
+        // due on or after today; those before it count as paid.
+        const carNextInstalment = (start, today) => {
+            let number = Math.max(1, (today.getFullYear() - start.getFullYear()) * 12 + today.getMonth() - start.getMonth() - 1);
+            while (number > 1 && addMonthsClamped(start, number - 1) >= today) number--;
+            while (addMonthsClamped(start, number) < today) number++;
+            return number;
+        };
+
+        // Each schedule row is one instalment of the whole term: what it pays, and the balance left after it.
+        // Flat rate: the instalment pays off the amount financed plus its flat interest for the term. The term is the
+        // fewest instalments that cover both, and the last one takes what is left.
+        const buildFlatSchedule = (amount, monthly, rate) => {
+            const amountSen = Math.round(amount * 100);
+            const monthlySen = Math.round(monthly * 100);
+            const monthlyInterestSen = amountSen * rate / 100 / 12;
+            if (monthlySen <= monthlyInterestSen) return { error: 'car_never' };
+            const term = Math.ceil(amountSen / (monthlySen - monthlyInterestSen) - 1e-9);
+            if (term > CAR_MAX_MONTHS) return { error: 'car_too_long' };
+            const interestSen = Math.round(monthlyInterestSen * term);
+            // Interest not yet earned with `left` instalments to go
+            const unearned = left => Math.round(interestSen * left * (left + 1) / (term * (term + 1)));
+            let owedSen = amountSen + interestSen;
+            return {
+                schedule: Array.from({ length: term }, (_, index) => {
+                    const left = term - index - 1;
+                    const paymentSen = left === 0 ? owedSen : monthlySen;
+                    const interestPart = unearned(left + 1) - unearned(left);
+                    owedSen -= paymentSen;
+                    return { payment: paymentSen / 100, principal: (paymentSen - interestPart) / 100, interest: interestPart / 100, balance: owedSen / 100 };
+                })
+            };
+        };
+
+        const buildReducingSchedule = (amount, monthly, rate) => {
+            const monthlyRate = rate / 100 / 12;
+            const monthlySen = Math.round(monthly * 100);
+            let owedSen = Math.round(amount * 100);
+            const schedule = [];
+            while (owedSen > 0) {
+                if (schedule.length === CAR_MAX_MONTHS) return { error: 'car_too_long' };
+                const interestSen = Math.round(owedSen * monthlyRate);
+                if (monthlySen <= interestSen) return { error: 'car_never' };
+                const paymentSen = Math.min(monthlySen, owedSen + interestSen);
+                owedSen -= paymentSen - interestSen;
+                schedule.push({ payment: paymentSen / 100, principal: (paymentSen - interestSen) / 100, interest: interestSen / 100, balance: owedSen / 100 });
+            }
+            return { schedule };
+        };
+
+        // The labels and help that depend on the interest type
+        const applyCarRateType = () => {
+            document.querySelectorAll('[data-car-type]').forEach(button => {
+                button.setAttribute('aria-pressed', String(button.dataset.carType === carRateType));
+            });
+            document.getElementById('carTypeHelp').textContent = t(`car_type_help_${carRateType}`);
+            document.getElementById('lblCarRate').textContent = t(`car_rate_${carRateType}`);
+            document.getElementById('carRateHelp').textContent = t(`car_rate_help_${carRateType}`);
+            document.getElementById('lblCarColBalance').textContent = t(`car_col_balance_${carRateType}`);
+        };
+
+        // A line at today's place on the timeline: paid instalments to its left, the projection to its right
+        const carTodayMarker = {
+            id: 'carTodayMarker',
+            afterDatasetsDraw(chart) {
+                if (carTodayIndex === null || !carChartPoints.length) return;
+                const { ctx, chartArea } = chart;
+                const theme = chartTheme();
+                const x = chart.scales.x.getPixelForValue(carTodayIndex);
+                ctx.save();
+                ctx.strokeStyle = theme.text;
+                ctx.lineWidth = 1;
+                ctx.setLineDash([3, 3]);
+                ctx.beginPath();
+                ctx.moveTo(x, chartArea.top);
+                ctx.lineTo(x, chartArea.bottom);
+                ctx.stroke();
+                // Above the plot with the number of instalments paid, kept within the plot's width
+                const label = tf('car_chart_today_paid', { paid: carTodayIndex, total: carChartPoints.length - 1 });
+                ctx.font = "500 11px 'Geist', system-ui, sans-serif";
+                const halfWidth = ctx.measureText(label).width / 2;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+                ctx.fillStyle = theme.text;
+                ctx.fillText(label, Math.min(chartArea.right - halfWidth, Math.max(chartArea.left + halfWidth, x)), chartArea.top - 4);
+                ctx.restore();
+            }
+        };
+
+        // Instalments after today are a projection, so their part of each line is dashed and the fill lighter
+        const carIsProjected = context => carTodayIndex === null || context.p1DataIndex > carTodayIndex;
+
+        const drawCarLoanChart = () => {
+            const theme = chartTheme();
+            const key = `${isDarkMode}|${currentLang}`;
+            if (key !== carChartKey) {
+                if (chartCarBalance) chartCarBalance.destroy();
+                chartCarBalance = null;
+                carChartKey = key;
+            }
+            const labels = carChartPoints.map(point => point.label);
+            const data = [carChartPoints.map(point => point.principal), carChartPoints.map(point => point.interest)];
+            if (chartCarBalance) {
+                chartCarBalance.data.labels = labels;
+                chartCarBalance.data.datasets.forEach((dataset, index) => { dataset.data = data[index]; });
+                chartCarBalance.update();
+                return;
+            }
+            const canvas = document.getElementById('carBalanceChart');
+            canvas.setAttribute('aria-label', t('car_chart_title'));
+            chartCarBalance = new Chart(canvas, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: t('car_chart_principal'), data: data[0], borderColor: theme.primary, backgroundColor: theme.primaryFillStrong, fill: 'origin', pointRadius: 0, tension: 0,
+                            segment: { borderDash: context => carIsProjected(context) ? [6, 4] : undefined, backgroundColor: context => carIsProjected(context) ? theme.primaryFill : undefined }
+                        },
+                        {
+                            label: t('car_chart_interest'), data: data[1], borderColor: theme.secondary, backgroundColor: hexWithAlpha(theme.secondary, 0.22), fill: '-1', pointRadius: 0, tension: 0,
+                            segment: { borderDash: context => carIsProjected(context) ? [6, 4] : undefined, backgroundColor: context => carIsProjected(context) ? hexWithAlpha(theme.secondary, 0.1) : undefined }
+                        }
+                    ]
+                },
+                plugins: [carTodayMarker],
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: { top: 18 } },
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: theme.text } },
+                        tooltip: {
+                            callbacks: {
+                                // Paid or projected heads the tooltip, above the instalment and its date
+                                title: items => {
+                                    const point = carChartPoints[items[0].dataIndex];
+                                    return point.status ? [t(point.status), point.title] : point.title;
+                                },
+                                label: context => ` ${context.dataset.label}: ${formatRM2(context.parsed.y)}`,
+                                footer: items => {
+                                    const point = carChartPoints[items[0].dataIndex];
+                                    const total = tf('car_chart_total', { amount: formatRM2(roundSen(point.principal + point.interest)) });
+                                    if (!point.status) return total;
+                                    // Paid instalments add up to what has really been paid; later ones are what will have been
+                                    const paidKey = point.status === 'car_chart_status_paid' ? 'car_chart_paid_so_far' : 'car_chart_paid_by_then';
+                                    return [total, tf(paidKey, { amount: formatRM2(point.paidSoFar) })];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { stacked: true, beginAtZero: true, grid: { color: theme.grid }, ticks: { color: theme.text, callback: value => formatRM(value) } },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                color: theme.text,
+                                maxRotation: 0,
+                                autoSkip: false,
+                                // The start and the final month always show, with evenly spaced months between
+                                callback(value, index) {
+                                    const last = carChartPoints.length - 1;
+                                    const step = Math.max(1, Math.ceil(last / Math.max(2, Math.floor(this.width / 96))));
+                                    const isShown = index === 0 || index === last || (index % step === 0 && last - index >= step * 0.6);
+                                    return isShown && carChartPoints[index] ? carChartPoints[index].label : '';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        };
+
+        // No projection to show: the reason goes where the settlement date would be
+        const renderCarLoanMessage = key => {
+            document.getElementById('resCarEnd').innerHTML = `<span class="kpi-message">${t(key)}</span>`;
+            document.getElementById('resCarRemaining').textContent = key === 'car_settled' ? formatRM2(0) : '-';
+            document.getElementById('resCarInterest').textContent = key === 'car_settled' ? formatRM2(0) : '-';
+            document.getElementById('resCarRemainingNote').textContent = '';
+            document.getElementById('resCarInterestNote').textContent = '';
+            document.getElementById('carProgressLabel').textContent = '-';
+            document.getElementById('carProgressPercent').textContent = '';
+            document.getElementById('carProgressFill').style.width = key === 'car_settled' ? '100%' : '0%';
+            document.getElementById('carProgressTrack').setAttribute('aria-valuenow', key === 'car_settled' ? '100' : '0');
+            document.getElementById('carProgressNote').textContent = '';
+            document.getElementById('carYearSub').textContent = '';
+            document.getElementById('carYearBody').innerHTML = '';
+            ['Paid', 'Left'].forEach(part => ['Count', 'Principal', 'Interest', 'Paid'].forEach(name => {
+                document.getElementById(`carYear${part}${name}`).textContent = '';
+            }));
+            carChartPoints = [];
+            carTodayIndex = null;
+            drawCarLoanChart();
+        };
+
+        const calcCarLoan = () => {
+            const readAmount = (id, max) => Math.min(max, Math.max(0, parseFloat(document.getElementById(id).value) || 0));
+            const amount = readAmount('inpCarAmount', CAR_MAX_AMOUNT);
+            const monthly = readAmount('inpCarMonthly', CAR_MAX_AMOUNT);
+            const rate = readAmount('inpCarRate', CAR_MAX_RATE);
+            const start = parseDateInput(document.getElementById('inpCarStart').value);
+            applyCarRateType();
+
+            if (amount <= 0) return renderCarLoanMessage('car_need_amount');
+            if (monthly <= 0) return renderCarLoanMessage('car_need_instalment');
+            if (!start) return renderCarLoanMessage('car_need_start');
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const nextNumber = carNextInstalment(start, today);
+            const { schedule, error } = carRateType === 'flat'
+                ? buildFlatSchedule(amount, monthly, rate)
+                : buildReducingSchedule(amount, monthly, rate);
+            if (error) return renderCarLoanMessage(error);
+            // Instalments due before today count as paid; once they all are, the loan is settled
+            const paid = nextNumber - 1;
+            if (paid >= schedule.length) return renderCarLoanMessage('car_settled');
+            const history = schedule.slice(0, paid);
+            const rows = schedule.slice(paid);
+            const interestLeft = roundSen(rows.reduce((total, row) => total + row.interest, 0));
+            // Settling today pays the principal still owed: for a flat-rate loan, the balance less the unearned interest
+            const settleToday = roundSen(rows.reduce((total, row) => total + row.principal, 0));
+            // The due date of the instalment `index` places after the next one
+            const dueDate = index => addMonthsClamped(start, nextNumber + index);
+            const endDate = dueDate(rows.length - 1);
+            const monthsLeft = (endDate.getFullYear() - today.getFullYear()) * 12 + endDate.getMonth() - today.getMonth();
+            const stillToPay = roundSen(rows.reduce((total, row) => total + row.payment, 0));
+            const lastPayment = rows[rows.length - 1].payment;
+
+            document.getElementById('resCarEnd').innerHTML = `<span>${formatShortDate(endDate)}</span><span class="kpi-note"><i class="fa-regular fa-calendar"></i>${monthsLeft > 0 ? tf('car_in_duration', { duration: formatDuration(monthsLeft) }) : t('car_this_month')}</span>`;
+            const remainingNotes = [rows.length === 1
+                ? tf('car_instalment_left_one', { date: formatShortDate(dueDate(0)) })
+                : tf('car_instalments_left', { count: rows.length, date: formatShortDate(dueDate(0)) })];
+            if (rows.length > 1 && lastPayment !== rows[0].payment) remainingNotes.push(tf('car_last_amount', { amount: formatRM2(lastPayment) }));
+            document.getElementById('resCarRemaining').textContent = formatRM2(stillToPay);
+            document.getElementById('resCarRemainingNote').textContent = remainingNotes.join(' · ');
+            document.getElementById('resCarInterest').textContent = formatRM2(interestLeft);
+            document.getElementById('resCarInterestNote').textContent = tf('car_settle_today', { amount: formatRM2(settleToday) });
+
+            const term = schedule.length;
+            const percent = Math.round(paid / term * 100);
+            document.getElementById('carProgressLabel').textContent = tf('car_progress_paid', { paid, total: term });
+            document.getElementById('carProgressPercent').textContent = `${percent}%`;
+            document.getElementById('carProgressFill').style.width = `${percent}%`;
+            document.getElementById('carProgressTrack').setAttribute('aria-valuenow', String(percent));
+            document.getElementById('carProgressNote').textContent = tf('car_progress_note', { start: formatShortDate(start), end: formatShortDate(endDate), term: formatDuration(term) });
+
+            // Loan years from the start date: instalments 1-12 are year 1, and so on, over the whole term.
+            // Each year shows the balance left after its last instalment.
+            const years = [];
+            schedule.forEach((row, index) => {
+                const number = index + 1;
+                const year = Math.ceil(number / 12);
+                let entry = years[years.length - 1];
+                if (!entry || entry.year !== year) {
+                    entry = { year, first: number, count: 0, principal: 0, interest: 0, paid: 0 };
+                    years.push(entry);
+                }
+                entry.last = number;
+                entry.count++;
+                entry.principal += row.principal;
+                entry.interest += row.interest;
+                entry.paid += row.payment;
+                entry.balance = row.balance;
+            });
+            document.getElementById('carYearSub').textContent = tf('car_year_sub', { date: formatShortDate(start) });
+            document.getElementById('carYearBody').innerHTML = years.map(entry => {
+                const status = entry.last < nextNumber ? 'past' : entry.first <= nextNumber ? 'current' : '';
+                const badge = status === 'past' ? `<span class="epp-badge car-badge-paid">${t('car_year_paid')}</span>`
+                    : status === 'current' ? `<span class="epp-badge">${t('car_year_current')}</span>` : '';
+                return `<tr${status ? ` class="is-${status}"` : ''}>
+                    <td><span class="car-year-name">${tf('car_year_label', { year: entry.year })}${badge}</span><span class="car-year-range">${formatMonthYear(addMonthsClamped(start, entry.first))} – ${formatMonthYear(addMonthsClamped(start, entry.last))}</span></td>
+                    <td class="is-num">${entry.count}</td>
+                    <td class="is-num">${formatRM2(roundSen(entry.principal))}</td>
+                    <td class="is-num">${formatRM2(roundSen(entry.interest))}</td>
+                    <td class="is-num is-strong">${formatRM2(roundSen(entry.paid))}</td>
+                    <td class="is-num">${formatRM2(entry.balance)}</td>
+                </tr>`;
+            }).join('');
+            const sum = (list, field) => formatRM2(roundSen(list.reduce((total, row) => total + row[field], 0)));
+            [['Paid', history], ['Left', rows]].forEach(([part, list]) => {
+                document.getElementById(`carYear${part}Count`).textContent = list.length;
+                document.getElementById(`carYear${part}Principal`).textContent = sum(list, 'principal');
+                document.getElementById(`carYear${part}Interest`).textContent = sum(list, 'interest');
+                document.getElementById(`carYear${part}Paid`).textContent = sum(list, 'payment');
+            });
+
+            // The chart spans the whole term from the start date. What is still owed after an instalment is
+            // what the later ones pay, so both parts are summed back from the last instalment.
+            let principalLater = 0;
+            let interestLater = 0;
+            const owedAfter = [];
+            for (let index = schedule.length - 1; index >= 0; index--) {
+                owedAfter[index] = { principal: roundSen(principalLater), interest: roundSen(interestLater) };
+                principalLater += schedule[index].principal;
+                interestLater += schedule[index].interest;
+            }
+            // Today falls after the last paid instalment; a loan that has not started yet has no marker
+            carTodayIndex = start <= today ? paid : null;
+            let paidSoFar = 0;
+            carChartPoints = [{
+                label: formatMonthYear(start),
+                title: tf('car_chart_start', { date: formatShortDate(start) }),
+                principal: roundSen(principalLater),
+                interest: roundSen(interestLater),
+                status: null
+            }, ...schedule.map((row, index) => {
+                // Everything paid up to and including this instalment
+                paidSoFar += row.payment;
+                return {
+                    label: formatMonthYear(addMonthsClamped(start, index + 1)),
+                    title: tf('car_chart_tooltip', { count: index + 1, date: formatShortDate(addMonthsClamped(start, index + 1)) }),
+                    ...owedAfter[index],
+                    paidSoFar: roundSen(paidSoFar),
+                    status: index < paid ? 'car_chart_status_paid' : 'car_chart_status_projected'
+                };
+            })];
+            drawCarLoanChart();
+        };
+
+        const initCarLoan = () => {
+            ['inpCarAmount', 'inpCarMonthly', 'inpCarRate', 'inpCarStart'].forEach(id => {
+                document.getElementById(id).addEventListener('input', calcCarLoan);
+            });
+            document.querySelectorAll('[data-car-type]').forEach(button => button.addEventListener('click', () => {
+                if (button.dataset.carType === carRateType) return;
+                carRateType = button.dataset.carType;
+                calcCarLoan();
+            }));
+            applyCarRateType();
+        };
+
         window.onload = () => {
             const startMonthInput = document.getElementById('inpDivStartMonth');
             const now = new Date();
@@ -9522,6 +10166,7 @@
             initTaskTracker();
             initExpenses();
             initInstalmentPlans();
+            initCarLoan();
             renderLanguage();
             calcSalary(); 
             calcRetirement();
