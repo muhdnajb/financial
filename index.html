@@ -1786,7 +1786,7 @@
                 </div>
             </div>
             <div class="header-actions">
-                <!-- Admin only: the selection made here sets the public tabs; restricted modules never show publicly -->
+                <!-- Admin only: the ticks made here are exactly the modules the public view shows on this browser -->
                 <button id="btnTabVisibility" type="button" class="icon-btn is-square" aria-haspopup="true" aria-expanded="false" aria-controls="tabVisibilityMenu" onclick="toggleTabVisibilityMenu()" hidden>
                     <i class="fa-solid fa-sliders" aria-hidden="true"></i>
                     <span class="sr-only" data-i18n="tab_visibility_button">Customize visible tabs</span>
@@ -1805,8 +1805,8 @@
                     <label class="tab-visibility-option" for="showTab7"><input id="showTab7" type="checkbox" data-tab-id="tab7"><span data-i18n="tab_daily_dividend">Daily Dividend</span></label>
                     <label class="tab-visibility-option" for="showTab8"><input id="showTab8" type="checkbox" data-tab-id="tab8"><span data-i18n="tab_dash_text">Hypen Text</span></label>
                     <label class="tab-visibility-option" for="showTab9"><input id="showTab9" type="checkbox" data-tab-id="tab9"><span data-i18n="tab_tasks">Task Tracker</span></label>
-                    <label class="tab-visibility-option" for="showTab10"><input id="showTab10" type="checkbox" data-tab-id="tab10" checked><span data-i18n="tab_expenses">Expenses</span></label>
-                    <label class="tab-visibility-option" for="showTab11"><input id="showTab11" type="checkbox" data-tab-id="tab11" checked><span data-i18n="tab_instalment">EPP/FPP Credit Card</span></label>
+                    <label class="tab-visibility-option" for="showTab10"><input id="showTab10" type="checkbox" data-tab-id="tab10"><span data-i18n="tab_expenses">Expenses</span></label>
+                    <label class="tab-visibility-option" for="showTab11"><input id="showTab11" type="checkbox" data-tab-id="tab11"><span data-i18n="tab_instalment">Credit Card</span></label>
                 </div>
                 <button id="btnTheme" type="button" onclick="toggleTheme()" class="icon-btn is-square" aria-label="Switch between light and dark mode">
                     <i class="fa-solid fa-moon" id="iconTheme" aria-hidden="true"></i>
@@ -1844,7 +1844,7 @@
                     <option value="tab8" data-i18n="tab_dash_text" hidden>Hypen Text</option>
                     <option value="tab9" data-i18n="tab_tasks" hidden>Task Tracker</option>
                     <option value="tab10" data-i18n="tab_expenses" hidden>Expenses</option>
-                    <option value="tab11" data-i18n="tab_instalment" hidden>EPP/FPP Credit Card</option>
+                    <option value="tab11" data-i18n="tab_instalment" hidden>Credit Card</option>
                 </select>
                 <button type="button" onclick="switchTab('tab1')" id="btnTab1" class="nav-tab is-active" aria-current="page">
                     <i class="fa-solid fa-wallet" aria-hidden="true"></i><span data-i18n="tab_salary">Agihan Gaji</span>
@@ -1877,7 +1877,7 @@
                     <i class="fa-solid fa-receipt" aria-hidden="true"></i><span data-i18n="tab_expenses">Expenses</span>
                 </button>
                 <button type="button" onclick="switchTab('tab11')" id="btnTab11" class="nav-tab" hidden>
-                    <i class="fa-solid fa-credit-card" aria-hidden="true"></i><span data-i18n="tab_instalment">EPP/FPP Credit Card</span>
+                    <i class="fa-solid fa-credit-card" aria-hidden="true"></i><span data-i18n="tab_instalment">Credit Card</span>
                 </button>
             </div>
         </nav>
@@ -3232,11 +3232,21 @@
             [...document.querySelectorAll('#moduleSelector option')].map(option => [option.value, option])
         );
 
-        // Role-based access: these modules are reachable only after an admin signs in.
-        // The page is static, so the passcode only keeps them out of the public UI;
-        // their markup still ships to every browser. Do not rely on it to protect real secrets.
+        // The modules listed under "Admin-only modules" in the visible tabs menu. They start switched off,
+        // and like every other module the public sees one once the admin ticks it. The page is static, so
+        // an unticked module is only kept out of the public UI; its markup still ships to every browser.
+        // Do not rely on it to protect real secrets.
         const ADMIN_TAB_IDS = ['tab4', 'tab7', 'tab8', 'tab9', 'tab10', 'tab11'];
-        const ADMIN_PASSCODE_HASH = 'a35c5f63916fff41369754c7a01cc4a82e9e3e5f1e05628791b5f5770435d6b0'; // SHA-256 of the passcode
+        // Only a salted PBKDF2-SHA-256 hash of the passcode ships with the page. The many rounds make
+        // each guess slow to test, but a short passcode can still be found by trying common ones.
+        const ADMIN_PASSCODE = {
+            salt: '4cb1c0b5c9a7861b0b5beeb51144dda1',
+            iterations: 600000,
+            hash: '1a888c748f24259faea7c8ea77369b20fa69bbbda8162d48503d1dc0e7a691a2'
+        };
+        // Repeated wrong passcodes lock the form for a while
+        const ADMIN_MAX_ATTEMPTS = 5;
+        const ADMIN_LOCKOUT_MS = 30000;
         const ADMIN_SESSION_KEY = 'financialPlannerAdmin';
         // The admin's tab selection. It is kept in this browser's localStorage, so it drives the
         // public view here (and in other open tabs of the site) but cannot reach other devices.
@@ -3282,6 +3292,7 @@
                 admin_cancel: "Batal",
                 admin_wrong_passcode: "Kod laluan tidak sah. Sila cuba lagi.",
                 admin_unavailable: "Log masuk admin memerlukan sambungan selamat (HTTPS).",
+                admin_locked: "Terlalu banyak cubaan. Cuba lagi dalam {seconds} saat.",
                 tab_salary: "Agihan Gaji",
                 tab_retire: "Kalkulator Persaraan",
                 tab_dividend: "Kalkulator Dividen",
@@ -3739,7 +3750,7 @@
                 expense_cat_family: "Keluarga",
                 expense_cat_debt: "Pinjaman & hutang",
                 expense_cat_other: "Lain-lain",
-                tab_instalment: "Kad Kredit EPP/FPP",
+                tab_instalment: "Kad Kredit",
                 epp_params: "Pelan ansuran",
                 epp_amount: "Jumlah pembelian (RM)",
                 epp_amount_help: "Seret gelangsar, atau taip jumlah tepat di atas.",
@@ -3818,6 +3829,7 @@
                 admin_cancel: "Cancel",
                 admin_wrong_passcode: "Incorrect passcode. Please try again.",
                 admin_unavailable: "Admin sign-in needs a secure (HTTPS) connection.",
+                admin_locked: "Too many attempts. Try again in {seconds} seconds.",
                 tab_salary: "Salary Allocation",
                 tab_retire: "Retirement Calculator",
                 tab_dividend: "Dividend Calculator",
@@ -4275,7 +4287,7 @@
                 expense_cat_family: "Family",
                 expense_cat_debt: "Loans & debt",
                 expense_cat_other: "Other",
-                tab_instalment: "EPP/FPP Credit Card",
+                tab_instalment: "Credit Card",
                 epp_params: "Instalment plan",
                 epp_amount: "Purchase amount (RM)",
                 epp_amount_help: "Drag the slider, or type an exact amount above.",
@@ -4364,8 +4376,6 @@
         };
 
         const applyTabVisibility = (tabId, isVisible) => {
-            // Restricted modules can only be switched on by a signed-in admin
-            if (isAdminTab(tabId) && !isAdmin) isVisible = false;
             const checkbox = document.querySelector(`[data-tab-id="${tabId}"]`);
             checkbox.checked = isVisible;
 
@@ -4380,6 +4390,8 @@
             if (isVisible) {
                 // Detached options miss language changes, so refresh the label on the way back in
                 moduleOption.textContent = t(moduleOption.dataset.i18n);
+                // The admin group's options are marked hidden in the markup
+                moduleOption.hidden = false;
                 const nextOption = [...moduleSelector.options].find(option =>
                     Number(option.value.slice(3)) > Number(tabNumber)
                 );
@@ -4450,13 +4462,11 @@
             }
         };
 
-        // Makes the navigation match the admin's saved selection. Restricted modules in that
-        // selection only show while an admin is signed in.
+        // Makes the navigation match the admin's saved selection, which is exactly what the public sees
         const applyStoredTabVisibility = () => {
             const visibleTabIds = readStoredTabVisibility();
             const inputs = [...document.querySelectorAll('[data-tab-id]')];
-            const shouldShow = input => visibleTabIds.includes(input.dataset.tabId)
-                && (isAdmin || !isAdminTab(input.dataset.tabId));
+            const shouldShow = input => visibleTabIds.includes(input.dataset.tabId);
             // Show before hiding so the open tab has somewhere to fall back to
             inputs.filter(input => !input.checked && shouldShow(input))
                 .forEach(input => applyTabVisibility(input.dataset.tabId, true));
@@ -4490,10 +4500,8 @@
             window.addEventListener('storage', event => {
                 if (event.key === TAB_VISIBILITY_KEY || event.key === null) applyStoredTabVisibility();
             });
-            // Restricted modules start hidden even when they are on by default; signing in brings them back
-            document.querySelectorAll('[data-tab-id]').forEach(checkbox => {
-                if (!checkbox.checked || isAdminTab(checkbox.dataset.tabId)) applyTabVisibility(checkbox.dataset.tabId, false);
-            });
+            // Every module starts in step with its checkbox; the saved selection is applied once the admin state is known
+            document.querySelectorAll('[data-tab-id]').forEach(checkbox => applyTabVisibility(checkbox.dataset.tabId, checkbox.checked));
 
             document.addEventListener('click', event => {
                 if (event.target instanceof Element && event.target.closest('#tabVisibilityMenu, #btnTabVisibility')) return;
@@ -4507,12 +4515,32 @@
         };
 
         // --- Admin access ---
-        const isAdminTab = (tabId) => ADMIN_TAB_IDS.includes(tabId);
+        // A module can be opened while it is ticked; a signed-in admin can always reach its content
+        const canOpenTab = (tabId) => isAdmin || document.querySelector(`[data-tab-id="${tabId}"]`).checked;
 
-        const sha256Hex = async (text) => {
-            const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
-            return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('');
+        const bytesToHex = buffer => [...new Uint8Array(buffer)].map(byte => byte.toString(16).padStart(2, '0')).join('');
+        const hexToBytes = hex => new Uint8Array(hex.match(/../g).map(pair => parseInt(pair, 16)));
+
+        const derivePasscodeHash = async (passcode) => {
+            const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(passcode), 'PBKDF2', false, ['deriveBits']);
+            const bits = await crypto.subtle.deriveBits(
+                { name: 'PBKDF2', hash: 'SHA-256', salt: hexToBytes(ADMIN_PASSCODE.salt), iterations: ADMIN_PASSCODE.iterations },
+                key,
+                256
+            );
+            return bytesToHex(bits);
         };
+
+        // Compares every character, so the time taken does not depend on how much of the hash matches
+        const hashesMatch = (a, b) => {
+            if (a.length !== b.length) return false;
+            let difference = 0;
+            for (let index = 0; index < a.length; index++) difference |= a.charCodeAt(index) ^ b.charCodeAt(index);
+            return difference === 0;
+        };
+
+        let adminFailedAttempts = 0;
+        let adminLockedUntil = 0;
 
         const setAdminMode = (enabled) => {
             isAdmin = enabled;
@@ -4535,20 +4563,40 @@
             event.preventDefault();
             const passcodeInput = document.getElementById('inpAdminPasscode');
             const error = document.getElementById('adminLoginError');
+            const submitButton = event.target.querySelector('button[type="submit"]');
+            const lockedFor = adminLockedUntil - Date.now();
+            if (lockedFor > 0) {
+                error.textContent = tf('admin_locked', { seconds: Math.ceil(lockedFor / 1000) });
+                return;
+            }
             let passcodeHash;
+            // The hash takes a moment to work out, so the button can't be pressed again meanwhile
+            submitButton.disabled = true;
+            submitButton.setAttribute('aria-busy', 'true');
             try {
-                passcodeHash = await sha256Hex(passcodeInput.value);
+                passcodeHash = await derivePasscodeHash(passcodeInput.value);
             } catch (hashError) {
                 // crypto.subtle is only available on HTTPS, localhost or file://
                 error.textContent = t('admin_unavailable');
                 console.error('Unable to verify the admin passcode:', hashError);
                 return;
+            } finally {
+                submitButton.disabled = false;
+                submitButton.removeAttribute('aria-busy');
             }
-            if (passcodeHash !== ADMIN_PASSCODE_HASH) {
-                error.textContent = t('admin_wrong_passcode');
+            if (!hashesMatch(passcodeHash, ADMIN_PASSCODE.hash)) {
+                adminFailedAttempts++;
+                if (adminFailedAttempts >= ADMIN_MAX_ATTEMPTS) {
+                    adminFailedAttempts = 0;
+                    adminLockedUntil = Date.now() + ADMIN_LOCKOUT_MS;
+                    error.textContent = tf('admin_locked', { seconds: ADMIN_LOCKOUT_MS / 1000 });
+                } else {
+                    error.textContent = t('admin_wrong_passcode');
+                }
                 passcodeInput.select();
                 return;
             }
+            adminFailedAttempts = 0;
 
             // Keeps the admin signed in across reloads until the browser tab is closed
             try {
@@ -4604,7 +4652,7 @@
 
             let hasAdminSession = false;
             try {
-                hasAdminSession = sessionStorage.getItem(ADMIN_SESSION_KEY) === ADMIN_PASSCODE_HASH;
+                hasAdminSession = sessionStorage.getItem(ADMIN_SESSION_KEY) === ADMIN_PASSCODE.hash;
             } catch (storageError) {
                 console.warn('Admin session could not be read; starting in public mode.', storageError);
             }
@@ -4814,7 +4862,7 @@
             let targetTab = document.getElementById(tabId);
             if (!targetTab || !targetTab.classList.contains('tab-content')) return;
             const visibilityInput = document.querySelector(`[data-tab-id="${tabId}"]`);
-            if ((isAdminTab(tabId) && !isAdmin) || (visibilityInput && !visibilityInput.checked)) {
+            if (visibilityInput && !visibilityInput.checked) {
                 const firstVisibleTab = [...document.querySelectorAll('[data-tab-id]')].find(input => input.checked);
                 if (!firstVisibleTab) return;
                 tabId = firstVisibleTab.dataset.tabId;
@@ -6540,8 +6588,8 @@
         // Earliest date and time first; tasks without a date go last
         const byTaskDate = (a, b) => `${a.date || '9999'} ${a.time}`.localeCompare(`${b.date || '9999'} ${b.time}`);
 
-        // While the module is restricted, its content is only used for a signed-in admin
-        const accessibleTasks = () => isAdmin || !isAdminTab(TASK_TAB_ID) ? taskItems : [];
+        // While the module is switched off, its content is only used for a signed-in admin
+        const accessibleTasks = () => canOpenTab(TASK_TAB_ID) ? taskItems : [];
 
         // "other" is stored as a marker and shown in the current language
         const taskPlatformLabel = name => name === TASK_PLATFORM_OTHER ? t('task_platform_other') : name;
@@ -7728,8 +7776,8 @@
             }
         };
 
-        // While the module is restricted, its content is only used for a signed-in admin
-        const accessibleExpenses = () => isAdmin || !isAdminTab(EXPENSE_TAB_ID) ? expenseItems : [];
+        // While the module is switched off, its content is only used for a signed-in admin
+        const accessibleExpenses = () => canOpenTab(EXPENSE_TAB_ID) ? expenseItems : [];
 
         const loadExpenseRent = () => {
             try {
@@ -7754,7 +7802,7 @@
 
         // The month's bills, or the latest earlier month's; `from` says which month they come from
         const rentForMonth = key => {
-            const rent = isAdmin || !isAdminTab(EXPENSE_TAB_ID) ? expenseRent : {};
+            const rent = canOpenTab(EXPENSE_TAB_ID) ? expenseRent : {};
             const from = rent[key] ? key : Object.keys(rent).filter(month => month < key).sort().pop();
             return from ? { ...rent[from], from } : { ...Object.fromEntries(EXPENSE_RENT_ITEMS.map(item => [item.key, 0])), from: null };
         };
