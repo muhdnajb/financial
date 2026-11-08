@@ -63,6 +63,7 @@
             --accent-ring: rgba(15, 118, 110, 0.16);
             --on-accent: #ffffff;
             --c-brand: #0f766e;
+            --c-blue: #2a78d6;
             --c-violet: #8b5cf6;
             --c-green: #22a35a;
             --c-amber: #e08a1e;
@@ -101,6 +102,7 @@
             --accent-ring: rgba(94, 196, 182, 0.24);
             --on-accent: #06201d;
             --c-brand: #5ec4b6;
+            --c-blue: #5b9df0;
             --c-violet: #a594f9;
             --c-green: #5fcf8a;
             --c-amber: #f0a64a;
@@ -468,8 +470,22 @@
         .app-shell .glass-card.border-l-rose-500 > p:first-child::before { background: var(--c-rose); }
         .app-shell #cardRetDepletion.is-danger > p:first-child::before { background: var(--c-rose); }
         .app-shell #cardRetDepletion.is-safe > p:first-child::before { background: var(--c-green); }
-        .app-shell #cardRetDepletion.is-danger { background: linear-gradient(var(--rose-soft), var(--rose-soft)), var(--surface); }
-        .app-shell #cardRetDepletion.is-safe { background: linear-gradient(var(--green-soft), var(--green-soft)), var(--surface); }
+        /* The retirement summary: blue for the fund built up while saving, amber for the monthly cost it
+           pays once retired (the chart's retirement colour), and green or rose for how long the fund lasts.
+           Each card is a pastel of its colour with a soft border of it; the text stays in ink. */
+        /* Blue keeps the fund clearly apart from the green (or rose) of the fund lifespan beside it */
+        .app-shell #cardRetFund { --tone: var(--c-blue); }
+        .app-shell #cardRetFund > p:first-child::before { background: var(--c-blue); }
+        .app-shell #cardRetExpense { --tone: var(--c-amber); }
+        .app-shell #cardRetDepletion.is-safe { --tone: var(--c-green); }
+        .app-shell #cardRetDepletion.is-danger { --tone: var(--c-rose); }
+        .app-shell #cardRetFund, .app-shell #cardRetExpense, .app-shell #cardRetDepletion.is-safe, .app-shell #cardRetDepletion.is-danger {
+            border-color: color-mix(in srgb, var(--tint, var(--tone)) 26%, var(--line));
+            background: color-mix(in srgb, var(--tint, var(--tone)) 12%, var(--surface));
+        }
+        .app-shell #cardRetFund:hover, .app-shell #cardRetExpense:hover, .app-shell #cardRetDepletion.is-safe:hover, .app-shell #cardRetDepletion.is-danger:hover {
+            border-color: color-mix(in srgb, var(--tint, var(--tone)) 40%, var(--line));
+        }
 
         /* Numeric values in summary cards use the display face */
         .app-shell .glass-card.shadow-card h3,
@@ -1673,31 +1689,36 @@
         }
 
         /* EPF forecast: four summary tiles over a year-by-year table */
-        .epf-kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 1.25rem; }
+        .epf-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 1.25rem; }
         .epf-kpis .report-kpi-value { overflow-wrap: anywhere; }
-        /* Each tile is tinted with its own colour and marked with a dot of it, like the summary cards; the text stays in ink */
-        .epf-kpis .report-kpi {
+        /* EPF tiles are tinted with their own colour and marked with a dot of it; the text stays in ink.
+           Under the salary field, blue is the employee's share and green the employer's. The forecast
+           tiles run blue, green and violet: distinct hues at the same light tint. */
+        .epf-tone {
             --tone: var(--accent);
             border: 1px solid color-mix(in srgb, var(--tone) 22%, transparent);
             background: color-mix(in srgb, var(--tone) 9%, var(--surface));
         }
-        .epf-kpis .report-kpi.is-now { --tone: var(--c-brand); }
-        .epf-kpis .report-kpi.is-final { --tone: var(--c-violet); }
-        .epf-kpis .report-kpi.is-total { --tone: var(--c-amber); }
-        .epf-kpis .report-kpi.is-balance { --tone: var(--c-green); }
+        .epf-tone.is-employee { --tone: var(--c-blue); }
+        .epf-tone.is-employer { --tone: var(--c-green); }
+        .epf-tone.is-now { --tone: var(--c-blue); }
+        .epf-tone.is-total { --tone: var(--c-green); }
+        .epf-tone.is-balance { --tone: var(--c-violet); }
         /* The dot stays beside the first line when a label wraps */
-        .epf-kpis .report-kpi-label { display: flex; align-items: flex-start; gap: 0.4rem; }
-        .epf-kpis .report-kpi-label::before { content: ''; flex: 0 0 auto; width: 0.5rem; height: 0.5rem; margin-top: 0.3rem; border-radius: 999px; background: var(--tone); }
+        .epf-tone-label { display: flex; align-items: flex-start; gap: 0.4rem; }
+        .epf-tone-label::before { content: ''; flex: 0 0 auto; width: 0.5rem; height: 0.5rem; margin-top: 0.3rem; border-radius: 999px; background: var(--tone); }
         .epf-age { display: block; color: var(--ink); font-weight: 600; }
         .epf-sub { display: block; margin-top: 0.125rem; color: var(--muted); font-size: 0.72rem; font-weight: 400; }
         /* Employee and employer shares under the salary field */
         .epf-split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; margin-top: 0.625rem; }
-        .epf-split div { padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); background: var(--surface-2); }
-        .epf-split span { display: block; color: var(--muted); font-size: 0.72rem; }
+        .epf-split div { padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); }
+        .epf-split span { color: var(--muted); font-size: 0.72rem; }
         .epf-split p { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: 0.72rem; font-variant-numeric: tabular-nums; }
         .epf-split strong { display: block; margin-top: 0.125rem; color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 600; font-variant-numeric: tabular-nums; }
         @media (max-width: 900px) {
             .epf-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            /* Two to a row, so the third tile takes the whole row rather than half of it */
+            .epf-kpis > :last-child:nth-child(odd) { grid-column: 1 / -1; }
         }
 
         /* Car loan years run from the start date; finished years recede and the current one is marked */
@@ -2198,14 +2219,14 @@
                 <div class="lg:col-span-8 flex flex-col gap-6">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <!-- Dana -->
-                        <div class="glass-card p-5 shadow-card relative overflow-hidden group">
+                        <div id="cardRetFund" class="glass-card p-5 shadow-card border-l-brand-500 relative overflow-hidden group">
                             <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="fund_at_retire">Dana Semasa Bersara</p>
                             <h3 class="font-display text-2xl font-extrabold text-slate-800 dark:text-white" id="resRetTotalFund">RM 0</h3>
                             <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-2"><span data-i18n="age_label">Umur</span> <span id="lblRetireAgeVal" class="text-gold-600 dark:text-gold-400 font-bold">56</span></p>
                             <i class="fa-solid fa-vault absolute -right-3 -top-3 text-6xl text-slate-100 dark:text-slate-700 opacity-50 group-hover:opacity-100 transition-opacity"></i>
                         </div>
                         <!-- Perbelanjaan Diselaraskan Inflasi -->
-                        <div class="glass-card p-5 shadow-card relative overflow-hidden group">
+                        <div id="cardRetExpense" class="glass-card p-5 shadow-card border-l-gold-500 relative overflow-hidden group">
                             <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="exp_at_retire">Belanja Bulanan (Kelak)</p>
                             <h3 class="font-display text-2xl font-extrabold text-slate-800 dark:text-white" id="resRetInflatedExpense">RM 0</h3>
                             <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-2" data-i18n="adj_infl">Diselaraskan inflasi</p>
@@ -3925,8 +3946,6 @@
                 epf_forecast_sub_manual: "Tahun demi tahun sehingga anda bersara pada umur {age}, dengan caruman tetap {amount} sebulan. Simpanan termasuk baki semasa dan kadar dividen di atas.",
                 epf_kpi_now: "KWSP sebulan kini",
                 epf_kpi_split: "Anda {employee} · majikan {employer}",
-                epf_kpi_final: "KWSP sebulan pada umur {age}",
-                epf_kpi_salary: "Gaji {amount} sebulan",
                 epf_kpi_total: "Jumlah caruman",
                 epf_kpi_years: "Dalam {count} tahun",
                 epf_kpi_balance: "Simpanan KWSP pada umur {age}",
@@ -4576,8 +4595,6 @@
                 epf_forecast_sub_manual: "Year by year until you retire at {age}, at a fixed {amount} a month. Savings include your current balance and the dividend rate above.",
                 epf_kpi_now: "Monthly EPF now",
                 epf_kpi_split: "You {employee} · employer {employer}",
-                epf_kpi_final: "Monthly EPF at {age}",
-                epf_kpi_salary: "Salary {amount} a month",
                 epf_kpi_total: "Total contributed",
                 epf_kpi_years: "Over {count} years",
                 epf_kpi_balance: "EPF savings at {age}",
@@ -6880,9 +6897,9 @@
             // This year's shares of the salary as typed, and the band of the schedule they come from
             const bandText = isAuto ? epfBandText(first.salary, first.shares.band) : '';
             document.getElementById('retEpfSplit').innerHTML = isAuto ? [
-                [tf('epf_employee_share', { rate: first.shares.employeeRate }), first.shares.employee],
-                [tf('epf_employer_share', { rate: first.shares.employerRate }), first.shares.employer]
-            ].map(([label, amount]) => `<div><span>${escapeHtml(label)}</span><strong>${formatRM(amount)}</strong></div>`).join('')
+                ['employee', tf('epf_employee_share', { rate: first.shares.employeeRate }), first.shares.employee],
+                ['employer', tf('epf_employer_share', { rate: first.shares.employerRate }), first.shares.employer]
+            ].map(([tone, label, amount]) => `<div class="epf-tone is-${tone}"><span class="epf-tone-label">${escapeHtml(label)}</span><strong>${formatRM(amount)}</strong></div>`).join('')
                 + (bandText ? `<p>${escapeHtml(bandText)}</p>` : '') : '';
             document.getElementById('epfForecastSub').textContent = tf(subKey, {
                 age: last.age, rate: formatEppRate(growth), amount: formatRM(isAuto ? raise : first.monthly)
@@ -6890,14 +6907,13 @@
 
             // Each tile keeps its own colour: today, at retirement, what goes in, and what it grows to
             const tile = (tone, label, value, note) => `
-                <div class="report-kpi is-${tone}">
-                    <p class="report-kpi-label">${escapeHtml(label)}</p>
+                <div class="report-kpi epf-tone is-${tone}">
+                    <p class="report-kpi-label epf-tone-label">${escapeHtml(label)}</p>
                     <p class="report-kpi-value">${escapeHtml(value)}</p>
                     ${note ? `<p class="report-kpi-note">${escapeHtml(note)}</p>` : ''}
                 </div>`;
             document.getElementById('epfForecastKpis').innerHTML = [
                 tile('now', t('epf_kpi_now'), formatRM(first.monthly), isAuto ? tf('epf_kpi_split', { employee: formatRM(first.shares.employee), employer: formatRM(first.shares.employer) }) : ''),
-                tile('final', tf('epf_kpi_final', { age: last.age }), formatRM(last.monthly), isAuto ? tf('epf_kpi_salary', { amount: formatRM(last.salary) }) : ''),
                 tile('total', t('epf_kpi_total'), formatRM(total), tf('epf_kpi_years', { count: rows.length })),
                 tile('balance', tf('epf_kpi_balance', { age: last.age }), formatRM(last.balance), tf('epf_kpi_dividends', { amount: formatRM(Math.max(0, last.balance - startBalance - total)) }))
             ].join('');
