@@ -1648,6 +1648,162 @@
         .epp-badge { margin-left: 0.5rem; padding: 0.125rem 0.5rem; border-radius: 999px; background: color-mix(in srgb, var(--c-green) 14%, transparent); color: var(--c-green); font-size: 0.68rem; font-weight: 600; }
         .epp-note { margin-top: 1rem; color: var(--muted); font-size: 0.8125rem; line-height: 1.55; }
         .epp-note:empty { display: none; }
+
+        /* ---------- Homestay quotation ---------- */
+        /* Only a signed-in admin can change the rates; everyone else just sees the prices */
+        body:not(.is-admin) .hs-admin-only { display: none; }
+        /* Days and Nights side by side: Days is the stepper you edit, Nights follows it (days - 1) */
+        .hs-duration-fields { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 0.75rem; }
+        .hs-field { min-width: 0; }
+        .hs-field-label { display: flex; align-items: center; gap: 0.5rem; min-height: 1.25rem; margin-bottom: 0.5rem; }
+        .hs-field-label label { color: var(--muted); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
+        .hs-auto-chip { padding: 0.05rem 0.45rem; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 0.65rem; font-weight: 600; letter-spacing: 0.02em; }
+        .hs-stepper { display: flex; align-items: center; gap: 0.375rem; }
+        .app-shell .glass-card .hs-duration-fields input.w-full { height: 2.75rem; padding-block: 0; font-size: 1.125rem; text-align: center; }
+        .app-shell .glass-card .hs-stepper input { flex: 1 1 auto; min-width: 2.5rem; padding-inline: 0.25rem; }
+        .hs-stepper .icon-btn { flex: 0 0 auto; width: 2.75rem; height: 2.75rem; }
+        .hs-stepper .icon-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        /* Nights can't be typed in: a calm dashed tint so it reads as worked out, not as an empty field */
+        .app-shell .glass-card .hs-nights-field input[type="text"]:disabled,
+        .app-shell .glass-card .hs-nights-field input[type="text"]:disabled:hover {
+            border-style: dashed; border-color: var(--line-strong);
+            background-color: var(--surface-2);
+            color: var(--ink-2); -webkit-text-fill-color: var(--ink-2); opacity: 1; cursor: default;
+        }
+        @media (max-width: 360px) {
+            .hs-stepper .icon-btn { width: 2.25rem; }
+        }
+        /* What the typed days come to, e.g. "3D2N · 3 days, 2 nights" */
+        .hs-duration { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.75rem; color: var(--ink); font-size: 0.9375rem; font-weight: 600; }
+        .hs-duration:empty { display: none; }
+        .hs-duration-code { padding: 0.125rem 0.5rem; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-family: 'Space Grotesk', sans-serif; font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.02em; }
+        .hs-duration.is-invalid { color: var(--c-rose); }
+        .hs-lines { margin: 1rem 0 0; padding: 0; list-style: none; font-variant-numeric: tabular-nums; }
+        .hs-lines li { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 0.625rem 0; border-bottom: 1px solid var(--line); color: var(--ink-2); font-size: 0.875rem; }
+        .hs-lines li span:first-child { min-width: 0; overflow-wrap: anywhere; }
+        .hs-lines li strong { flex: 0 0 auto; color: var(--ink); font-weight: 600; }
+        .hs-lines li.is-discount strong { color: var(--c-green); }
+        .hs-lines li.is-total { border-bottom: 0; color: var(--ink); font-weight: 700; }
+        .hs-lines li.is-total strong { color: var(--accent); font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 700; }
+        .hs-line-qty { display: inline-block; margin-left: 0.375rem; color: var(--muted); font-size: 0.8125rem; white-space: nowrap; }
+        /* Rates: one soft pastel card per homestay, with a tile per stay length. Mint for D'Family,
+           lavender for D'Zehra; text stays dark on the light tints so the prices read easily. */
+        .hs-rates-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 0.75rem 1rem; }
+        .hs-rates-title { flex: 1 1 18rem; min-width: 0; }
+        .hs-rates-title p { margin-top: 0.25rem; color: var(--muted); font-size: 0.8125rem; line-height: 1.5; }
+        .hs-rates { display: grid; gap: 1rem; margin-top: 1.5rem; }
+
+        .hs-rate-card {
+            --tone-bg: #eaf5f0; --tone-tile: #f5faf8; --tone-line: #d3e9df; --tone-ink: #2d6a58; --tone-focus: #7dbfa9;
+            container-type: inline-size;
+            overflow: hidden;
+            border: 1px solid var(--tone-line);
+            border-radius: var(--radius);
+            background: var(--surface);
+            transition: border-color 200ms ease, box-shadow 200ms ease;
+        }
+        .hs-rate-card.is-violet { --tone-bg: #f1eefb; --tone-tile: #f9f7fe; --tone-line: #e0d9f4; --tone-ink: #574a8f; --tone-focus: #a99be0; }
+        html.dark .hs-rate-card { --tone-bg: rgba(125, 191, 169, 0.12); --tone-tile: rgba(125, 191, 169, 0.05); --tone-line: rgba(125, 191, 169, 0.22); --tone-ink: #a9dccb; --tone-focus: #7dbfa9; }
+        html.dark .hs-rate-card.is-violet { --tone-bg: rgba(169, 155, 224, 0.13); --tone-tile: rgba(169, 155, 224, 0.05); --tone-line: rgba(169, 155, 224, 0.24); --tone-ink: #cdc4f2; --tone-focus: #a99be0; }
+        /* The homestay picked in the booking form gets a slightly firmer outline */
+        .hs-rate-card.is-selected { border-color: var(--tone-focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--tone-focus) 18%, transparent); }
+
+        .hs-rate-banner { display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1.25rem; background: var(--tone-bg); border-bottom: 1px solid var(--tone-line); }
+        .hs-rate-banner-copy { flex: 1 1 auto; min-width: 0; }
+        .hs-rate-banner h3 { color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 1.0625rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.25; }
+        .hs-rate-banner p { margin-top: 0.125rem; color: var(--tone-ink); font-size: 0.8125rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+        .hs-rate-selected { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 0.375rem; padding: 0.25rem 0.625rem; border: 1px solid var(--tone-line); border-radius: 999px; background: var(--surface); color: var(--tone-ink); font-size: 0.72rem; font-weight: 600; }
+        .hs-rate-selected[hidden] { display: none; }
+        .hs-rate-selected i { font-size: 0.65rem; }
+
+        .hs-rate-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; padding: 1.25rem; }
+        .hs-rate-tile {
+            position: relative; display: flex; flex-direction: column; gap: 0.625rem; min-width: 0; padding: 0.875rem;
+            border: 1px solid var(--tone-line);
+            border-radius: var(--radius-sm);
+            background: var(--tone-tile);
+            transition: border-color 160ms ease;
+        }
+        .hs-rate-tile:focus-within { border-color: var(--tone-focus); }
+        .hs-rate-tile-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.375rem; }
+        .hs-rate-tile-head label, .hs-rate-tile-name { color: var(--ink); font-size: 0.875rem; font-weight: 600; }
+        .hs-rate-code { padding: 0.1rem 0.45rem; border-radius: 999px; background: var(--tone-bg); color: var(--tone-ink); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.02em; }
+
+        .hs-rate-input { position: relative; }
+        .hs-rate-input span { position: absolute; top: 50%; left: 0.75rem; transform: translateY(-50%); color: var(--muted); font-size: 0.8125rem; font-weight: 600; pointer-events: none; }
+        .app-shell .glass-card .hs-rate-input input[type="number"] {
+            width: 100%; min-width: 0; padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+            border-color: var(--tone-line);
+            background-color: var(--surface);
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 600; letter-spacing: -0.02em; text-align: right;
+        }
+        .app-shell .glass-card .hs-rate-input input[type="number"]:focus { border-color: var(--tone-focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--tone-focus) 22%, transparent); }
+        .app-shell .glass-card .hs-rate-input input[type="number"][aria-invalid="true"] { border-color: #e7a3a5; box-shadow: 0 0 0 3px rgba(231, 163, 165, 0.25); }
+
+        .hs-rate-per { display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem; color: var(--muted); font-size: 0.75rem; font-variant-numeric: tabular-nums; }
+        /* Soft sage for the saving, soft peach for the best value */
+        .hs-rate-save { padding: 0.1rem 0.4rem; border-radius: 6px; background: #e8f4ea; color: #2f6b43; font-size: 0.7rem; font-weight: 600; }
+        html.dark .hs-rate-save { background: rgba(143, 201, 160, 0.14); color: #b4dcbf; }
+        .hs-rate-save[hidden] { display: none; }
+        .hs-rate-best { position: absolute; top: -0.6rem; right: 0.75rem; display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.125rem 0.5rem; border: 1px solid #f1dcc2; border-radius: 999px; background: #fcf1e4; color: #8a5a22; font-size: 0.66rem; font-weight: 600; }
+        html.dark .hs-rate-best { border-color: rgba(232, 190, 140, 0.3); background: #3a2f24; color: #edcfa8; }
+        .hs-rate-best[hidden] { display: none; }
+        .hs-rate-best i { font-size: 0.58rem; }
+        .hs-rate-error { display: flex; align-items: center; gap: 0.375rem; margin: -0.25rem 1.25rem 1.25rem; color: #b4474b; font-size: 0.75rem; font-weight: 500; }
+        html.dark .hs-rate-error { color: #f0a7a9; }
+        .hs-rate-error:empty { display: none; }
+        .hs-rate-error::before { content: "\f06a"; font-family: "Font Awesome 6 Free"; font-weight: 900; }
+
+        /* Stays past the packages are priced for you: the figure sits in a dashed box instead of a field */
+        .hs-rate-value {
+            display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; min-width: 0; padding: 0.5rem 0.75rem;
+            border: 1px dashed var(--tone-line); border-radius: var(--radius-sm);
+            background: color-mix(in srgb, var(--surface) 60%, transparent);
+        }
+        .hs-rate-value span { color: var(--muted); font-size: 0.8125rem; font-weight: 600; }
+        .hs-rate-value strong { color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.6; }
+        /* The stay being quoted, on the homestay picked */
+        .hs-rate-tile.is-current { border-color: var(--tone-focus); box-shadow: inset 0 0 0 1px var(--tone-focus); }
+
+        .hs-rate-discount {
+            display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 1rem;
+            margin: 0 1.25rem 1.25rem; padding-top: 1rem; border-top: 1px dashed var(--tone-line);
+        }
+        .hs-rate-discount-copy { flex: 1 1 14rem; min-width: 0; }
+        .hs-rate-discount-copy label { color: var(--ink); font-size: 0.875rem; font-weight: 600; }
+        .hs-rate-discount-copy p { margin-top: 0.125rem; color: var(--muted); font-size: 0.75rem; }
+        .hs-rate-input.is-percent { flex: 0 0 7rem; }
+        .hs-rate-input.is-percent span { left: auto; right: 0.75rem; }
+        .app-shell .glass-card .hs-rate-input.is-percent input[type="number"] { padding: 0.375rem 2rem 0.375rem 0.75rem; font-size: 1.125rem; }
+
+        /* Narrow cards (phones, or a slim column) stack the tiles: the stay on top, then the price with
+           its nightly figure beside it */
+        @container (max-width: 34rem) {
+            .hs-rate-tiles { grid-template-columns: 1fr; padding: 1rem; gap: 1rem; }
+            .hs-rate-tile { display: grid; grid-template-columns: minmax(7.5rem, 1fr) minmax(0, 6.5rem); grid-template-areas: "head head" "input per"; align-items: center; column-gap: 0.75rem; row-gap: 0.5rem; }
+            .hs-rate-tile-head { grid-area: head; justify-content: flex-start; gap: 0.5rem; }
+            .hs-rate-input, .hs-rate-value { grid-area: input; }
+            .hs-rate-per { grid-area: per; flex-direction: column; align-items: flex-end; gap: 0.25rem; text-align: right; }
+            .hs-rate-discount { margin-inline: 1rem; }
+            .hs-rate-error { margin-inline: 1rem; }
+        }
+
+        /* The popup shows the quotation the way the copied image draws it */
+        .hs-quote-dialog { width: min(36rem, calc(100vw - 2rem)); }
+        .hs-quote-status { margin: 0.25rem 0 0; }
+        #btnHsCopyImage { white-space: nowrap; }
+        #btnHsGenerate:disabled { cursor: not-allowed; }
+        #btnHsCopyImage.is-done { background: var(--c-green); }
+        .hs-quote { padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); font-variant-numeric: tabular-nums; }
+        .hs-quote-head { padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
+        .hs-quote-head h3 { color: var(--ink); font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+        .hs-quote-head p { margin-top: 0.125rem; color: var(--accent); font-size: 0.9375rem; font-weight: 600; }
+        .hs-quote-meta { display: grid; gap: 0.375rem; margin: 1rem 0; }
+        .hs-quote-meta div { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.875rem; }
+        .hs-quote-meta dt { color: var(--muted); }
+        .hs-quote-meta dd { margin: 0; color: var(--ink); font-weight: 500; text-align: right; overflow-wrap: anywhere; }
+        .hs-quote .hs-lines { margin: 0; border-top: 1px solid var(--line); }
+        .hs-quote-foot { margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.75rem; }
         .epp-chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--stack); }
         /* Chart tooltips: one HTML tooltip shared by every chart, so a label and its value can differ in weight */
         .chart-tooltip {
@@ -1859,6 +2015,8 @@
             .report-dialog { width: 100%; height: 100%; max-height: 100%; border: 0; border-radius: 0; }
             .report-head { padding: 1rem; }
             .report-head-actions .btn-primary span { display: none; }
+            /* Icon only on phones, but the label (and its "Copied" change) is still read out */
+            .report-head-actions #btnHsCopyImage span { display: inline; position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
             .report-body { padding: 1rem; }
             .report-section { padding: 1rem; }
             .expense-row { grid-template-columns: 0.625rem minmax(0, 1fr) 6.25rem 2.375rem; gap: 0.375rem; }
@@ -1956,6 +2114,7 @@
                     <label class="tab-visibility-option" for="showTab10"><input id="showTab10" type="checkbox" data-tab-id="tab10"><span data-i18n="tab_expenses">Expenses</span></label>
                     <label class="tab-visibility-option" for="showTab11"><input id="showTab11" type="checkbox" data-tab-id="tab11"><span data-i18n="tab_instalment">Credit Card</span></label>
                     <label class="tab-visibility-option" for="showTab12"><input id="showTab12" type="checkbox" data-tab-id="tab12"><span data-i18n="tab_car_loan">Car Loan</span></label>
+                    <label class="tab-visibility-option" for="showTab13"><input id="showTab13" type="checkbox" data-tab-id="tab13"><span data-i18n="tab_homestay">Homestay Quotation</span></label>
                 </div>
                 <button id="btnTheme" type="button" onclick="toggleTheme()" class="icon-btn is-square" aria-label="Switch between light and dark mode">
                     <i class="fa-solid fa-moon" id="iconTheme" aria-hidden="true"></i>
@@ -1995,6 +2154,7 @@
                     <option value="tab10" data-i18n="tab_expenses" hidden>Expenses</option>
                     <option value="tab11" data-i18n="tab_instalment" hidden>Credit Card</option>
                     <option value="tab12" data-i18n="tab_car_loan" hidden>Car Loan</option>
+                    <option value="tab13" data-i18n="tab_homestay" hidden>Homestay Quotation</option>
                 </select>
                 <button type="button" onclick="switchTab('tab1')" id="btnTab1" class="nav-tab is-active" aria-current="page">
                     <i class="fa-solid fa-wallet" aria-hidden="true"></i><span data-i18n="tab_salary">Agihan Gaji</span>
@@ -2031,6 +2191,9 @@
                 </button>
                 <button type="button" onclick="switchTab('tab12')" id="btnTab12" class="nav-tab" hidden>
                     <i class="fa-solid fa-car" aria-hidden="true"></i><span data-i18n="tab_car_loan">Car Loan</span>
+                </button>
+                <button type="button" onclick="switchTab('tab13')" id="btnTab13" class="nav-tab" hidden>
+                    <i class="fa-solid fa-house-chimney" aria-hidden="true"></i><span data-i18n="tab_homestay">Homestay Quotation</span>
                 </button>
             </div>
         </nav>
@@ -3287,19 +3450,19 @@
                                 <div class="epp-rate-grid">
                                     <div>
                                         <label for="inpEppRate6" class="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1 block" data-i18n="epp_tenor_6">6 months</label>
-                                        <input type="number" id="inpEppRate6" data-epp-rate="6" value="6" min="0" max="36" step="0.01" class="w-full px-3 py-2 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                        <input type="number" id="inpEppRate6" data-epp-rate="6" value="9" min="0" max="36" step="0.01" class="w-full px-3 py-2 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
                                     </div>
                                     <div>
                                         <label for="inpEppRate12" class="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1 block" data-i18n="epp_tenor_12">12 months</label>
-                                        <input type="number" id="inpEppRate12" data-epp-rate="12" value="5.5" min="0" max="36" step="0.01" class="w-full px-3 py-2 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                        <input type="number" id="inpEppRate12" data-epp-rate="12" value="9" min="0" max="36" step="0.01" class="w-full px-3 py-2 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
                                     </div>
                                     <div>
                                         <label for="inpEppRate18" class="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1 block" data-i18n="epp_tenor_18">18 months</label>
-                                        <input type="number" id="inpEppRate18" data-epp-rate="18" value="5.25" min="0" max="36" step="0.01" class="w-full px-3 py-2 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                        <input type="number" id="inpEppRate18" data-epp-rate="18" value="9" min="0" max="36" step="0.01" class="w-full px-3 py-2 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
                                     </div>
                                     <div>
                                         <label for="inpEppRate24" class="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1 block" data-i18n="epp_tenor_24">24 months</label>
-                                        <input type="number" id="inpEppRate24" data-epp-rate="24" value="5" min="0" max="36" step="0.01" class="w-full px-3 py-2 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                        <input type="number" id="inpEppRate24" data-epp-rate="24" value="9" min="0" max="36" step="0.01" class="w-full px-3 py-2 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
                                     </div>
                                 </div>
                                 <p class="text-[11px] text-slate-500 dark:text-slate-400" data-i18n="epp_rate_help">The starting rates are examples only. Use the rates in your bank's offer.</p>
@@ -3521,6 +3684,103 @@
             </div>
         </div>
 
+        <div id="tab13" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-5 flex flex-col gap-6">
+                    <div class="glass-card shadow-soft p-6 md:p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center border border-brand-100 dark:border-brand-800">
+                                <i class="fa-solid fa-house-chimney text-lg"></i>
+                            </div>
+                            <h2 class="font-display text-xl font-bold text-slate-800 dark:text-slate-100" data-i18n="hs_params">Booking details</h2>
+                        </div>
+                        <div class="space-y-5">
+                            <div>
+                                <p id="hsUnitLabel" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="hs_unit">Homestay</p>
+                                <div id="hsUnitToggle" class="task-view-toggle epp-toggle" role="group" aria-labelledby="hsUnitLabel"></div>
+                            </div>
+                            <div>
+                                <div class="hs-duration-fields">
+                                    <div class="hs-field">
+                                        <div class="hs-field-label"><label for="inpHsDays" data-i18n="hs_days">Days</label></div>
+                                        <div class="hs-stepper">
+                                            <button type="button" id="btnHsDaysDown" class="icon-btn is-square" data-hs-step="-1"><i class="fa-solid fa-minus" aria-hidden="true"></i></button>
+                                            <input type="number" id="inpHsDays" value="2" min="2" max="31" step="1" inputmode="numeric" class="w-full font-display font-bold" aria-describedby="hsDuration hsDaysHelp">
+                                            <button type="button" id="btnHsDaysUp" class="icon-btn is-square" data-hs-step="1"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="hs-field hs-nights-field">
+                                        <div class="hs-field-label"><label for="inpHsNights" data-i18n="hs_nights_field">Nights</label><span class="hs-auto-chip" data-i18n="hs_nights_auto">Auto</span></div>
+                                        <input type="text" id="inpHsNights" value="1" disabled class="w-full font-display font-bold" aria-describedby="hsDaysHelp">
+                                    </div>
+                                </div>
+                                <p id="hsDuration" class="hs-duration" aria-live="polite"></p>
+                                <p id="hsDaysHelp" class="text-xs text-slate-500 dark:text-slate-400 mt-2" data-i18n="hs_days_help">From 2 to 31 days. Nights are days minus 1. Stays of 4 nights or more are charged the 1-night rate for each night, less the long-stay discount.</p>
+                            </div>
+                            <div>
+                                <label for="inpHsGuest" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="hs_guest">Guest name (optional)</label>
+                                <input type="text" id="inpHsGuest" maxlength="60" autocomplete="off" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                            </div>
+                            <div>
+                                <label for="inpHsCheckIn" class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block" data-i18n="hs_checkin">Check-in date (optional)</label>
+                                <input type="date" id="inpHsCheckIn" min="2000-01-01" max="2100-12-31" class="w-full px-4 py-3 font-display font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                <p id="hsCheckOutNote" class="text-xs text-slate-500 dark:text-slate-400 mt-2"></p>
+                            </div>
+                            <button type="button" id="btnHsGenerate" class="btn-primary w-full justify-center"><i class="fa-solid fa-file-invoice" aria-hidden="true"></i><span data-i18n="hs_generate">Generate Quotation</span></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 flex flex-col gap-6">
+                    <div class="epp-kpis grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-brand-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="hs_kpi_total">Total</p>
+                            <h3 class="epp-kpi-value font-display text-2xl font-extrabold" id="resHsTotal" aria-live="polite">RM 0.00</h3>
+                            <p id="resHsTotalNote">-</p>
+                        </div>
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-gold-500">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2" data-i18n="hs_kpi_average">Average per night</p>
+                            <h3 class="epp-kpi-value font-display text-2xl font-extrabold" id="resHsAverage">RM 0.00</h3>
+                            <p id="resHsAverageNote">-</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card shadow-soft p-6">
+                        <h2 class="font-display text-lg font-bold" data-i18n="hs_breakdown_title">Price breakdown</h2>
+                        <p class="text-xs" id="hsBreakdownSub"></p>
+                        <ul id="hsBreakdown" class="hs-lines"></ul>
+                    </div>
+
+                    <div class="glass-card shadow-soft p-6 hs-admin-only">
+                        <div class="hs-rates-head">
+                            <div class="hs-rates-title">
+                                <h2 class="font-display text-lg font-bold" data-i18n="hs_rates_title">Rates</h2>
+                                <p data-i18n="hs_rates_sub">Package prices for 1 to 3 nights, in RM. Longer stays are listed up to the stay you enter and priced from the 1-night rate less the long-stay discount. Changes are saved in this browser only.</p>
+                            </div>
+                            <button type="button" id="btnHsResetRates" class="btn-ghost spend-copy"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i><span data-i18n="hs_rates_reset">Reset to default</span></button>
+                        </div>
+                        <div id="hsRates" class="hs-rates"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <dialog id="hsQuoteDialog" class="report-dialog hs-quote-dialog" aria-labelledby="hsQuoteDialogTitle">
+            <div class="report-head">
+                <div class="report-head-copy">
+                    <h2 id="hsQuoteDialogTitle" data-i18n="hs_dialog_title">Quotation preview</h2>
+                    <p id="hsQuoteStatus" class="spend-copy-status hs-quote-status" role="status" aria-live="polite"></p>
+                </div>
+                <div class="report-head-actions">
+                    <button type="button" id="btnHsCopyImage" class="btn-primary" data-copy-label="hs_copy_image"><i class="fa-regular fa-copy" aria-hidden="true"></i><span data-i18n="hs_copy_image">Copy as Image</span></button>
+                    <button type="button" id="btnCloseHsQuote" class="icon-btn is-square"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                </div>
+            </div>
+            <div class="report-body">
+                <article id="hsQuotePreview" class="hs-quote"></article>
+            </div>
+        </dialog>
+
         <dialog id="weddingReportDialog" class="report-dialog" aria-labelledby="weddingReportTitle">
             <div class="report-head">
                 <div class="report-head-copy">
@@ -3610,7 +3870,7 @@
         // and like every other module the public sees one once the admin ticks it. The page is static, so
         // an unticked module is only kept out of the public UI; its markup still ships to every browser.
         // Do not rely on it to protect real secrets.
-        const ADMIN_TAB_IDS = ['tab4', 'tab7', 'tab8', 'tab9', 'tab10', 'tab11', 'tab12'];
+        const ADMIN_TAB_IDS = ['tab4', 'tab7', 'tab8', 'tab9', 'tab10', 'tab11', 'tab12', 'tab13'];
         // Only a salted PBKDF2-SHA-256 hash of the passcode ships with the page. The many rounds make
         // each guess slow to test, but a short passcode can still be found by trying common ones.
         const ADMIN_PASSCODE = {
@@ -4308,6 +4568,64 @@
                 car_col_balance_reducing: "Prinsipal terhutang",
                 car_total_paid: "Dibayar setakat ini",
                 car_total_left: "Baki perlu dibayar",
+                tab_homestay: "Sebut Harga Homestay",
+                hs_params: "Butiran tempahan",
+                hs_unit: "Homestay",
+                hs_days: "Hari",
+                hs_nights_field: "Malam",
+                hs_nights_auto: "Auto",
+                hs_days_help: "Dari 2 hingga 31 hari. Bilangan malam ialah bilangan hari tolak 1. Penginapan 4 malam atau lebih dikenakan kadar 1 malam bagi setiap malam, tolak diskaun penginapan panjang.",
+                hs_days_invalid: "Masukkan antara 2 hingga 31 hari.",
+                hs_days_down: "Kurang satu hari",
+                hs_days_up: "Tambah satu hari",
+                hs_days_one: "{count} Hari",
+                hs_days_many: "{count} Hari",
+                hs_dur_nights_one: "{count} Malam",
+                hs_dur_nights_many: "{count} Malam",
+                hs_duration_code: "{days}H{nights}M",
+                hs_duration_text: "{days}, {nights}",
+                hs_duration_full: "{text} ({code})",
+                hs_guest: "Nama tetamu (pilihan)",
+                hs_checkin: "Tarikh daftar masuk (pilihan)",
+                hs_checkout_note: "Daftar keluar: {date}",
+                hs_checkout_empty: "Tambah tarikh daftar masuk untuk memaparkan tarikh daftar keluar dalam sebut harga.",
+                hs_generate: "Jana Sebut Harga",
+                hs_kpi_total: "Jumlah",
+                hs_kpi_total_note: "{homestay} · {duration}",
+                hs_kpi_average: "Purata semalam",
+                hs_kpi_average_note: "Bagi {nights}",
+                hs_breakdown_title: "Pecahan harga",
+                hs_breakdown_sub: "Cara harga {nights} di {homestay} dikira.",
+                hs_nights_one: "{count} malam",
+                hs_nights_many: "{count} malam",
+                hs_package: "Pakej {nights}",
+                hs_qty: "{count} × {price}",
+                hs_total: "Jumlah",
+                hs_rates_title: "Kadar harga",
+                hs_rates_reset: "Set semula",
+                hs_rates_sub: "Harga pakej 1 hingga 3 malam, dalam RM. Penginapan lebih lama dipaparkan sehingga tempoh yang dimasukkan dan dikira daripada kadar 1 malam tolak diskaun penginapan panjang. Perubahan disimpan dalam pelayar ini sahaja.",
+                hs_discount_label: "Diskaun penginapan panjang",
+                hs_discount_help: "Ditolak daripada kadar 1 malam bagi {nights} atau lebih",
+                hs_discount_invalid: "Masukkan diskaun antara 0% hingga {max}%.",
+                hs_line_nightly: "Kadar semalam",
+                hs_line_discount: "Diskaun penginapan panjang",
+                hs_line_discount_qty: "potongan {pct}%",
+                hs_rate_invalid: "Masukkan harga melebihi RM 0.",
+                hs_rate_selected: "Dipilih",
+                hs_rate_from: "Dari {price} semalam",
+                hs_rate_per_night: "{price} semalam",
+                hs_rate_save: "−{pct}%",
+                hs_rate_save_long: "{pct}% lebih murah semalam berbanding kadar 1 malam",
+                hs_rate_best: "Nilai terbaik",
+                hs_dialog_title: "Pratonton sebut harga",
+                hs_copy_image: "Salin sebagai Imej",
+                hs_close: "Tutup",
+                hs_quote_title: "Sebut Harga",
+                hs_quote_guest: "Tetamu",
+                hs_quote_checkin: "Daftar masuk",
+                hs_quote_checkout: "Daftar keluar",
+                hs_quote_nights: "Tempoh",
+                hs_quote_issued: "Tarikh sebut harga: {date}",
                 footer_credit: "© 2026 · Direka dan dibangunkan oleh @muhdnajb"
             },
             en: {
@@ -4976,6 +5294,64 @@
                 car_col_balance_reducing: "Principal owed",
                 car_total_paid: "Paid to date",
                 car_total_left: "Still to pay",
+                tab_homestay: "Homestay Quotation",
+                hs_params: "Booking details",
+                hs_unit: "Homestay",
+                hs_days: "Days",
+                hs_nights_field: "Nights",
+                hs_nights_auto: "Auto",
+                hs_days_help: "From 2 to 31 days. Nights are days minus 1. Stays of 4 nights or more are charged the 1-night rate for each night, less the long-stay discount.",
+                hs_days_invalid: "Enter between 2 and 31 days.",
+                hs_days_down: "One day fewer",
+                hs_days_up: "One day more",
+                hs_days_one: "{count} Day",
+                hs_days_many: "{count} Days",
+                hs_dur_nights_one: "{count} Night",
+                hs_dur_nights_many: "{count} Nights",
+                hs_duration_code: "{days}D{nights}N",
+                hs_duration_text: "{days}, {nights}",
+                hs_duration_full: "{text} ({code})",
+                hs_guest: "Guest name (optional)",
+                hs_checkin: "Check-in date (optional)",
+                hs_checkout_note: "Check-out: {date}",
+                hs_checkout_empty: "Add a check-in date to show the check-out date on the quotation.",
+                hs_generate: "Generate Quotation",
+                hs_kpi_total: "Total",
+                hs_kpi_total_note: "{homestay} · {duration}",
+                hs_kpi_average: "Average per night",
+                hs_kpi_average_note: "Across {nights}",
+                hs_breakdown_title: "Price breakdown",
+                hs_breakdown_sub: "How the {nights} at {homestay} are priced.",
+                hs_nights_one: "{count} night",
+                hs_nights_many: "{count} nights",
+                hs_package: "{nights} package",
+                hs_qty: "{count} × {price}",
+                hs_total: "Total",
+                hs_rates_title: "Rates",
+                hs_rates_reset: "Reset to default",
+                hs_rates_sub: "Package prices for 1 to 3 nights, in RM. Longer stays are listed up to the stay you enter and priced from the 1-night rate less the long-stay discount. Changes are saved in this browser only.",
+                hs_discount_label: "Long-stay discount",
+                hs_discount_help: "Taken off the 1-night rate for {nights} or more",
+                hs_discount_invalid: "Enter a discount from 0% to {max}%.",
+                hs_line_nightly: "Nightly rate",
+                hs_line_discount: "Long-stay discount",
+                hs_line_discount_qty: "{pct}% off",
+                hs_rate_invalid: "Enter a price above RM 0.",
+                hs_rate_selected: "Selected",
+                hs_rate_from: "From {price} per night",
+                hs_rate_per_night: "{price} per night",
+                hs_rate_save: "−{pct}%",
+                hs_rate_save_long: "{pct}% less per night than the 1-night rate",
+                hs_rate_best: "Best value",
+                hs_dialog_title: "Quotation preview",
+                hs_copy_image: "Copy as Image",
+                hs_close: "Close",
+                hs_quote_title: "Quotation",
+                hs_quote_guest: "Guest",
+                hs_quote_checkin: "Check-in",
+                hs_quote_checkout: "Check-out",
+                hs_quote_nights: "Length of stay",
+                hs_quote_issued: "Quoted on {date}",
                 footer_credit: "© 2026 · Designed and developed by @muhdnajb"
             }
         };
@@ -5540,7 +5916,8 @@
                 tab9: renderTaskTracker,
                 tab10: renderExpenses,
                 tab11: calcInstalmentPlans,
-                tab12: calcCarLoan
+                tab12: calcCarLoan,
+                tab13: calcHomestay
             };
             if (calculators[tabId]) calculators[tabId]();
         };
@@ -10970,6 +11347,523 @@
             applyCarRateType();
         };
 
+        // --- Homestay quotation ---
+        // Each homestay has a package price for 1, 2 and 3 nights. A longer stay is charged the 1-night rate
+        // for every night, less that homestay's long-stay discount (6% at D'Family, 5% at D'Zehra by default).
+        const HOMESTAY_RATES_KEY = 'financialPlannerHomestayRates';
+        const HOMESTAY_DISCOUNTS_KEY = 'financialPlannerHomestayDiscounts';
+        // The stay is entered in days; nights are always one fewer (3 days = 3D2N)
+        const HOMESTAY_MIN_DAYS = 2;
+        const HOMESTAY_MAX_DAYS = 31;
+        const HOMESTAY_MAX_RATE = 100000;
+        const HOMESTAY_PACKAGE_NIGHTS = 3;
+        const HOMESTAY_MAX_DISCOUNT = 50;
+        const HOMESTAY_UNITS = [
+            { id: 'dfamily', name: "D'Family", tone: 'teal', rates: [160, 300, 450], discount: 6 },
+            { id: 'dzehra', name: "D'Zehra", tone: 'violet', rates: [140, 280, 400], discount: 5 }
+        ];
+        const defaultHomestayRates = () => Object.fromEntries(HOMESTAY_UNITS.map(unit => [unit.id, [...unit.rates]]));
+        const defaultHomestayDiscounts = () => Object.fromEntries(HOMESTAY_UNITS.map(unit => [unit.id, unit.discount]));
+        const validHomestayRate = value => Number.isFinite(value) && value > 0 && value <= HOMESTAY_MAX_RATE;
+        const validHomestayDiscount = value => Number.isFinite(value) && value >= 0 && value <= HOMESTAY_MAX_DISCOUNT;
+        const formatHomestayPct = value => String(Math.round(value * 100) / 100);
+
+        // The rates the admin set in this browser, falling back to the defaults for anything missing or broken
+        const readHomestayRates = () => {
+            const rates = defaultHomestayRates();
+            try {
+                const saved = JSON.parse(localStorage.getItem(HOMESTAY_RATES_KEY) || 'null');
+                if (saved && typeof saved === 'object') {
+                    HOMESTAY_UNITS.forEach(unit => {
+                        if (!Array.isArray(saved[unit.id])) return;
+                        saved[unit.id].slice(0, 3).forEach((value, index) => {
+                            if (validHomestayRate(value)) rates[unit.id][index] = value;
+                        });
+                    });
+                }
+            } catch (error) {
+                console.warn('The saved homestay rates could not be read.', error);
+            }
+            return rates;
+        };
+
+        const saveHomestayRates = () => {
+            try {
+                localStorage.setItem(HOMESTAY_RATES_KEY, JSON.stringify(homestayRates));
+            } catch (error) {
+                console.warn('The homestay rates could not be saved.', error);
+            }
+        };
+
+        const readHomestayDiscounts = () => {
+            const discounts = defaultHomestayDiscounts();
+            try {
+                const saved = JSON.parse(localStorage.getItem(HOMESTAY_DISCOUNTS_KEY) || 'null');
+                if (saved && typeof saved === 'object') {
+                    HOMESTAY_UNITS.forEach(unit => {
+                        if (validHomestayDiscount(saved[unit.id])) discounts[unit.id] = saved[unit.id];
+                    });
+                }
+            } catch (error) {
+                console.warn('The saved homestay discounts could not be read.', error);
+            }
+            return discounts;
+        };
+
+        const saveHomestayDiscounts = () => {
+            try {
+                localStorage.setItem(HOMESTAY_DISCOUNTS_KEY, JSON.stringify(homestayDiscounts));
+            } catch (error) {
+                console.warn('The homestay discounts could not be saved.', error);
+            }
+        };
+
+        let homestayRates = readHomestayRates();
+        let homestayDiscounts = readHomestayDiscounts();
+        let homestayUnitId = HOMESTAY_UNITS[0].id;
+        let homestayQuote = null;
+
+        const homestayNightsText = count => tf(count === 1 ? 'hs_nights_one' : 'hs_nights_many', { count });
+        const homestayDaysText = count => tf(count === 1 ? 'hs_days_one' : 'hs_days_many', { count });
+        const homestayDurationCode = days => tf('hs_duration_code', { days, nights: days - 1 });
+        const homestayDurationText = days => tf('hs_duration_text', { days: homestayDaysText(days), nights: tf(days === 2 ? 'hs_dur_nights_one' : 'hs_dur_nights_many', { count: days - 1 }) });
+        // "3 Days, 2 Nights (3D2N)": the caption under the fields and the quotation both use it
+        const homestayDurationFull = days => tf('hs_duration_full', { code: homestayDurationCode(days), text: homestayDurationText(days) });
+        const formatHomestayDate = date => new Intl.DateTimeFormat(dateLocale(), { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).format(date);
+
+        // Up to 3 nights the stay is that package. Beyond it, every night is charged the 1-night rate and the
+        // long-stay discount comes off the sum. Worked out in sen so the amounts stay exact.
+        const priceHomestayStay = (unitId, nights) => {
+            const rates = homestayRates[unitId];
+            if (nights <= HOMESTAY_PACKAGE_NIGHTS) {
+                const price = rates[nights - 1];
+                return { lines: [{ kind: 'package', size: nights, count: 1, price, amount: price }], total: price };
+            }
+            const pct = homestayDiscounts[unitId];
+            const baseSen = nights * Math.round(rates[0] * 100);
+            const discountSen = Math.round(baseSen * pct / 100);
+            const lines = [{ kind: 'nightly', count: nights, price: rates[0], amount: baseSen / 100 }];
+            if (discountSen > 0) lines.push({ kind: 'discount', pct, amount: -discountSen / 100 });
+            return { lines, total: (baseSen - discountSen) / 100 };
+        };
+
+        const readHomestayDays = () => {
+            const raw = document.getElementById('inpHsDays').value.trim();
+            const days = Number(raw);
+            return /^\d+$/.test(raw) && days >= HOMESTAY_MIN_DAYS && days <= HOMESTAY_MAX_DAYS ? days : null;
+        };
+
+        const buildHomestayQuote = () => {
+            const days = readHomestayDays();
+            if (!days) return null;
+            const nights = days - 1;
+            const unit = HOMESTAY_UNITS.find(item => item.id === homestayUnitId);
+            const checkIn = parseDateInput(document.getElementById('inpHsCheckIn').value);
+            const checkOut = checkIn ? new Date(checkIn.getFullYear(), checkIn.getMonth(), checkIn.getDate() + nights) : null;
+            return {
+                unit,
+                days,
+                nights,
+                guest: document.getElementById('inpHsGuest').value.trim(),
+                checkIn,
+                checkOut,
+                issued: new Date(),
+                ...priceHomestayStay(unit.id, nights)
+            };
+        };
+
+        // The label and value rows shown above the prices, in the popup and in the copied image
+        const homestayQuoteMeta = quote => [
+            quote.guest && [t('hs_quote_guest'), quote.guest],
+            quote.checkIn && [t('hs_quote_checkin'), formatHomestayDate(quote.checkIn)],
+            quote.checkOut && [t('hs_quote_checkout'), formatHomestayDate(quote.checkOut)],
+            [t('hs_quote_nights'), homestayDurationFull(quote.days)]
+        ].filter(Boolean);
+
+        const homestayLineLabel = line => ({
+            package: () => tf('hs_package', { nights: homestayNightsText(line.size) }),
+            nightly: () => t('hs_line_nightly'),
+            discount: () => t('hs_line_discount')
+        })[line.kind]();
+        const homestayLineQty = line => line.kind === 'discount'
+            ? tf('hs_line_discount_qty', { pct: formatHomestayPct(line.pct) })
+            : tf('hs_qty', { count: line.kind === 'nightly' ? homestayNightsText(line.count) : line.count, price: formatRM2(line.price) });
+        const homestayLineAmount = line => line.amount < 0 ? `−${formatRM2(-line.amount)}` : formatRM2(line.amount);
+
+        const homestayLinesHtml = quote => [
+            ...quote.lines.map(line => `<li${line.kind === 'discount' ? ' class="is-discount"' : ''}><span>${escapeHtml(homestayLineLabel(line))}<span class="hs-line-qty">${escapeHtml(homestayLineQty(line))}</span></span><strong>${homestayLineAmount(line)}</strong></li>`),
+            `<li class="is-total"><span>${escapeHtml(t('hs_total'))}</span><strong>${formatRM2(quote.total)}</strong></li>`
+        ].join('');
+
+        const calcHomestay = () => {
+            document.querySelectorAll('[data-hs-unit]').forEach(button => {
+                button.setAttribute('aria-pressed', String(button.dataset.hsUnit === homestayUnitId));
+            });
+            const daysInput = document.getElementById('inpHsDays');
+            const days = readHomestayDays();
+            daysInput.setAttribute('aria-invalid', String(!days));
+            document.getElementById('btnHsDaysDown').disabled = days !== null && days <= HOMESTAY_MIN_DAYS;
+            document.getElementById('btnHsDaysUp').disabled = days !== null && days >= HOMESTAY_MAX_DAYS;
+            document.getElementById('btnHsDaysDown').setAttribute('aria-label', t('hs_days_down'));
+            document.getElementById('btnHsDaysUp').setAttribute('aria-label', t('hs_days_up'));
+
+            // Nights is never typed: it always follows Days
+            const nightsInput = document.getElementById('inpHsNights');
+            nightsInput.value = days ? String(days - 1) : '–';
+            nightsInput.title = t('hs_days_help');
+
+            // The caption under the fields: the stay as days and nights, or why it can't be priced
+            const duration = document.getElementById('hsDuration');
+            duration.classList.toggle('is-invalid', !days);
+            duration.innerHTML = days
+                ? `<span>${escapeHtml(homestayDurationText(days))}</span><span class="hs-duration-code">${escapeHtml(homestayDurationCode(days))}</span>`
+                : `<i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i><span>${escapeHtml(t('hs_days_invalid'))}</span>`;
+
+            updateHomestayRateCards();
+
+            const quote = buildHomestayQuote();
+            document.getElementById('btnHsGenerate').disabled = !quote;
+            const checkOutNote = document.getElementById('hsCheckOutNote');
+            if (!quote) {
+                document.getElementById('resHsTotal').textContent = '–';
+                document.getElementById('resHsTotalNote').textContent = t('hs_days_invalid');
+                document.getElementById('resHsAverage').textContent = '–';
+                document.getElementById('resHsAverageNote').textContent = '-';
+                document.getElementById('hsBreakdownSub').textContent = t('hs_days_invalid');
+                document.getElementById('hsBreakdown').innerHTML = '';
+                checkOutNote.textContent = '';
+                return;
+            }
+            const nightsText = homestayNightsText(quote.nights);
+            document.getElementById('resHsTotal').textContent = formatRM2(quote.total);
+            document.getElementById('resHsTotalNote').textContent = tf('hs_kpi_total_note', { homestay: quote.unit.name, duration: homestayDurationCode(quote.days) });
+            document.getElementById('resHsAverage').textContent = formatRM2(quote.total / quote.nights);
+            document.getElementById('resHsAverageNote').textContent = tf('hs_kpi_average_note', { nights: nightsText });
+            document.getElementById('hsBreakdownSub').textContent = tf('hs_breakdown_sub', { nights: nightsText, homestay: quote.unit.name });
+            document.getElementById('hsBreakdown').innerHTML = homestayLinesHtml(quote);
+            checkOutNote.textContent = quote.checkOut
+                ? tf('hs_checkout_note', { date: formatHomestayDate(quote.checkOut) })
+                : t('hs_checkout_empty');
+        };
+
+        // How many nights the rate cards list: the three packages, or up to the stay being quoted when it is longer
+        const homestayRateTileCount = () => {
+            const days = readHomestayDays();
+            return Math.max(HOMESTAY_PACKAGE_NIGHTS, days ? days - 1 : 0);
+        };
+
+        const formatHomestayAmount = value => new Intl.NumberFormat('ms-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+
+        // A tile past the packages: its price is worked out from the 1-night rate and the discount, not typed
+        const homestayAutoTileHtml = (unitId, size) => `
+            <div class="hs-rate-tile is-auto" data-hs-rate-tile="${size}">
+                <span class="hs-rate-best" data-hs-rate-best hidden><i class="fa-solid fa-star" aria-hidden="true"></i><span></span></span>
+                <div class="hs-rate-tile-head">
+                    <span class="hs-rate-tile-name" data-hs-rate-label="${size}"></span>
+                    <span class="hs-rate-code" data-hs-rate-code="${size}" aria-hidden="true"></span>
+                </div>
+                <p class="hs-rate-value"><span aria-hidden="true">RM</span><strong data-hs-rate-value></strong></p>
+                <p class="hs-rate-per"><span data-hs-rate-per></span><span class="hs-rate-save" data-hs-rate-save hidden></span></p>
+            </div>`;
+
+        // Fills in what each rate card works out from its prices: the price and price per night of every stay
+        // length listed, how much cheaper a night is than on the 1-night rate, the best value and the lowest
+        // nightly price. Runs on every change, so it follows the stay, the typed prices and the language.
+        const updateHomestayRateCards = () => {
+            const count = homestayRateTileCount();
+            const stayNights = (readHomestayDays() || 0) - 1;
+            document.querySelectorAll('[data-hs-rate-unit]').forEach(card => {
+                const unitId = card.dataset.hsRateUnit;
+
+                // Add or drop the auto-priced tiles so the card runs from 1 night to the stay entered
+                const tiles = card.querySelector('.hs-rate-tiles');
+                tiles.querySelectorAll('.hs-rate-tile.is-auto').forEach(tile => {
+                    if (Number(tile.dataset.hsRateTile) > count) tile.remove();
+                });
+                const shown = tiles.querySelectorAll('[data-hs-rate-tile]').length;
+                if (count > shown) {
+                    const sizes = Array.from({ length: count - shown }, (_, i) => shown + i + 1);
+                    tiles.insertAdjacentHTML('beforeend', sizes.map(size => homestayAutoTileHtml(unitId, size)).join(''));
+                }
+
+                // Nightly prices in sen, so equal prices compare as equal
+                const totalFor = size => priceHomestayStay(unitId, size).total;
+                const perNightSen = size => Math.round(totalFor(size) / size * 100);
+                const sizes = Array.from({ length: count }, (_, i) => i + 1);
+                const perNight = sizes.map(perNightSen);
+                const lowestShown = Math.min(...perNight);
+                // Ties go to the longer stay
+                const bestIndex = perNight.lastIndexOf(lowestShown);
+                const hasBest = lowestShown < perNight[0];
+                // Every stay from 4 nights gets the long-stay rate, listed or not
+                const lowest = Math.min(...[1, 2, 3, HOMESTAY_PACKAGE_NIGHTS + 1].map(perNightSen));
+
+                card.classList.toggle('is-selected', unitId === homestayUnitId);
+                const selected = card.querySelector('[data-hs-rate-selected]');
+                selected.hidden = unitId !== homestayUnitId;
+                selected.querySelector('span').textContent = t('hs_rate_selected');
+                card.querySelector('[data-hs-rate-from]').textContent = tf('hs_rate_from', { price: formatRM2(lowest / 100) });
+
+                tiles.querySelectorAll('[data-hs-rate-tile]').forEach(tile => {
+                    const size = Number(tile.dataset.hsRateTile);
+                    const index = size - 1;
+                    tile.querySelector('[data-hs-rate-label]').textContent = homestayNightsText(size);
+                    tile.querySelector('[data-hs-rate-code]').textContent = homestayDurationCode(size + 1);
+                    tile.querySelector('[data-hs-rate-per]').textContent = tf('hs_rate_per_night', { price: formatRM2(perNight[index] / 100) });
+                    const value = tile.querySelector('[data-hs-rate-value]');
+                    if (value) value.textContent = formatHomestayAmount(totalFor(size));
+                    // The stay being quoted, on the homestay picked
+                    tile.classList.toggle('is-current', unitId === homestayUnitId && size === stayNights);
+
+                    const saving = Math.round((1 - perNight[index] / perNight[0]) * 100);
+                    const save = tile.querySelector('[data-hs-rate-save]');
+                    save.hidden = index === 0 || saving < 1;
+                    save.textContent = tf('hs_rate_save', { pct: saving });
+                    save.title = tf('hs_rate_save_long', { pct: saving });
+
+                    const isBest = hasBest && index === bestIndex;
+                    tile.classList.toggle('is-best', isBest);
+                    const best = tile.querySelector('[data-hs-rate-best]');
+                    best.hidden = !isBest;
+                    best.querySelector('span').textContent = t('hs_rate_best');
+                });
+
+                card.querySelector('[data-hs-discount-label]').textContent = t('hs_discount_label');
+                card.querySelector('[data-hs-discount-help]').textContent = tf('hs_discount_help', { nights: homestayNightsText(HOMESTAY_PACKAGE_NIGHTS + 1) });
+
+                // Only touched when it changes, so screen readers don't repeat the alert on every key
+                const error = card.querySelector('.hs-rate-error');
+                const message = card.querySelector('[data-hs-rate-size][aria-invalid="true"]') ? t('hs_rate_invalid')
+                    : card.querySelector('[data-hs-discount][aria-invalid="true"]') ? tf('hs_discount_invalid', { max: HOMESTAY_MAX_DISCOUNT })
+                    : '';
+                if (error.textContent !== message) error.textContent = message;
+            });
+        };
+
+        // One card per homestay: the 1, 2 and 3-night prices to edit, the auto-priced longer stays after
+        // them, and the long-stay discount
+        const renderHomestayRates = () => {
+            const container = document.getElementById('hsRates');
+            container.innerHTML = HOMESTAY_UNITS.map(unit => `
+                <article class="hs-rate-card is-${unit.tone}" data-hs-rate-unit="${unit.id}" aria-labelledby="hsRateName-${unit.id}">
+                    <header class="hs-rate-banner">
+                        <div class="hs-rate-banner-copy">
+                            <h3 id="hsRateName-${unit.id}">${escapeHtml(unit.name)}</h3>
+                            <p data-hs-rate-from></p>
+                        </div>
+                        <span class="hs-rate-selected" data-hs-rate-selected hidden><i class="fa-solid fa-check" aria-hidden="true"></i><span></span></span>
+                    </header>
+                    <div class="hs-rate-tiles">
+                        ${[1, 2, 3].map(size => `
+                            <div class="hs-rate-tile" data-hs-rate-tile="${size}">
+                                <span class="hs-rate-best" data-hs-rate-best hidden><i class="fa-solid fa-star" aria-hidden="true"></i><span></span></span>
+                                <div class="hs-rate-tile-head">
+                                    <label for="inpHsRate-${unit.id}-${size}" data-hs-rate-label="${size}">${escapeHtml(homestayNightsText(size))}</label>
+                                    <span class="hs-rate-code" data-hs-rate-code="${size}" aria-hidden="true"></span>
+                                </div>
+                                <div class="hs-rate-input">
+                                    <span aria-hidden="true">RM</span>
+                                    <input type="number" id="inpHsRate-${unit.id}-${size}" data-hs-rate-size="${size}" value="${homestayRates[unit.id][size - 1]}" min="1" max="${HOMESTAY_MAX_RATE}" step="1" inputmode="decimal" aria-describedby="hsRatePer-${unit.id}-${size} hsRateError-${unit.id}">
+                                </div>
+                                <p id="hsRatePer-${unit.id}-${size}" class="hs-rate-per"><span data-hs-rate-per></span><span class="hs-rate-save" data-hs-rate-save hidden></span></p>
+                            </div>`).join('')}
+                    </div>
+                    <div class="hs-rate-discount">
+                        <div class="hs-rate-discount-copy">
+                            <label for="inpHsDiscount-${unit.id}" data-hs-discount-label></label>
+                            <p id="hsDiscountHelp-${unit.id}" data-hs-discount-help></p>
+                        </div>
+                        <div class="hs-rate-input is-percent">
+                            <input type="number" id="inpHsDiscount-${unit.id}" data-hs-discount value="${homestayDiscounts[unit.id]}" min="0" max="${HOMESTAY_MAX_DISCOUNT}" step="0.5" inputmode="decimal" aria-describedby="hsDiscountHelp-${unit.id} hsRateError-${unit.id}">
+                            <span aria-hidden="true">%</span>
+                        </div>
+                    </div>
+                    <p id="hsRateError-${unit.id}" class="hs-rate-error" role="alert"></p>
+                </article>`).join('');
+
+            // Typing a usable value saves it at once; leaving a field that holds none puts back the value in use
+            const bindField = (input, { valid, read, write }) => {
+                input.addEventListener('input', () => {
+                    const value = parseFloat(input.value);
+                    const isValid = input.value.trim() !== '' && valid(value);
+                    input.setAttribute('aria-invalid', String(!isValid));
+                    if (isValid) write(Math.round(value * 100) / 100);
+                    calcHomestay();
+                });
+                input.addEventListener('change', () => {
+                    if (input.getAttribute('aria-invalid') !== 'true') return;
+                    input.value = read();
+                    input.setAttribute('aria-invalid', 'false');
+                    calcHomestay();
+                });
+            };
+            container.querySelectorAll('[data-hs-rate-unit]').forEach(card => {
+                const unitId = card.dataset.hsRateUnit;
+                card.querySelectorAll('[data-hs-rate-size]').forEach(input => {
+                    const index = Number(input.dataset.hsRateSize) - 1;
+                    bindField(input, {
+                        valid: validHomestayRate,
+                        read: () => homestayRates[unitId][index],
+                        write: value => { homestayRates[unitId][index] = value; saveHomestayRates(); }
+                    });
+                });
+                bindField(card.querySelector('[data-hs-discount]'), {
+                    valid: validHomestayDiscount,
+                    read: () => homestayDiscounts[unitId],
+                    write: value => { homestayDiscounts[unitId] = value; saveHomestayDiscounts(); }
+                });
+            });
+        };
+
+        const renderHomestayQuote = quote => {
+            document.getElementById('hsQuotePreview').innerHTML = `
+                <header class="hs-quote-head">
+                    <h3>${escapeHtml(t('hs_quote_title'))}</h3>
+                    <p>${escapeHtml(quote.unit.name)}</p>
+                </header>
+                <dl class="hs-quote-meta">
+                    ${homestayQuoteMeta(quote).map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join('')}
+                </dl>
+                <ul class="hs-lines">${homestayLinesHtml(quote)}</ul>
+                <p class="hs-quote-foot">${escapeHtml(tf('hs_quote_issued', { date: formatLongDate(quote.issued) }))}</p>`;
+        };
+
+        // The same quotation as the popup, drawn on a canvas so it can go on the clipboard
+        const drawHomestayQuoteImage = quote => {
+            const meta = homestayQuoteMeta(quote);
+            const headH = 112;
+            const metaRowH = 30;
+            const lineH = 48;
+            const totalH = 60;
+            const height = headH + 12 + meta.length * metaRowH + 20 + quote.lines.length * lineH + totalH + 4 + 48;
+            const { canvas, ctx, colors, width, pad, font, figures, fit, rule } = startExpenseImage(height, t('hs_quote_title'), '', { footer: false });
+            const right = width - pad;
+
+            ctx.fillStyle = colors.accent;
+            ctx.font = font(600, 17);
+            ctx.fillText(fit(quote.unit.name, width - pad * 2), pad, pad + 46);
+            rule(headH - 8);
+
+            let y = headH + 12;
+            meta.forEach(([label, value]) => {
+                y += metaRowH;
+                ctx.textAlign = 'left';
+                ctx.fillStyle = colors.muted;
+                ctx.font = font(500, 14);
+                ctx.fillText(label, pad, y - 10);
+                const labelWidth = ctx.measureText(label).width;
+                ctx.textAlign = 'right';
+                ctx.fillStyle = colors.ink;
+                ctx.font = font(500, 14);
+                ctx.fillText(fit(value, width - pad * 2 - labelWidth - 24), right, y - 10);
+            });
+            y += 20;
+            rule(y);
+
+            quote.lines.forEach(line => {
+                y += lineH;
+                const label = homestayLineLabel(line);
+                ctx.textAlign = 'left';
+                ctx.fillStyle = colors.ink;
+                ctx.font = font(500, 15);
+                ctx.fillText(label, pad, y - 18);
+                const labelWidth = ctx.measureText(label).width;
+                ctx.fillStyle = colors.muted;
+                ctx.font = font(500, 13);
+                ctx.fillText(homestayLineQty(line), pad + labelWidth + 8, y - 18);
+                ctx.textAlign = 'right';
+                ctx.fillStyle = colors.ink;
+                ctx.font = font(600, 15, figures);
+                ctx.fillText(homestayLineAmount(line), right, y - 18);
+                rule(y);
+            });
+
+            y += totalH;
+            ctx.textAlign = 'left';
+            ctx.fillStyle = colors.ink;
+            ctx.font = font(700, 17);
+            ctx.fillText(t('hs_total'), pad, y - 22);
+            ctx.textAlign = 'right';
+            ctx.fillStyle = colors.accent;
+            ctx.font = font(700, 26, figures);
+            ctx.fillText(formatRM2(quote.total), right, y - 20);
+
+            rule(height - 48);
+            ctx.textAlign = 'left';
+            ctx.fillStyle = colors.muted;
+            ctx.font = font(500, 12);
+            ctx.fillText(tf('hs_quote_issued', { date: formatLongDate(quote.issued) }), pad, height - 22);
+            return canvas;
+        };
+
+        const openHomestayQuote = () => {
+            const quote = buildHomestayQuote();
+            if (!quote) return;
+            homestayQuote = quote;
+            renderHomestayQuote(quote);
+            document.getElementById('hsQuoteStatus').textContent = '';
+            const copyButton = document.getElementById('btnHsCopyImage');
+            resetExpenseCopyButton(copyButton);
+            document.getElementById('btnCloseHsQuote').setAttribute('aria-label', t('hs_close'));
+            document.getElementById('hsQuoteDialog').showModal();
+        };
+
+        const copyHomestayQuoteImage = () => {
+            if (!homestayQuote) return;
+            const quote = homestayQuote;
+            copyExpenseImage({
+                button: document.getElementById('btnHsCopyImage'),
+                status: document.getElementById('hsQuoteStatus'),
+                draw: () => drawHomestayQuoteImage(quote),
+                fileName: `quotation-${quote.unit.id}-${quote.days}d${quote.nights}n.png`
+            });
+        };
+
+        const initHomestay = () => {
+            const toggle = document.getElementById('hsUnitToggle');
+            toggle.innerHTML = HOMESTAY_UNITS.map(unit => `<button type="button" data-hs-unit="${unit.id}" aria-pressed="false">${escapeHtml(unit.name)}</button>`).join('');
+            toggle.querySelectorAll('[data-hs-unit]').forEach(button => button.addEventListener('click', () => {
+                homestayUnitId = button.dataset.hsUnit;
+                calcHomestay();
+            }));
+
+            const daysInput = document.getElementById('inpHsDays');
+            const clampDays = value => Math.min(HOMESTAY_MAX_DAYS, Math.max(HOMESTAY_MIN_DAYS, value));
+            document.querySelectorAll('[data-hs-step]').forEach(button => button.addEventListener('click', () => {
+                const current = Math.round(parseFloat(daysInput.value)) || HOMESTAY_MIN_DAYS;
+                daysInput.value = clampDays(current + Number(button.dataset.hsStep));
+                calcHomestay();
+            }));
+            daysInput.addEventListener('input', calcHomestay);
+            // A number out of range is pulled back in when the field is left
+            daysInput.addEventListener('change', () => {
+                if (readHomestayDays()) return;
+                const value = Math.round(parseFloat(daysInput.value));
+                daysInput.value = Number.isFinite(value) ? clampDays(value) : HOMESTAY_MIN_DAYS;
+                calcHomestay();
+            });
+            ['inpHsGuest', 'inpHsCheckIn'].forEach(id => document.getElementById(id).addEventListener('input', calcHomestay));
+
+            renderHomestayRates();
+            document.getElementById('btnHsResetRates').addEventListener('click', () => {
+                homestayRates = defaultHomestayRates();
+                homestayDiscounts = defaultHomestayDiscounts();
+                saveHomestayRates();
+                saveHomestayDiscounts();
+                renderHomestayRates();
+                calcHomestay();
+            });
+
+            document.getElementById('btnHsGenerate').addEventListener('click', openHomestayQuote);
+            document.getElementById('btnHsCopyImage').addEventListener('click', copyHomestayQuoteImage);
+            const dialog = document.getElementById('hsQuoteDialog');
+            document.getElementById('btnCloseHsQuote').addEventListener('click', () => dialog.close());
+            dialog.addEventListener('click', event => {
+                if (event.target === dialog) dialog.close();
+            });
+            calcHomestay();
+        };
+
         window.onload = () => {
             const startMonthInput = document.getElementById('inpDivStartMonth');
             const now = new Date();
@@ -10990,6 +11884,7 @@
             initExpenses();
             initInstalmentPlans();
             initCarLoan();
+            initHomestay();
             renderLanguage();
             calcSalary(); 
             calcRetirement();
