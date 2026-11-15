@@ -1958,6 +1958,150 @@
         /* Two summary rows, so the whole footer sticks rather than each cell */
         .car-year-table tfoot { position: sticky; bottom: 0; z-index: 1; background: var(--surface); box-shadow: 0 -1px 0 var(--line); }
         .car-year-table tfoot th, .car-year-table tfoot td { position: static; padding-block: 0.5rem; }
+
+        /* ---------- Credit card commitment tracker ---------- */
+        #tab14 [hidden] { display: none !important; }
+        /* Section titles and captions stay on one line; a very narrow screen trims them rather than wrapping */
+        #tab14 .cc-kpis .glass-card > p:not(:first-child),
+        #tab14 .glass-card h2 + p.text-xs { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        /* Card titles only stay on one line: clipping them would cut off the dot, which grows on hover */
+        #tab14 .cc-kpis .glass-card > p:first-child { white-space: nowrap; }
+        /* Values shrink with their card, so an amount like "RM 18,360.00" stays on one line */
+        #tab14 .cc-kpis .glass-card { container-type: inline-size; }
+        #tab14 .cc-kpis .glass-card h3 { font-size: clamp(1rem, 12.5cqi, 1.5rem); white-space: nowrap; overflow-wrap: normal; }
+        /* "This month" opens its payments; the chevron shows it can be opened and turns while open */
+        .cc-kpi-toggle { position: relative; cursor: pointer; transition: border-color 160ms ease, box-shadow 160ms ease; }
+        .app-shell .glass-card.cc-kpi-toggle:hover { border-color: var(--line-strong); }
+        .app-shell .glass-card.cc-kpi-toggle[aria-expanded="true"] { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-ring); }
+        .cc-kpi-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .cc-kpi-chevron { position: absolute; top: 1.35rem; right: 1.25rem; color: var(--muted-2); font-size: 0.7rem; transition: transform 200ms var(--ease), color 160ms ease; }
+        .cc-kpi-toggle:hover .cc-kpi-chevron { color: var(--ink-2); }
+        .cc-kpi-toggle[aria-expanded="true"] .cc-kpi-chevron { transform: rotate(180deg); color: var(--accent); }
+        /* The panel itself: fixed under the card, scrolling inside when the list is long */
+        .cc-pop { position: fixed; inset: auto; z-index: 60; margin: 0; padding: 0; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; border: 0; border-radius: var(--radius); background: transparent; color: var(--ink); }
+        .cc-pop::backdrop { background: transparent; }
+        .app-shell .glass-card.cc-pop-card { padding: 1.25rem; box-shadow: var(--shadow-pop); animation: panel-in 200ms var(--ease); }
+        .cc-pop-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+        .cc-pop-month { color: var(--muted); font-size: 0.8125rem; font-weight: 500; }
+        .cc-pop-head .icon-btn { width: 2rem; height: 2rem; }
+        .cc-pop-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.75rem; }
+        #tab14 .cc-head > div:first-child { flex: 1 1 12rem; min-width: 0; }
+        .cc-field-label { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .cc-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+        .app-shell .glass-card .cc-form-grid input[type='number'] { text-align: right; }
+        .cc-link-btn { color: var(--accent); font-size: 0.75rem; font-weight: 600; }
+        .cc-link-btn:hover { text-decoration: underline; }
+        .cc-form-error { color: var(--c-rose); font-size: 0.8125rem; }
+        .cc-form-error:empty { display: none; }
+        .cc-form-actions { display: flex; gap: 0.5rem; }
+        .cc-form-actions .btn-primary { flex: 1 1 auto; justify-content: center; }
+        .cc-kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .cc-kpis h3 { overflow-wrap: anywhere; }
+        .cc-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+        .cc-head .task-view-toggle { height: 2.25rem; }
+        .cc-head .task-view-toggle button { padding: 0 0.75rem; font-size: 0.8125rem; }
+        .cc-empty { margin-top: 1.25rem; padding: 1.5rem; border: 1px dashed var(--line-strong); border-radius: var(--radius-sm); color: var(--muted); font-size: 0.875rem; text-align: center; }
+        .cc-empty[hidden] { display: none; }
+        .cc-item-name { display: flex; align-items: center; gap: 0.5rem; color: var(--ink); font-weight: 600; white-space: normal; }
+        .cc-item-name span:last-child { overflow-wrap: anywhere; }
+        .cc-item-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem; margin-top: 0.25rem; margin-left: 1.125rem; color: var(--muted); font-size: 0.72rem; }
+        .cc-type { padding: 0.05rem 0.4rem; border-radius: 4px; background: var(--surface-3); color: var(--ink-2); font-family: 'Space Grotesk', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.04em; }
+        .cc-status { padding: 0.05rem 0.45rem; border-radius: 999px; font-size: 0.65rem; font-weight: 600; }
+        .cc-status.is-active { background: var(--accent-soft); color: var(--accent); }
+        .cc-status.is-upcoming { background: color-mix(in srgb, var(--c-amber) 14%, transparent); color: var(--c-amber); }
+        .cc-status.is-completed { background: var(--surface-2); color: var(--muted); }
+        #ccListBody tr.is-completed td { color: var(--muted); }
+        #ccListBody tr.is-editing { background: var(--accent-soft); }
+        .cc-progress { display: flex; flex-direction: column; gap: 0.3rem; min-width: 6.5rem; }
+        .cc-progress-track { height: 0.375rem; overflow: hidden; border-radius: 999px; background: var(--track); }
+        .cc-progress-fill { height: 100%; border-radius: 999px; background: var(--accent); }
+        .cc-progress-label { color: var(--muted); font-size: 0.72rem; }
+        .cc-actions { display: flex; justify-content: flex-end; gap: 0.25rem; }
+        .cc-actions .icon-btn { width: 2rem; height: 2rem; }
+        .cc-actions .icon-btn.is-danger:hover { color: var(--c-rose); }
+        /* Year and month navigation, shared by the overview, breakdown and timeline */
+        .cc-nav { display: inline-flex; align-items: center; gap: 0.25rem; }
+        .cc-nav .icon-btn { width: 2.25rem; height: 2.25rem; }
+        .cc-nav .icon-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+        .cc-nav-label { min-width: 3.5rem; color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 600; text-align: center; font-variant-numeric: tabular-nums; }
+        /* Breakdown of the picked month, under the overview chart */
+        .cc-breakdown { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
+        .cc-bd-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; }
+        .cc-bd-head .cc-nav-label { min-width: 9.5rem; font-size: 1rem; }
+        .cc-bd-head .btn-ghost { height: 2.25rem; font-size: 0.8125rem; }
+        .cc-bd-head .btn-ghost:disabled { opacity: 0.45; }
+        .cc-bd-summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.875rem; margin-top: 1rem; }
+        .cc-bd-total { color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+        .cc-bd-count, .cc-bd-change { color: var(--muted); font-size: 0.8125rem; }
+        .cc-bd-change.cc-change-up { color: var(--c-rose); }
+        .cc-bd-change.cc-change-down { color: var(--c-green); }
+        .cc-bd-chips { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-top: 0.75rem; }
+        .cc-bd-chips:empty { display: none; }
+        /* Payment states: an icon and a word with every colour, so none rests on colour alone */
+        .cc-state { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.15rem 0.55rem; border-radius: 999px; font-size: 0.72rem; font-weight: 600; white-space: nowrap; }
+        .cc-state i { font-size: 0.7rem; }
+        .cc-state.is-paid { background: color-mix(in srgb, var(--c-green) 14%, transparent); color: var(--c-green); }
+        .cc-state.is-due { background: color-mix(in srgb, var(--c-amber) 16%, transparent); color: var(--c-amber); }
+        .cc-state.is-upcoming { background: var(--surface-2); color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line-strong); }
+        .cc-bd-list { display: flex; flex-direction: column; margin-top: 0.5rem; }
+        .cc-bd-item { display: grid; grid-template-columns: 0.625rem minmax(0, 1fr) auto; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid var(--line); }
+        .cc-bd-item:last-child { border-bottom: 0; }
+        .cc-bd-main { min-width: 0; }
+        .cc-bd-main strong { display: block; color: var(--ink); font-size: 0.875rem; font-weight: 600; overflow-wrap: anywhere; }
+        .cc-bd-main > span { display: block; margin-top: 0.125rem; color: var(--muted); font-size: 0.75rem; }
+        .cc-bd-tags { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.375rem; }
+        .cc-tag { padding: 0.05rem 0.45rem; border-radius: 4px; font-size: 0.65rem; font-weight: 600; }
+        .cc-tag.is-first { background: var(--accent-soft); color: var(--accent); }
+        .cc-tag.is-final { background: color-mix(in srgb, var(--c-violet) 14%, transparent); color: var(--c-violet); }
+        .cc-bd-side { display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem; }
+        .cc-bd-side strong { color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 0.9375rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+        .cc-bd-item.is-paid .cc-bd-main strong, .cc-bd-item.is-paid .cc-bd-side strong { color: var(--ink-2); }
+        /* Yearly timeline: a column per month, a row per plan; each instalment is one segment */
+        .cc-timeline { margin-top: 1.25rem; overflow-x: auto; }
+        .cc-timeline-inner { --cc-tl-label: 9rem; min-width: 36rem; }
+        .cc-tl-label { min-width: 0; }
+        .cc-tl-label strong { display: block; overflow: hidden; color: var(--ink); font-size: 0.8125rem; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+        .cc-tl-label span { color: var(--muted); font-size: 0.7rem; font-variant-numeric: tabular-nums; }
+        .cc-yt-row { display: grid; grid-template-columns: var(--cc-tl-label) repeat(12, minmax(0, 1fr)); border-bottom: 1px solid var(--line); }
+        .cc-yt-row > .cc-tl-label { align-self: center; padding: 0.5rem 0.75rem 0.5rem 0; }
+        .cc-yt-head { border-bottom-color: var(--line-strong); }
+        .cc-yt-corner { align-self: center; color: var(--muted); font-size: 0.72rem; font-weight: 600; }
+        .cc-yt-month { position: relative; height: 2.25rem; border-radius: 8px 8px 0 0; color: var(--muted); font-size: 0.72rem; font-weight: 500; transition: background-color 140ms ease, color 140ms ease; }
+        .cc-yt-month:hover { background: var(--surface-2); color: var(--ink); }
+        .cc-yt-month:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+        .cc-yt-month.is-now { color: var(--ink); font-weight: 700; }
+        .cc-yt-month.is-now::after { content: ''; position: absolute; bottom: 0.2rem; left: 50%; width: 0.35rem; height: 0.35rem; margin-left: -0.175rem; border-radius: 999px; background: var(--accent); }
+        .cc-yt-month.is-selected { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+        .cc-yt-cell { display: flex; align-items: center; min-height: 3rem; padding: 0 1px; cursor: pointer; }
+        .cc-yt-cell:hover { background: var(--surface-2); }
+        .cc-yt-cell.is-selected, .cc-yt-cell.is-selected:hover { background: var(--accent-soft); }
+        .cc-yt-seg { --cc-c: var(--muted-2); display: block; width: 100%; height: 0.875rem; background: var(--cc-c); }
+        .cc-yt-seg.is-first { border-top-left-radius: 5px; border-bottom-left-radius: 5px; }
+        .cc-yt-seg.is-last { border-top-right-radius: 5px; border-bottom-right-radius: 5px; }
+        .cc-yt-seg.is-upcoming { background: color-mix(in srgb, var(--cc-c) 26%, transparent); }
+        .cc-yt-seg.is-due { background: color-mix(in srgb, var(--cc-c) 26%, transparent); box-shadow: inset 0 0 0 2px var(--cc-c); border-radius: 5px; }
+        .cc-yt-legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin-top: 1rem; color: var(--muted); font-size: 0.75rem; }
+        .cc-yt-legend > span { display: inline-flex; align-items: center; gap: 0.45rem; }
+        .cc-yt-legend .cc-yt-seg { width: 1.375rem; height: 0.625rem; border-radius: 3px; }
+        .cc-yt-legend .cc-yt-sel { display: inline-block; width: 1.375rem; height: 0.875rem; border-radius: 3px; background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent-ring); }
+        .cc-yt-legend .cc-yt-now { display: inline-block; width: 0.35rem; height: 0.35rem; margin: 0 0.5rem; border-radius: 999px; background: var(--accent); }
+        /* Month-by-month rows pick the month shown in the breakdown and timeline */
+        #ccOverviewBody tr { cursor: pointer; transition: background-color 160ms ease; }
+        #ccOverviewBody tr:hover { background: var(--surface-2); }
+        #ccOverviewBody tr.is-selected, #ccOverviewBody tr.is-selected:hover { background: var(--accent-soft); }
+        #ccOverviewBody tr.is-current .cc-month-btn::after { content: ''; display: inline-block; width: 0.35rem; height: 0.35rem; margin-left: 0.4rem; border-radius: 999px; background: var(--accent); vertical-align: middle; }
+        .cc-month-btn { color: inherit; text-align: left; }
+        .cc-month-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+        .cc-change-up { color: var(--c-rose); }
+        .cc-change-down { color: var(--c-green); }
+        .cc-ending { white-space: normal; color: var(--muted); font-size: 0.75rem; }
+        @media (max-width: 1100px) {
+            .cc-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 480px) {
+            .cc-kpis, .cc-form-grid { grid-template-columns: minmax(0, 1fr); }
+            .cc-timeline-inner { --cc-tl-label: 6.5rem; min-width: 30rem; }
+        }
         @media (max-width: 1100px) {
             .epp-chart-grid { grid-template-columns: minmax(0, 1fr); }
         }
@@ -2136,6 +2280,7 @@
                     <label class="tab-visibility-option" for="showTab11"><input id="showTab11" type="checkbox" data-tab-id="tab11"><span data-i18n="tab_instalment">Credit Card</span></label>
                     <label class="tab-visibility-option" for="showTab12"><input id="showTab12" type="checkbox" data-tab-id="tab12"><span data-i18n="tab_car_loan">Car Loan</span></label>
                     <label class="tab-visibility-option" for="showTab13"><input id="showTab13" type="checkbox" data-tab-id="tab13"><span data-i18n="tab_homestay">Homestay Quotation</span></label>
+                    <label class="tab-visibility-option" for="showTab14"><input id="showTab14" type="checkbox" data-tab-id="tab14"><span data-i18n="tab_cc_tracker">Card Commitments</span></label>
                 </div>
                 <button id="btnTheme" type="button" onclick="toggleTheme()" class="icon-btn is-square" aria-label="Switch between light and dark mode">
                     <i class="fa-solid fa-moon" id="iconTheme" aria-hidden="true"></i>
@@ -2176,6 +2321,7 @@
                     <option value="tab11" data-i18n="tab_instalment" hidden>Credit Card</option>
                     <option value="tab12" data-i18n="tab_car_loan" hidden>Car Loan</option>
                     <option value="tab13" data-i18n="tab_homestay" hidden>Homestay Quotation</option>
+                    <option value="tab14" data-i18n="tab_cc_tracker" hidden>Card Commitments</option>
                 </select>
                 <button type="button" onclick="switchTab('tab1')" id="btnTab1" class="nav-tab is-active" aria-current="page">
                     <i class="fa-solid fa-wallet" aria-hidden="true"></i><span data-i18n="tab_salary">Agihan Gaji</span>
@@ -2215,6 +2361,9 @@
                 </button>
                 <button type="button" onclick="switchTab('tab13')" id="btnTab13" class="nav-tab" hidden>
                     <i class="fa-solid fa-house-chimney" aria-hidden="true"></i><span data-i18n="tab_homestay">Homestay Quotation</span>
+                </button>
+                <button type="button" onclick="switchTab('tab14')" id="btnTab14" class="nav-tab" hidden>
+                    <i class="fa-solid fa-calendar-check" aria-hidden="true"></i><span data-i18n="tab_cc_tracker">Card Commitments</span>
                 </button>
             </div>
         </nav>
@@ -3786,6 +3935,259 @@
             </div>
         </div>
 
+        <div id="tab14" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-4 flex flex-col gap-6">
+                    <form id="ccForm" class="glass-card shadow-soft p-6 md:p-8" novalidate>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 flex items-center justify-center border border-brand-100 dark:border-brand-800">
+                                <i class="fa-solid fa-calendar-check text-lg"></i>
+                            </div>
+                            <h2 id="ccFormTitle" class="font-display text-xl font-bold text-slate-800 dark:text-slate-100">Add purchase</h2>
+                        </div>
+                        <div class="space-y-5">
+                            <div>
+                                <label for="inpCcName" class="mb-2 block" data-i18n="cc_name">Item</label>
+                                <input type="text" id="inpCcName" maxlength="60" autocomplete="off" class="w-full">
+                            </div>
+                            <div>
+                                <label for="inpCcCard" class="mb-2 block" data-i18n="cc_card">Credit card</label>
+                                <select id="inpCcCard" class="w-full"></select>
+                            </div>
+                            <div>
+                                <p id="ccTypeLabel" class="text-xs font-semibold uppercase tracking-wider mb-2" data-i18n="cc_type">Plan type</p>
+                                <div class="task-view-toggle epp-toggle" role="group" aria-labelledby="ccTypeLabel">
+                                    <button type="button" data-cc-type="epp" aria-pressed="true">EPP</button>
+                                    <button type="button" data-cc-type="fpp" aria-pressed="false">FPP</button>
+                                </div>
+                            </div>
+                            <div class="cc-form-grid">
+                                <div>
+                                    <label for="inpCcAmount" class="mb-2 block" data-i18n="cc_amount">Purchase amount (RM)</label>
+                                    <input type="number" id="inpCcAmount" min="0" step="0.01" inputmode="decimal" class="w-full">
+                                </div>
+                                <div>
+                                    <label for="inpCcTenure" class="mb-2 block" data-i18n="cc_tenure">Tenure (months)</label>
+                                    <select id="inpCcTenure" class="w-full"></select>
+                                </div>
+                            </div>
+                            <div id="ccRateField" hidden>
+                                <label for="inpCcRate" class="mb-2 block" data-i18n="cc_rate">Interest rate (% p.a., flat)</label>
+                                <input type="number" id="inpCcRate" value="0" min="0" max="36" step="0.01" inputmode="decimal" class="w-full">
+                            </div>
+                            <div>
+                                <div class="cc-field-label">
+                                    <label for="inpCcMonthly" data-i18n="cc_monthly">Monthly instalment (RM)</label>
+                                    <span id="ccMonthlyAuto" class="hs-auto-chip" data-i18n="cc_auto">Auto</span>
+                                    <button type="button" id="btnCcMonthlyReset" class="cc-link-btn" data-i18n="cc_monthly_reset" hidden>Use calculated amount</button>
+                                </div>
+                                <input type="number" id="inpCcMonthly" min="0" step="0.01" inputmode="decimal" class="w-full" aria-describedby="ccMonthlyHelp">
+                                <p id="ccMonthlyHelp" class="text-xs mt-2"></p>
+                            </div>
+                            <div>
+                                <label for="inpCcStart" class="mb-2 block" data-i18n="cc_start">First instalment date</label>
+                                <input type="date" id="inpCcStart" min="2000-01-01" max="2100-12-31" class="w-full" aria-describedby="ccStartHelp">
+                                <p id="ccStartHelp" class="text-xs mt-2" data-i18n="cc_start_help">Later instalments fall due on the same day each month. An instalment counts as paid once its due date arrives.</p>
+                            </div>
+                            <p id="ccFormError" class="cc-form-error" role="alert"></p>
+                            <div class="cc-form-actions">
+                                <button type="button" id="btnCcCancel" class="btn-ghost" data-i18n="cc_cancel" hidden>Cancel</button>
+                                <button type="submit" id="btnCcSubmit" class="btn-primary"><i class="fa-solid fa-plus" aria-hidden="true"></i><span id="ccSubmitLabel">Add purchase</span></button>
+                            </div>
+                            <p class="text-xs" data-i18n="cc_saved_note">Saved in this browser only.</p>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-8 flex flex-col gap-6">
+                    <div class="cc-kpis grid gap-4">
+                        <div id="ccMonthCard" class="glass-card p-5 shadow-card border-l-4 border-l-brand-500 cc-kpi-toggle" role="button" tabindex="0" aria-expanded="false" aria-controls="ccMonthPopover" aria-haspopup="dialog">
+                            <p class="text-[11px] font-bold uppercase tracking-wider mb-2" data-i18n="cc_kpi_month">This month</p>
+                            <h3 class="font-display text-2xl font-extrabold" id="resCcMonth">RM 0.00</h3>
+                            <p id="resCcMonthNote">-</p>
+                            <i class="fa-solid fa-chevron-down cc-kpi-chevron" aria-hidden="true"></i>
+                        </div>
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-gold-500">
+                            <p class="text-[11px] font-bold uppercase tracking-wider mb-2" data-i18n="cc_kpi_active">Active plans</p>
+                            <h3 class="font-display text-2xl font-extrabold" id="resCcActive">0</h3>
+                            <p id="resCcActiveNote">-</p>
+                        </div>
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-purple-500">
+                            <p class="text-[11px] font-bold uppercase tracking-wider mb-2" data-i18n="cc_kpi_outstanding">Outstanding</p>
+                            <h3 class="font-display text-2xl font-extrabold" id="resCcOutstanding">RM 0.00</h3>
+                            <p id="resCcOutstandingNote">-</p>
+                        </div>
+                        <div class="glass-card p-5 shadow-card border-l-4 border-l-emerald-500">
+                            <p class="text-[11px] font-bold uppercase tracking-wider mb-2" data-i18n="cc_kpi_free">Debt-free</p>
+                            <h3 class="font-display text-2xl font-extrabold" id="resCcFree">-</h3>
+                            <p id="resCcFreeNote">-</p>
+                        </div>
+                    </div>
+
+                    <div id="ccMonthPopover" class="cc-pop" popover="manual" role="dialog" aria-labelledby="ccPopMonth" hidden>
+                        <div class="glass-card shadow-soft cc-pop-card">
+                            <div class="cc-pop-head">
+                                <div>
+                                    <p id="ccPopMonth" class="cc-pop-month"></p>
+                                    <strong id="ccPopTotal" class="cc-bd-total"></strong>
+                                </div>
+                                <button type="button" id="btnCcPopClose" class="icon-btn is-square"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                            </div>
+                            <div id="ccPopChips" class="cc-bd-chips"></div>
+                            <ul id="ccPopList" class="cc-bd-list"></ul>
+                            <p id="ccPopEmpty" class="cc-empty" hidden></p>
+                            <div class="cc-pop-foot">
+                                <span id="ccPopNext"></span>
+                                <button type="button" id="btnCcPopOpen" class="cc-link-btn" data-i18n="cc_pop_open">Open month view</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card shadow-soft p-6 flex flex-col">
+                        <div class="cc-head">
+                            <div>
+                                <h2 class="font-display text-lg font-bold" data-i18n="cc_overview_title">Commitments</h2>
+                                <p class="text-xs" id="ccOverviewSub"></p>
+                            </div>
+                            <div class="cc-nav" role="group" data-cc-year-nav>
+                                <button type="button" class="icon-btn is-square" data-cc-year-step="-1"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+                                <span class="cc-nav-label" data-cc-year-label aria-live="polite"></span>
+                                <button type="button" class="icon-btn is-square" data-cc-year-step="1"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div id="ccOverviewChartWrap" class="relative w-full mt-6 h-[300px]"><canvas id="ccOverviewChart" role="img"></canvas></div>
+                        <p id="ccOverviewEmpty" class="cc-empty" hidden></p>
+
+                        <div id="ccBreakdown" class="cc-breakdown">
+                            <div class="cc-bd-head">
+                                <div class="cc-nav" role="group" id="ccMonthNav">
+                                    <button type="button" class="icon-btn is-square" data-cc-month-step="-1"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+                                    <span class="cc-nav-label" id="ccMonthLabel" aria-live="polite"></span>
+                                    <button type="button" class="icon-btn is-square" data-cc-month-step="1"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+                                </div>
+                                <button type="button" id="btnCcThisMonth" class="btn-ghost"><i class="fa-regular fa-calendar" aria-hidden="true"></i><span data-i18n="cc_month_today">This month</span></button>
+                            </div>
+                            <div class="cc-bd-summary">
+                                <strong id="ccBdTotal" class="cc-bd-total"></strong>
+                                <span id="ccBdCount" class="cc-bd-count"></span>
+                                <span id="ccBdChange" class="cc-bd-change"></span>
+                            </div>
+                            <div id="ccBdChips" class="cc-bd-chips"></div>
+                            <ul id="ccBdList" class="cc-bd-list"></ul>
+                            <p id="ccBdEmpty" class="cc-empty" hidden></p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card shadow-soft p-6">
+                        <div class="cc-head">
+                            <div>
+                                <h2 class="font-display text-lg font-bold" data-i18n="cc_list_title">Purchases</h2>
+                                <p class="text-xs" data-i18n="cc_list_sub">EPP & FPP plans</p>
+                            </div>
+                            <div id="ccFilterGroup" class="task-view-toggle" role="group">
+                                <button type="button" data-cc-filter="all" aria-pressed="true" data-i18n="cc_filter_all">All</button>
+                                <button type="button" data-cc-filter="active" aria-pressed="false" data-i18n="cc_filter_active">Active</button>
+                                <button type="button" data-cc-filter="upcoming" aria-pressed="false" data-i18n="cc_filter_upcoming">Upcoming</button>
+                                <button type="button" data-cc-filter="completed" aria-pressed="false" data-i18n="cc_filter_completed">Completed</button>
+                            </div>
+                        </div>
+                        <div id="ccListWrap" class="epp-table-wrap">
+                            <table class="epp-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" data-i18n="cc_col_item">Item</th>
+                                        <th scope="col" class="is-num" data-i18n="cc_col_monthly">Monthly</th>
+                                        <th scope="col" data-i18n="cc_col_progress">Paid</th>
+                                        <th scope="col" class="is-num" data-i18n="cc_col_outstanding">Outstanding</th>
+                                        <th scope="col" data-i18n="cc_col_ends">Ends</th>
+                                        <th scope="col"><span class="sr-only" data-i18n="cc_col_actions">Actions</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ccListBody"></tbody>
+                            </table>
+                        </div>
+                        <p id="ccListEmpty" class="cc-empty" hidden></p>
+                    </div>
+
+                    <div class="glass-card shadow-soft p-6">
+                        <div class="cc-head">
+                            <div>
+                                <h2 class="font-display text-lg font-bold" data-i18n="cc_timeline_title">Timeline</h2>
+                                <p class="text-xs" id="ccTimelineSub"></p>
+                            </div>
+                            <div class="cc-nav" role="group" data-cc-year-nav>
+                                <button type="button" class="icon-btn is-square" data-cc-year-step="-1"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+                                <span class="cc-nav-label" data-cc-year-label></span>
+                                <button type="button" class="icon-btn is-square" data-cc-year-step="1"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div id="ccTimeline" class="cc-timeline"></div>
+                        <p id="ccTimelineEmpty" class="cc-empty" hidden></p>
+                        <div id="ccTimelineLegend" class="cc-yt-legend">
+                            <span><i class="cc-yt-seg is-paid" aria-hidden="true"></i><span data-i18n="cc_lg_paid">Paid</span></span>
+                            <span><i class="cc-yt-seg is-due" aria-hidden="true"></i><span data-i18n="cc_lg_due">Due this month</span></span>
+                            <span><i class="cc-yt-seg is-upcoming" aria-hidden="true"></i><span data-i18n="cc_lg_upcoming">Upcoming</span></span>
+                            <span><i class="cc-yt-sel" aria-hidden="true"></i><span data-i18n="cc_lg_selected">Selected month</span></span>
+                            <span><i class="cc-yt-now" aria-hidden="true"></i><span data-i18n="cc_lg_now">This month</span></span>
+                        </div>
+                    </div>
+
+                    <div class="epp-chart-grid">
+                        <div class="glass-card chart-panel shadow-soft p-6 flex flex-col">
+                            <h2 class="font-display text-lg font-bold" data-i18n="cc_chart_split_title">By purchase</h2>
+                            <p class="text-xs mb-6" data-i18n="cc_chart_split_sub">Still owed per plan</p>
+                            <div id="ccSplitChartWrap" class="relative w-full flex-grow min-h-[300px]"><canvas id="ccSplitChart" role="img"></canvas></div>
+                            <p id="ccSplitEmpty" class="cc-empty" data-i18n="cc_nothing_owed" hidden>Nothing is owed right now.</p>
+                        </div>
+                        <div class="glass-card chart-panel shadow-soft p-6 flex flex-col">
+                            <h2 class="font-display text-lg font-bold" data-i18n="cc_chart_balance_title">Balance</h2>
+                            <p class="text-xs mb-6" data-i18n="cc_chart_balance_sub">Owed after each month</p>
+                            <div id="ccBalanceChartWrap" class="relative w-full flex-grow min-h-[300px]"><canvas id="ccBalanceChart" role="img"></canvas></div>
+                            <p id="ccBalanceEmpty" class="cc-empty" data-i18n="cc_nothing_owed" hidden>Nothing is owed right now.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card shadow-soft p-6">
+                        <h2 class="font-display text-lg font-bold" data-i18n="cc_table_title">Monthly totals</h2>
+                        <p class="text-xs" data-i18n="cc_table_sub">Overlapping plans combined</p>
+                        <div id="ccOverviewTableWrap" class="epp-table-wrap is-scroll">
+                            <table class="epp-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" data-i18n="cc_col_month">Month</th>
+                                        <th scope="col" class="is-num" data-i18n="cc_col_plans">Plans billed</th>
+                                        <th scope="col" class="is-num" data-i18n="cc_col_commitment">Commitment</th>
+                                        <th scope="col" class="is-num" data-i18n="cc_col_change">Change</th>
+                                        <th scope="col" data-i18n="cc_col_ending">Last instalment for</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ccOverviewBody"></tbody>
+                            </table>
+                        </div>
+                        <p id="ccOverviewTableEmpty" class="cc-empty" data-i18n="cc_overview_empty" hidden>No instalments ahead. Add a purchase to see your monthly commitments.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <dialog id="ccConfirmDialog" class="admin-dialog" aria-labelledby="ccConfirmTitle" aria-describedby="ccConfirmMessage">
+            <form id="ccConfirmForm" class="glass-card shadow-soft">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center">
+                        <i class="fa-solid fa-trash-can text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 id="ccConfirmTitle" data-i18n="cc_confirm_title">Delete purchase?</h2>
+                        <p id="ccConfirmMessage"></p>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" id="btnCcConfirmCancel" class="btn-ghost" data-i18n="admin_cancel">Cancel</button>
+                    <button type="submit" class="btn-primary btn-danger" data-i18n="cc_confirm_delete">Delete</button>
+                </div>
+            </form>
+        </dialog>
+
         <dialog id="hsQuoteDialog" class="report-dialog hs-quote-dialog" aria-labelledby="hsQuoteDialogTitle">
             <div class="report-head">
                 <div class="report-head-copy">
@@ -3891,7 +4293,7 @@
         // and like every other module the public sees one once the admin ticks it. The page is static, so
         // an unticked module is only kept out of the public UI; its markup still ships to every browser.
         // Do not rely on it to protect real secrets.
-        const ADMIN_TAB_IDS = ['tab4', 'tab7', 'tab8', 'tab9', 'tab10', 'tab11', 'tab12', 'tab13'];
+        const ADMIN_TAB_IDS = ['tab4', 'tab7', 'tab8', 'tab9', 'tab10', 'tab11', 'tab12', 'tab13', 'tab14'];
         // Only a salted PBKDF2-SHA-256 hash of the passcode ships with the page. The many rounds make
         // each guess slow to test, but a short passcode can still be found by trying common ones.
         const ADMIN_PASSCODE = {
@@ -4647,6 +5049,129 @@
                 hs_quote_checkout: "Daftar keluar",
                 hs_quote_nights: "Tempoh",
                 hs_quote_issued: "Tarikh sebut harga: {date}",
+                tab_cc_tracker: "Komitmen Kad",
+                cc_form_add: "Tambah pembelian",
+                cc_form_edit: "Kemas kini pembelian",
+                cc_name: "Item",
+                cc_name_placeholder: "cth. Telefon, Sofa",
+                cc_card: "Kad kredit",
+                cc_tenure_option: "{months} bulan",
+                cc_type: "Jenis pelan",
+                cc_amount: "Jumlah pembelian (RM)",
+                cc_tenure: "Tempoh (bulan)",
+                cc_rate: "Kadar faedah (% setahun, rata)",
+                cc_monthly: "Ansuran bulanan (RM)",
+                cc_auto: "Auto",
+                cc_monthly_reset: "Guna amaun dikira",
+                cc_monthly_help_epp: "Jumlah pembelian ÷ tempoh, dibundarkan ke bawah kepada sen; ansuran terakhir mengambil bakinya. Taip amaun lain untuk mengikut penyata anda.",
+                cc_monthly_help_fpp: "Jumlah pembelian berserta faedah rata bagi seluruh tempoh, ÷ tempoh. Taip amaun lain untuk mengikut penyata anda.",
+                cc_monthly_help_manual: "Menggunakan amaun yang anda taip.",
+                cc_start: "Tarikh ansuran pertama",
+                cc_start_help: "Ansuran seterusnya jatuh tempo pada hari yang sama setiap bulan. Ansuran dikira telah dibayar sebaik tarikh tempohnya tiba.",
+                cc_add_btn: "Tambah pembelian",
+                cc_save_btn: "Simpan perubahan",
+                cc_cancel: "Batal",
+                cc_saved_note: "Disimpan dalam pelayar ini sahaja.",
+                cc_err_name: "Masukkan nama item.",
+                cc_err_amount: "Masukkan jumlah pembelian melebihi RM 0.",
+                cc_err_tenure: "Masukkan tempoh antara 1 hingga 120 bulan.",
+                cc_err_rate: "Masukkan kadar antara 0% hingga 36%.",
+                cc_err_monthly: "Masukkan ansuran bulanan melebihi RM 0.",
+                cc_err_short: "{monthly} × {months} bulan kurang daripada jumlah pembelian.",
+                cc_err_start: "Pilih tarikh ansuran pertama.",
+                cc_kpi_month: "Bulan ini",
+                cc_kpi_month_note_one: "1 pelan dibilkan",
+                cc_kpi_month_note_many: "{count} pelan dibilkan",
+                cc_kpi_month_none: "Tiada bil",
+                cc_kpi_active: "Pelan aktif",
+                cc_kpi_active_note: "{upcoming} menunggu",
+                cc_kpi_outstanding: "Tertunggak",
+                cc_kpi_outstanding_note: "dari {total}",
+                cc_kpi_free: "Bebas hutang",
+                cc_kpi_free_note: "Tamat {month}",
+                cc_kpi_free_none: "Tiada baki",
+                cc_pop_hint: "Lihat bayaran bulan ini",
+                cc_pop_close: "Tutup",
+                cc_pop_next: "Bulan depan ({month}): {amount}",
+                cc_pop_open: "Buka paparan bulan",
+                cc_overview_title: "Komitmen",
+                cc_overview_sub: "{year} · pilih bulan",
+                cc_year_empty: "Tiada ansuran pada {year}.",
+                cc_year_nav: "Pilih tahun",
+                cc_year_prev: "Tahun sebelumnya",
+                cc_year_next: "Tahun berikutnya",
+                cc_month_nav: "Pilih bulan",
+                cc_month_prev: "Bulan sebelumnya",
+                cc_month_next: "Bulan berikutnya",
+                cc_month_today: "Bulan ini",
+                cc_now: "Kini",
+                cc_bd_count_one: "1 ansuran",
+                cc_bd_count_many: "{count} ansuran",
+                cc_bd_change_up: "+{amount} berbanding {month}",
+                cc_bd_change_down: "−{amount} berbanding {month}",
+                cc_bd_change_same: "Sama seperti {month}",
+                cc_bd_empty: "Tiada ansuran pada {month}.",
+                cc_bd_instalment: "Ansuran {number} daripada {total}",
+                cc_bd_due: "Tempoh {date}",
+                cc_state_paid: "Dibayar",
+                cc_state_due_days: "Perlu dibayar dalam {days} hari",
+                cc_state_due_tomorrow: "Perlu dibayar esok",
+                cc_state_upcoming: "Akan datang",
+                cc_chip_paid: "{count} dibayar",
+                cc_chip_due: "{count} hampir tempoh",
+                cc_chip_upcoming: "{count} akan datang",
+                cc_tag_first: "Ansuran pertama",
+                cc_tag_final: "Ansuran terakhir",
+                cc_tl_empty_year: "Tiada pelan berjalan pada {year}.",
+                cc_lg_paid: "Dibayar",
+                cc_lg_due: "Perlu dibayar bulan ini",
+                cc_lg_upcoming: "Akan datang",
+                cc_lg_selected: "Bulan dipilih",
+                cc_lg_now: "Bulan ini",
+                cc_cell_title: "{name}: ansuran {number} daripada {total}, {amount}, tempoh {date} ({state})",
+                cc_overview_empty: "Tiada ansuran akan datang. Tambah pembelian untuk melihat komitmen bulanan anda.",
+                cc_other: "Pelan lain",
+                cc_chart_total: "Jumlah: {amount}",
+                cc_table_title: "Jumlah bulanan",
+                cc_table_sub: "Pelan bertindih digabung",
+                cc_col_month: "Bulan",
+                cc_col_plans: "Pelan dibilkan",
+                cc_col_commitment: "Komitmen",
+                cc_col_change: "Perubahan",
+                cc_col_ending: "Ansuran terakhir bagi",
+                cc_list_title: "Pembelian",
+                cc_list_sub: "Pelan EPP & FPP",
+                cc_filter_all: "Semua",
+                cc_filter_active: "Aktif",
+                cc_filter_upcoming: "Akan datang",
+                cc_filter_completed: "Selesai",
+                cc_col_item: "Item",
+                cc_col_monthly: "Bulanan",
+                cc_col_progress: "Dibayar",
+                cc_col_outstanding: "Tertunggak",
+                cc_col_ends: "Tamat",
+                cc_col_actions: "Tindakan",
+                cc_progress: "{paid} daripada {total} · {left} berbaki",
+                cc_status_active: "Aktif",
+                cc_status_upcoming: "Mula {month}",
+                cc_status_completed: "Selesai",
+                cc_edit: "Kemas kini {name}",
+                cc_delete: "Padam {name}",
+                cc_list_empty: "Belum ada pembelian. Tambah pelan EPP atau FPP pertama anda menggunakan borang.",
+                cc_list_empty_filter: "Tiada pelan yang sepadan dengan penapis ini.",
+                cc_timeline_title: "Garis masa",
+                cc_timeline_sub: "Ansuran pada {year}",
+                cc_today: "Hari ini",
+                cc_chart_split_title: "Ikut pembelian",
+                cc_chart_split_sub: "Baki setiap pelan",
+                cc_chart_balance_title: "Baki",
+                cc_chart_balance_sub: "Baki selepas setiap bulan",
+                cc_chart_balance_series: "Tertunggak",
+                cc_chart_owed_after: "Baki selepas {month}",
+                cc_nothing_owed: "Tiada baki tertunggak sekarang.",
+                cc_confirm_title: "Padam pembelian?",
+                cc_confirm_message: "{name} dan ansurannya akan dibuang daripada penjejak. Tindakan ini tidak boleh dibatalkan.",
+                cc_confirm_delete: "Padam",
                 footer_credit: "© 2026 · Direka dan dibangunkan oleh @muhdnajb"
             },
             en: {
@@ -5373,6 +5898,129 @@
                 hs_quote_checkout: "Check-out",
                 hs_quote_nights: "Length of stay",
                 hs_quote_issued: "Quoted on {date}",
+                tab_cc_tracker: "Card Commitments",
+                cc_form_add: "Add purchase",
+                cc_form_edit: "Edit purchase",
+                cc_name: "Item",
+                cc_name_placeholder: "e.g. Phone, Sofa",
+                cc_card: "Credit card",
+                cc_tenure_option: "{months} months",
+                cc_type: "Plan type",
+                cc_amount: "Purchase amount (RM)",
+                cc_tenure: "Tenure (months)",
+                cc_rate: "Interest rate (% p.a., flat)",
+                cc_monthly: "Monthly instalment (RM)",
+                cc_auto: "Auto",
+                cc_monthly_reset: "Use calculated amount",
+                cc_monthly_help_epp: "Purchase amount ÷ tenure, rounded down to the sen; the last instalment takes the difference. Type over it to match your statement.",
+                cc_monthly_help_fpp: "Purchase amount plus flat interest for the whole tenure, ÷ tenure. Type over it to match your statement.",
+                cc_monthly_help_manual: "Using the amount you typed.",
+                cc_start: "First instalment date",
+                cc_start_help: "Later instalments fall due on the same day each month. An instalment counts as paid once its due date arrives.",
+                cc_add_btn: "Add purchase",
+                cc_save_btn: "Save changes",
+                cc_cancel: "Cancel",
+                cc_saved_note: "Saved in this browser only.",
+                cc_err_name: "Enter the item name.",
+                cc_err_amount: "Enter a purchase amount above RM 0.",
+                cc_err_tenure: "Enter a tenure from 1 to 120 months.",
+                cc_err_rate: "Enter a rate from 0% to 36%.",
+                cc_err_monthly: "Enter a monthly instalment above RM 0.",
+                cc_err_short: "{monthly} × {months} months is less than the purchase amount.",
+                cc_err_start: "Choose the date of the first instalment.",
+                cc_kpi_month: "This month",
+                cc_kpi_month_note_one: "1 plan billed",
+                cc_kpi_month_note_many: "{count} plans billed",
+                cc_kpi_month_none: "Nothing billed",
+                cc_kpi_active: "Active plans",
+                cc_kpi_active_note: "{upcoming} upcoming",
+                cc_kpi_outstanding: "Outstanding",
+                cc_kpi_outstanding_note: "of {total}",
+                cc_kpi_free: "Debt-free",
+                cc_kpi_free_note: "Ends {month}",
+                cc_kpi_free_none: "All settled",
+                cc_pop_hint: "Show this month's payments",
+                cc_pop_close: "Close",
+                cc_pop_next: "Next month ({month}): {amount}",
+                cc_pop_open: "Open month view",
+                cc_overview_title: "Commitments",
+                cc_overview_sub: "{year} · select a month",
+                cc_year_empty: "No instalments in {year}.",
+                cc_year_nav: "Choose a year",
+                cc_year_prev: "Previous year",
+                cc_year_next: "Next year",
+                cc_month_nav: "Choose a month",
+                cc_month_prev: "Previous month",
+                cc_month_next: "Next month",
+                cc_month_today: "This month",
+                cc_now: "Now",
+                cc_bd_count_one: "1 instalment",
+                cc_bd_count_many: "{count} instalments",
+                cc_bd_change_up: "+{amount} vs {month}",
+                cc_bd_change_down: "−{amount} vs {month}",
+                cc_bd_change_same: "Same as {month}",
+                cc_bd_empty: "No instalments in {month}.",
+                cc_bd_instalment: "Instalment {number} of {total}",
+                cc_bd_due: "Due {date}",
+                cc_state_paid: "Paid",
+                cc_state_due_days: "Due in {days} days",
+                cc_state_due_tomorrow: "Due tomorrow",
+                cc_state_upcoming: "Upcoming",
+                cc_chip_paid: "{count} paid",
+                cc_chip_due: "{count} due soon",
+                cc_chip_upcoming: "{count} upcoming",
+                cc_tag_first: "First instalment",
+                cc_tag_final: "Final instalment",
+                cc_tl_empty_year: "No plans run in {year}.",
+                cc_lg_paid: "Paid",
+                cc_lg_due: "Due this month",
+                cc_lg_upcoming: "Upcoming",
+                cc_lg_selected: "Selected month",
+                cc_lg_now: "This month",
+                cc_cell_title: "{name}: instalment {number} of {total}, {amount}, due {date} ({state})",
+                cc_overview_empty: "No instalments ahead. Add a purchase to see your monthly commitments.",
+                cc_other: "Other plans",
+                cc_chart_total: "Total: {amount}",
+                cc_table_title: "Monthly totals",
+                cc_table_sub: "Overlapping plans combined",
+                cc_col_month: "Month",
+                cc_col_plans: "Plans billed",
+                cc_col_commitment: "Commitment",
+                cc_col_change: "Change",
+                cc_col_ending: "Last instalment for",
+                cc_list_title: "Purchases",
+                cc_list_sub: "EPP & FPP plans",
+                cc_filter_all: "All",
+                cc_filter_active: "Active",
+                cc_filter_upcoming: "Upcoming",
+                cc_filter_completed: "Completed",
+                cc_col_item: "Item",
+                cc_col_monthly: "Monthly",
+                cc_col_progress: "Paid",
+                cc_col_outstanding: "Outstanding",
+                cc_col_ends: "Ends",
+                cc_col_actions: "Actions",
+                cc_progress: "{paid} of {total} · {left} left",
+                cc_status_active: "Active",
+                cc_status_upcoming: "Starts {month}",
+                cc_status_completed: "Completed",
+                cc_edit: "Edit {name}",
+                cc_delete: "Delete {name}",
+                cc_list_empty: "No purchases yet. Add your first EPP or FPP plan with the form.",
+                cc_list_empty_filter: "No plans match this filter.",
+                cc_timeline_title: "Timeline",
+                cc_timeline_sub: "Instalments in {year}",
+                cc_today: "Today",
+                cc_chart_split_title: "By purchase",
+                cc_chart_split_sub: "Still owed per plan",
+                cc_chart_balance_title: "Balance",
+                cc_chart_balance_sub: "Owed after each month",
+                cc_chart_balance_series: "Outstanding",
+                cc_chart_owed_after: "Owed after {month}",
+                cc_nothing_owed: "Nothing is owed right now.",
+                cc_confirm_title: "Delete purchase?",
+                cc_confirm_message: "{name} and its instalments will be removed from the tracker. This cannot be undone.",
+                cc_confirm_delete: "Delete",
                 footer_credit: "© 2026 · Designed and developed by @muhdnajb"
             }
         };
@@ -5656,10 +6304,12 @@
                 runTabCalculator(tabId);
             });
             updateDashFreeText();
+            resetCommitmentForm();
             setAdminMode(false);
-            // Tasks and expenses stay saved, but leave the page once the admin is gone
+            // Tasks, expenses and card commitments stay saved, but leave the page once the admin is gone
             renderTaskTracker();
             renderExpenses();
+            renderCommitments();
             document.getElementById('btnAdminLogin').focus();
         };
 
@@ -5938,7 +6588,8 @@
                 tab10: renderExpenses,
                 tab11: calcInstalmentPlans,
                 tab12: calcCarLoan,
-                tab13: calcHomestay
+                tab13: calcHomestay,
+                tab14: renderCommitments
             };
             if (calculators[tabId]) calculators[tabId]();
         };
@@ -11885,6 +12536,1022 @@
             calcHomestay();
         };
 
+        // --- Credit card commitments: every EPP / FPP plan being paid off, and what they add up to each month ---
+        // Instalment k (from 0) falls due k months after the first instalment date, on the same day or that
+        // month's last day. An instalment counts as paid once its due date arrives. Amounts are kept in sen.
+        const CC_TAB_ID = 'tab14';
+        const CC_KEY = 'financialPlannerCardCommitments';
+        const CC_MAX_AMOUNT = 10000000;
+        const CC_MAX_TENURE = 120;
+        const CC_MAX_RATE = 36;
+        // The overview chart and table look this many months ahead at most, so the bars stay readable
+        const CC_WINDOW_MAX = 36;
+        // Seven plans take the chart palette in a fixed order; any more fold into "Other plans"
+        const CC_NAMED_SLOTS = 7;
+        const CC_STATUS_ORDER = ['active', 'upcoming', 'completed'];
+        // The choices offered in the form
+        const CC_BANKS = ['Maybank Ikhwan Mastercard Platinum', 'AFFIN UiTM Credit Card'];
+        // Purchases saved under an earlier name of a card move to its current name
+        const CC_RENAMED_CARDS = {
+            'Mastercard': CC_BANKS[0],
+            'Maybank Islamic Ikhwan Mastercard Platinum': CC_BANKS[0],
+            'AFFIN Bank': CC_BANKS[1]
+        };
+        const CC_TENURES = [6, 12, 18, 24];
+        let ccItems = [];
+        let ccType = 'epp';
+        let ccFilter = 'all';
+        let ccEditingId = null;
+        // Once the monthly instalment is typed over, it stops following the amount and tenure
+        let ccMonthlyManual = false;
+        let ccConfirmId = null;
+        let chartCcOverview = null;
+        let chartCcSplit = null;
+        let chartCcBalance = null;
+        // The month picked in the overview, breakdown and timeline ("YYYY-MM"); its year is the year shown
+        let ccMonth = '';
+        // The plans as last worked out, shared by every view that follows the picked month
+        let ccView = null;
+
+        const ccToday = () => {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return today;
+        };
+        const newCommitmentId = () => `c${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+        const monthKeyDiff = (from, to) => (Number(to.slice(0, 4)) - Number(from.slice(0, 4))) * 12 + Number(to.slice(5, 7)) - Number(from.slice(5, 7));
+        const formatMonthKeyShort = key => formatMonthYear(parseMonthKey(key));
+        const toSen = value => Math.round(value * 100);
+        const ccClamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+        // FPP: flat interest at a yearly rate on the original amount for the whole tenure (as in the Credit Card tab)
+        const ccExpectedSen = (amount, tenure, type, rate) => toSen(amount) + (type === 'fpp' ? Math.round(amount * rate / 12) * tenure : 0);
+        // Each instalment rounded down to the sen; the last one takes the rest
+        const ccAutoMonthly = (amount, tenure, type, rate) => Math.floor(ccExpectedSen(amount, tenure, type, rate) / tenure) / 100;
+
+        // What the plan comes to: the instalments, what is paid by `today` and what is still owed
+        const ccPlan = (item, today = ccToday()) => {
+            const n = item.tenure;
+            const monthlySen = toSen(item.monthly);
+            const expectedSen = ccExpectedSen(item.amount, n, item.type, item.rate);
+            // A monthly figure that only differs by rounding settles the expected total exactly; any other is billed as typed
+            const totalSen = Math.abs(monthlySen * n - expectedSen) < n ? expectedSen : monthlySen * n;
+            const lastSen = totalSen - monthlySen * (n - 1);
+            const start = parseDateInput(item.start);
+            const dues = Array.from({ length: n }, (_, index) => {
+                const date = addMonthsClamped(start, index);
+                return { date, month: toMonthKey(date), sen: index === n - 1 ? lastSen : monthlySen };
+            });
+            const paid = dues.filter(due => due.date <= today).length;
+            const paidSen = dues.slice(0, paid).reduce((total, due) => total + due.sen, 0);
+            return {
+                item,
+                dues,
+                byMonth: new Map(dues.map(due => [due.month, due.sen])),
+                paid,
+                left: n - paid,
+                totalSen,
+                paidSen,
+                owedSen: totalSen - paidSen,
+                lastSen,
+                firstMonth: dues[0].month,
+                lastMonth: dues[n - 1].month,
+                start,
+                end: dues[n - 1].date,
+                status: paid === n ? 'completed' : paid === 0 ? 'upcoming' : 'active'
+            };
+        };
+
+        // Returns the cleaned purchase, or an error key
+        const validateCommitment = raw => {
+            const name = String(raw.name || '').trim().slice(0, 60);
+            const amount = roundSen(Number(raw.amount));
+            const tenure = Number(raw.tenure);
+            const type = raw.type === 'fpp' ? 'fpp' : 'epp';
+            const rate = type === 'fpp' ? Number(raw.rate || 0) : 0;
+            const monthly = roundSen(Number(raw.monthly));
+            if (!name) return { error: 'cc_err_name' };
+            if (!Number.isFinite(amount) || amount <= 0 || amount > CC_MAX_AMOUNT) return { error: 'cc_err_amount' };
+            if (!Number.isInteger(tenure) || tenure < 1 || tenure > CC_MAX_TENURE) return { error: 'cc_err_tenure' };
+            if (!Number.isFinite(rate) || rate < 0 || rate > CC_MAX_RATE) return { error: 'cc_err_rate' };
+            if (!Number.isFinite(monthly) || monthly <= 0 || monthly > CC_MAX_AMOUNT) return { error: 'cc_err_monthly' };
+            if (!parseDateInput(raw.start)) return { error: 'cc_err_start' };
+            const item = { id: raw.id, name, card: String(raw.card || '').trim().slice(0, 60), type, amount, tenure, rate, monthly, start: raw.start };
+            // The instalments have to cover the purchase, short of rounding, and the last one can't be nothing
+            const plan = ccPlan(item);
+            if (toSen(monthly) * tenure < toSen(amount) - (tenure - 1) || plan.lastSen <= 0) return { error: 'cc_err_short' };
+            return { item };
+        };
+
+        const loadCommitments = () => {
+            try {
+                const stored = JSON.parse(localStorage.getItem(CC_KEY));
+                if (!Array.isArray(stored)) return [];
+                const valid = stored.filter(item => item && typeof item.id === 'string' && /^[\w-]+$/.test(item.id));
+                const items = valid
+                    .map(item => validateCommitment({ ...item, card: CC_RENAMED_CARDS[item.card] || item.card }).item)
+                    .filter(Boolean);
+                // Old card names are written back under the new ones, so every saved copy agrees
+                if (valid.some(item => CC_RENAMED_CARDS[item.card])) {
+                    try {
+                        const renamed = new Map(items.map(item => [item.id, item.card]));
+                        localStorage.setItem(CC_KEY, JSON.stringify(stored.map(item => item && renamed.has(item.id) ? { ...item, card: renamed.get(item.id) } : item)));
+                    } catch (saveError) {
+                        console.warn('Renamed card names could not be saved; they are renamed again on the next load.', saveError);
+                    }
+                }
+                return items;
+            } catch (storageError) {
+                console.warn('Saved card commitments could not be read; starting with an empty list.', storageError);
+                return [];
+            }
+        };
+
+        const saveCommitments = () => {
+            try {
+                localStorage.setItem(CC_KEY, JSON.stringify(ccItems));
+            } catch (storageError) {
+                console.warn('Card commitments could not be saved; they last until the page reloads.', storageError);
+            }
+        };
+
+        // While the module is switched off, its content is only used for a signed-in admin
+        const accessibleCommitments = () => canOpenTab(CC_TAB_ID) ? ccItems : [];
+
+        // Active first, then upcoming, then completed; within each, the soonest to finish first
+        const sortCcPlans = plans => [...plans].sort((a, b) => CC_STATUS_ORDER.indexOf(a.status) - CC_STATUS_ORDER.indexOf(b.status)
+            || a.end - b.end || a.item.name.localeCompare(b.item.name));
+
+        // Each plan still running keeps one palette slot, in order of its first instalment; finished plans recede
+        const ccColorMap = (plans, theme) => {
+            const running = plans.filter(plan => plan.status !== 'completed')
+                .sort((a, b) => a.start - b.start || a.item.id.localeCompare(b.item.id));
+            const colors = new Map(plans.map(plan => [plan.item.id, theme.other]));
+            running.slice(0, CC_NAMED_SLOTS).forEach((plan, index) => colors.set(plan.item.id, theme.categorical[index]));
+            return { colors, named: new Set(running.slice(0, CC_NAMED_SLOTS).map(plan => plan.item.id)) };
+        };
+
+        const ccStatusText = plan => plan.status === 'upcoming'
+            ? tf('cc_status_upcoming', { month: formatMonthYear(plan.start) })
+            : t(`cc_status_${plan.status}`);
+
+        // --- Form ---
+        const ccFormValues = () => ({
+            id: ccEditingId,
+            name: document.getElementById('inpCcName').value,
+            card: document.getElementById('inpCcCard').value,
+            type: ccType,
+            amount: document.getElementById('inpCcAmount').value,
+            tenure: document.getElementById('inpCcTenure').value,
+            rate: document.getElementById('inpCcRate').value,
+            monthly: document.getElementById('inpCcMonthly').value,
+            start: document.getElementById('inpCcStart').value
+        });
+
+        const ccCalculatedMonthly = () => {
+            const amount = Number(document.getElementById('inpCcAmount').value);
+            const tenure = Number(document.getElementById('inpCcTenure').value);
+            const rate = ccClamp(Number(document.getElementById('inpCcRate').value) || 0, 0, CC_MAX_RATE);
+            if (!(amount > 0) || amount > CC_MAX_AMOUNT || !Number.isInteger(tenure) || tenure < 1 || tenure > CC_MAX_TENURE) return null;
+            return ccAutoMonthly(amount, tenure, ccType, rate);
+        };
+
+        // Keeps the monthly figure in step with the amount and tenure until it is typed over
+        const syncCcMonthly = () => {
+            const input = document.getElementById('inpCcMonthly');
+            if (!ccMonthlyManual) {
+                const auto = ccCalculatedMonthly();
+                input.value = auto === null ? '' : auto.toFixed(2);
+            }
+            document.getElementById('ccMonthlyAuto').hidden = ccMonthlyManual;
+            document.getElementById('btnCcMonthlyReset').hidden = !ccMonthlyManual;
+            document.getElementById('ccMonthlyHelp').textContent = ccMonthlyManual ? t('cc_monthly_help_manual') : t(`cc_monthly_help_${ccType}`);
+        };
+
+        const applyCcType = () => {
+            document.querySelectorAll('[data-cc-type]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.ccType === ccType)));
+            document.getElementById('ccRateField').hidden = ccType !== 'fpp';
+            syncCcMonthly();
+        };
+
+        const renderCcFormMode = () => {
+            const editing = Boolean(ccEditingId);
+            document.getElementById('ccFormTitle').textContent = t(editing ? 'cc_form_edit' : 'cc_form_add');
+            document.getElementById('ccSubmitLabel').textContent = t(editing ? 'cc_save_btn' : 'cc_add_btn');
+            document.querySelector('#btnCcSubmit i').className = `fa-solid ${editing ? 'fa-check' : 'fa-plus'}`;
+            document.getElementById('btnCcCancel').hidden = !editing;
+        };
+
+        // Back to a blank "Add" form. The card, plan type, tenure and date stay for the next entry unless `full`.
+        // Fills a dropdown with the offered choices. A purchase saved earlier with a value no longer offered
+        // keeps it as an extra choice while it is edited, so saving it doesn't change it unasked.
+        const fillCcSelect = (id, values, label, current) => {
+            const select = document.getElementById(id);
+            const choices = current !== '' && current !== undefined && !values.map(String).includes(String(current)) ? [...values, current] : values;
+            select.innerHTML = choices.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(label(value))}</option>`).join('');
+            select.value = String(choices.map(String).includes(String(current)) ? current : values[0]);
+        };
+        const renderCcSelects = (card = document.getElementById('inpCcCard').value, tenure = document.getElementById('inpCcTenure').value) => {
+            fillCcSelect('inpCcCard', CC_BANKS, value => value, card);
+            fillCcSelect('inpCcTenure', CC_TENURES, value => tf('cc_tenure_option', { months: value }), tenure);
+        };
+
+        const resetCommitmentForm = (full = true) => {
+            ccEditingId = null;
+            ccMonthlyManual = false;
+            document.getElementById('inpCcName').value = '';
+            document.getElementById('inpCcAmount').value = '';
+            document.getElementById('ccFormError').textContent = '';
+            if (full) {
+                ccType = 'epp';
+                renderCcSelects(CC_BANKS[0], 12);
+                document.getElementById('inpCcRate').value = '0';
+                document.getElementById('inpCcStart').value = toIsoDate(ccToday());
+            }
+            applyCcType();
+            renderCcFormMode();
+        };
+
+        const editCommitment = id => {
+            const item = ccItems.find(entry => entry.id === id);
+            if (!item) return;
+            ccEditingId = id;
+            ccType = item.type;
+            document.getElementById('inpCcName').value = item.name;
+            renderCcSelects(item.card, item.tenure);
+            document.getElementById('inpCcAmount').value = item.amount;
+            document.getElementById('inpCcRate').value = item.rate;
+            document.getElementById('inpCcMonthly').value = item.monthly.toFixed(2);
+            document.getElementById('inpCcStart').value = item.start;
+            document.getElementById('ccFormError').textContent = '';
+            ccMonthlyManual = item.monthly !== ccAutoMonthly(item.amount, item.tenure, item.type, item.rate);
+            applyCcType();
+            renderCcFormMode();
+            renderCcList();
+            const form = document.getElementById('ccForm');
+            form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            document.getElementById('inpCcName').focus({ preventScroll: true });
+        };
+
+        const submitCommitment = event => {
+            event.preventDefault();
+            const { item, error } = validateCommitment(ccFormValues());
+            const errorElement = document.getElementById('ccFormError');
+            if (error) {
+                const values = ccFormValues();
+                errorElement.textContent = error === 'cc_err_short'
+                    ? tf(error, { monthly: formatRM2(Number(values.monthly)), months: values.tenure })
+                    : t(error);
+                return;
+            }
+            errorElement.textContent = '';
+            const wasEditing = Boolean(ccEditingId);
+            if (wasEditing) {
+                ccItems = ccItems.map(entry => entry.id === ccEditingId ? item : entry);
+            } else {
+                ccItems = [...ccItems, { ...item, id: newCommitmentId() }];
+            }
+            saveCommitments();
+            resetCommitmentForm(wasEditing);
+            renderCommitments();
+            document.getElementById('inpCcName').focus();
+        };
+
+        // --- Dashboard ---
+        const ccEmptyState = (wrapId, emptyId, isEmpty) => {
+            document.getElementById(wrapId).hidden = isEmpty;
+            document.getElementById(emptyId).hidden = !isEmpty;
+        };
+
+        const renderCcKpis = (plans, currentMonth) => {
+            const billed = plans.filter(plan => plan.byMonth.has(currentMonth));
+            const monthSen = billed.reduce((total, plan) => total + plan.byMonth.get(currentMonth), 0);
+            const counts = Object.fromEntries(CC_STATUS_ORDER.map(status => [status, plans.filter(plan => plan.status === status).length]));
+            const owedSen = plans.reduce((total, plan) => total + plan.owedSen, 0);
+            const paidSen = plans.reduce((total, plan) => total + plan.paidSen, 0);
+            const totalSen = plans.reduce((total, plan) => total + plan.totalSen, 0);
+            const running = plans.filter(plan => plan.status !== 'completed');
+            const lastMonth = running.reduce((latest, plan) => !latest || plan.lastMonth > latest ? plan.lastMonth : latest, '');
+            const monthName = formatMonthKey(currentMonth);
+
+            document.getElementById('resCcMonth').textContent = formatRM2(monthSen / 100);
+            document.getElementById('resCcMonthNote').textContent = billed.length
+                ? tf(billed.length === 1 ? 'cc_kpi_month_note_one' : 'cc_kpi_month_note_many', { count: billed.length, month: monthName })
+                : tf('cc_kpi_month_none', { month: monthName });
+            document.getElementById('resCcActive').textContent = String(counts.active);
+            document.getElementById('resCcActiveNote').textContent = tf('cc_kpi_active_note', counts);
+            document.getElementById('resCcOutstanding').textContent = formatRM2(owedSen / 100);
+            document.getElementById('resCcOutstandingNote').textContent = tf('cc_kpi_outstanding_note', { paid: formatRM2(paidSen / 100), total: formatRM2(totalSen / 100) });
+            document.getElementById('resCcFree').textContent = lastMonth ? formatMonthKeyShort(shiftMonthKey(lastMonth, 1)) : '-';
+            document.getElementById('resCcFreeNote').textContent = lastMonth ? tf('cc_kpi_free_note', { month: formatMonthKeyShort(lastMonth) }) : t('cc_kpi_free_none');
+        };
+
+        // One row per month from this one to the last instalment: every plan billed that month, consolidated
+        const ccMonthWindow = (plans, currentMonth) => {
+            const lastMonth = plans.reduce((latest, plan) => plan.lastMonth >= currentMonth && (!latest || plan.lastMonth > latest) ? plan.lastMonth : latest, '');
+            if (!lastMonth) return { months: [], total: 0 };
+            const total = monthKeyDiff(currentMonth, lastMonth) + 1;
+            const months = Array.from({ length: Math.min(total, CC_WINDOW_MAX) }, (_, index) => shiftMonthKey(currentMonth, index));
+            return { months, total };
+        };
+
+        const ccMonthTotalSen = (plans, month) => plans.reduce((total, plan) => total + (plan.byMonth.get(month) || 0), 0);
+
+        const renderCcOverviewTable = (plans, months, currentMonth) => {
+            ccEmptyState('ccOverviewTableWrap', 'ccOverviewTableEmpty', !months.length);
+            let previousSen = months.length ? ccMonthTotalSen(plans, shiftMonthKey(months[0], -1)) : 0;
+            document.getElementById('ccOverviewBody').innerHTML = months.map(month => {
+                const billed = plans.filter(plan => plan.byMonth.has(month));
+                const totalSen = ccMonthTotalSen(plans, month);
+                const changeSen = totalSen - previousSen;
+                previousSen = totalSen;
+                const change = changeSen === 0 ? '<span aria-hidden="true">–</span>'
+                    : `<span class="${changeSen > 0 ? 'cc-change-up' : 'cc-change-down'}">${changeSen > 0 ? '+' : '−'}${formatRM2(Math.abs(changeSen) / 100)}</span>`;
+                const ending = billed.filter(plan => plan.lastMonth === month).map(plan => escapeHtml(plan.item.name)).join(', ');
+                const classes = [month === currentMonth && 'is-current', month === ccMonth && 'is-selected'].filter(Boolean).join(' ');
+                return `<tr data-cc-month="${month}"${classes ? ` class="${classes}"` : ''}>
+                    <td><button type="button" class="cc-month-btn" data-cc-month="${month}" aria-pressed="${month === ccMonth}">${escapeHtml(formatMonthKey(month))}</button></td>
+                    <td class="is-num">${billed.length}</td>
+                    <td class="is-num is-strong">${formatRM2(totalSen / 100)}</td>
+                    <td class="is-num">${change}</td>
+                    <td class="cc-ending">${ending}</td>
+                </tr>`;
+            }).join('');
+        };
+
+        // --- Picked month: the overview chart shows its year, the breakdown its instalments, the timeline its column ---
+        const ccYearMonths = year => Array.from({ length: 12 }, (_, index) => `${year}-${String(index + 1).padStart(2, '0')}`);
+        const formatMonthName = key => new Intl.DateTimeFormat(dateLocale(), { month: 'short' }).format(parseMonthKey(key));
+
+        // Years that can be shown: from any plan's first instalment to any plan's last, and always this year
+        const ccYearRange = () => {
+            const years = ccView.plans.flatMap(plan => [Number(plan.firstMonth.slice(0, 4)), Number(plan.lastMonth.slice(0, 4))]);
+            const current = Number(ccView.currentMonth.slice(0, 4));
+            return { min: Math.min(current, ...years), max: Math.max(current, ...years) };
+        };
+        const clampCcMonth = key => {
+            if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(key)) return ccView.currentMonth;
+            const { min, max } = ccYearRange();
+            if (key < `${min}-01`) return `${min}-01`;
+            if (key > `${max}-12`) return `${max}-12`;
+            return key;
+        };
+
+        // Paid once its due date has arrived; still to come this month is due soon; any later month is upcoming
+        const ccDueState = due => due.date <= ccView.today ? 'paid' : due.month === ccView.currentMonth ? 'due' : 'upcoming';
+        const CC_STATE_ICONS = { paid: 'fa-circle-check', due: 'fa-clock', upcoming: 'fa-calendar' };
+        const ccDueStateText = due => {
+            const state = ccDueState(due);
+            if (state !== 'due') return t(`cc_state_${state}`);
+            const days = Math.round((due.date - ccView.today) / 86400000);
+            return days === 1 ? t('cc_state_due_tomorrow') : tf('cc_state_due_days', { days });
+        };
+        const ccStateChip = (state, text) => `<span class="cc-state is-${state}"><i class="fa-solid ${CC_STATE_ICONS[state]}" aria-hidden="true"></i>${escapeHtml(text)}</span>`;
+
+        // Past months recede, the picked month stands out, the months ahead sit in between
+        const ccBarAlpha = month => month === ccMonth ? 1 : month < ccView.currentMonth ? 0.32 : 0.7;
+        const ccOverviewColors = color => ccYearMonths(ccMonth.slice(0, 4)).map(month => hexWithAlpha(color, ccBarAlpha(month)));
+        const ccOverviewMarkerOptions = months => ({
+            selected: months.indexOf(ccMonth),
+            now: months.indexOf(ccView.currentMonth),
+            band: ccView.theme.primaryFill,
+            color: ccView.theme.text,
+            label: t('cc_now')
+        });
+
+        // A band behind the picked month, and "Now" over this month's bar
+        const ccOverviewMarkers = {
+            id: 'ccOverviewMarkers',
+            beforeDatasetsDraw(chart, args, options) {
+                if (options.selected < 0) return;
+                const { ctx, chartArea, scales: { x } } = chart;
+                const width = x.width / chart.data.labels.length;
+                const left = x.getPixelForValue(options.selected) - width / 2 + 2;
+                ctx.save();
+                ctx.fillStyle = options.band;
+                ctx.beginPath();
+                if (ctx.roundRect) ctx.roundRect(left, chartArea.top - 18, width - 4, chartArea.bottom - chartArea.top + 18, 6);
+                else ctx.rect(left, chartArea.top - 18, width - 4, chartArea.bottom - chartArea.top + 18);
+                ctx.fill();
+                ctx.restore();
+            },
+            afterDatasetsDraw(chart, args, options) {
+                if (options.now < 0) return;
+                const { ctx, chartArea, scales: { x } } = chart;
+                const tops = chart.data.datasets
+                    .map((dataset, index) => chart.isDatasetVisible(index) && dataset.data[options.now] > 0 ? chart.getDatasetMeta(index).data[options.now]?.y : null)
+                    .filter(y => Number.isFinite(y));
+                const top = tops.length ? Math.min(...tops) : chartArea.bottom;
+                ctx.save();
+                ctx.font = "600 11px 'Space Grotesk', system-ui, sans-serif";
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+                ctx.fillStyle = options.color;
+                ctx.fillText(options.label, x.getPixelForValue(options.now), Math.max(12, top - 5));
+                ctx.restore();
+            }
+        };
+
+        const drawCcOverviewChart = () => {
+            const { plans, colorMap, theme } = ccView;
+            if (chartCcOverview) chartCcOverview.destroy();
+            chartCcOverview = null;
+            const year = ccMonth.slice(0, 4);
+            const months = ccYearMonths(year);
+            document.getElementById('ccOverviewSub').textContent = tf('cc_overview_sub', { year });
+            const inYear = plans.filter(plan => months.some(month => plan.byMonth.has(month))).sort((a, b) => a.start - b.start);
+            document.getElementById('ccOverviewEmpty').textContent = plans.length ? tf('cc_year_empty', { year }) : t('cc_overview_empty');
+            ccEmptyState('ccOverviewChartWrap', 'ccOverviewEmpty', !inYear.length);
+            if (!inYear.length) return;
+
+            const named = inYear.filter(plan => colorMap.named.has(plan.item.id));
+            const others = inYear.filter(plan => !colorMap.named.has(plan.item.id));
+            const series = named.map(plan => ({ label: plan.item.name, color: colorMap.colors.get(plan.item.id), plans: [plan] }));
+            if (others.length) series.push({ label: t('cc_other'), color: theme.other, plans: others });
+            const canvas = document.getElementById('ccOverviewChart');
+            canvas.setAttribute('aria-label', `${t('cc_overview_title')} ${year}`);
+            chartCcOverview = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels: months.map(formatMonthName),
+                    datasets: series.map(entry => ({
+                        label: entry.label,
+                        ccColor: entry.color,
+                        data: months.map(month => entry.plans.reduce((sum, plan) => sum + (plan.byMonth.get(month) || 0), 0) / 100),
+                        backgroundColor: ccOverviewColors(entry.color),
+                        hoverBackgroundColor: entry.color,
+                        // A thin gap in the card colour between stacked plans
+                        borderColor: theme.surface,
+                        borderWidth: { top: 2 },
+                        borderSkipped: 'bottom',
+                        maxBarThickness: 40
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: { top: 18 } },
+                    interaction: { mode: 'index', intersect: false },
+                    // Any point over a month's column picks that month
+                    onClick: (event, elements, chart) => {
+                        const index = Math.round(chart.scales.x.getValueForPixel(event.x));
+                        if (index >= 0 && index < months.length) selectCcMonth(months[index]);
+                    },
+                    onHover: (event, elements, chart) => {
+                        const { left, right, top, bottom } = chart.chartArea;
+                        chart.canvas.style.cursor = event.x >= left && event.x <= right && event.y >= top - 18 && event.y <= bottom ? 'pointer' : 'default';
+                    },
+                    plugins: {
+                        ccOverviewMarkers: ccOverviewMarkerOptions(months),
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: theme.text,
+                                // Each plan's own colour, not the faded shade of a month it happens to start with
+                                generateLabels: chart => Chart.defaults.plugins.legend.labels.generateLabels(chart).map(item => {
+                                    const color = chart.data.datasets[item.datasetIndex].ccColor;
+                                    return { ...item, fillStyle: color, strokeStyle: color };
+                                })
+                            }
+                        },
+                        tooltip: {
+                            filter: context => context.parsed.y > 0,
+                            callbacks: {
+                                labelColor: context => ({ backgroundColor: context.dataset.ccColor, borderColor: context.dataset.ccColor }),
+                                title: items => formatMonthKey(months[items[0].dataIndex]),
+                                label: context => ` ${context.dataset.label}: ${formatRM2(context.parsed.y)}`,
+                                footer: items => tf('cc_chart_total', { amount: formatRM2(ccMonthTotalSen(plans, months[items[0].dataIndex]) / 100) })
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { stacked: true, beginAtZero: true, grid: { color: theme.grid }, ticks: { color: theme.text, callback: value => formatRM(value) } },
+                        // Every month labelled where there is room; on a phone some labels give way
+                        x: { stacked: true, grid: { display: false }, ticks: { color: theme.text, maxRotation: 0, autoSkip: true, autoSkipPadding: 6 } }
+                    }
+                },
+                plugins: [ccOverviewMarkers]
+            });
+        };
+
+        // Within the same year only the highlight moves, so the bars don't animate in again
+        const updateCcOverviewSelection = () => {
+            if (!chartCcOverview) return;
+            chartCcOverview.data.datasets.forEach(dataset => { dataset.backgroundColor = ccOverviewColors(dataset.ccColor); });
+            Object.assign(chartCcOverview.options.plugins.ccOverviewMarkers, ccOverviewMarkerOptions(ccYearMonths(ccMonth.slice(0, 4))));
+            chartCcOverview.update('none');
+        };
+
+        const renderCcNav = () => {
+            const { min, max } = ccYearRange();
+            const year = Number(ccMonth.slice(0, 4));
+            document.querySelectorAll('[data-cc-year-label]').forEach(label => { label.textContent = String(year); });
+            document.querySelectorAll('[data-cc-year-nav]').forEach(group => group.setAttribute('aria-label', t('cc_year_nav')));
+            document.querySelectorAll('[data-cc-year-step]').forEach(button => {
+                const back = Number(button.dataset.ccYearStep) < 0;
+                button.disabled = back ? year <= min : year >= max;
+                button.title = t(back ? 'cc_year_prev' : 'cc_year_next');
+                button.setAttribute('aria-label', button.title);
+            });
+            document.getElementById('ccMonthNav').setAttribute('aria-label', t('cc_month_nav'));
+            document.querySelectorAll('[data-cc-month-step]').forEach(button => {
+                const back = Number(button.dataset.ccMonthStep) < 0;
+                button.disabled = back ? ccMonth <= `${min}-01` : ccMonth >= `${max}-12`;
+                button.title = t(back ? 'cc_month_prev' : 'cc_month_next');
+                button.setAttribute('aria-label', button.title);
+            });
+            document.getElementById('ccMonthLabel').textContent = formatMonthKey(ccMonth);
+            document.getElementById('btnCcThisMonth').disabled = ccMonth === ccView.currentMonth;
+        };
+
+        // Every instalment billed in the picked month: whether it is paid, due soon or still to come
+        // Every instalment billed in a month, soonest first, with whether it is paid, due soon or still to come
+        const ccMonthEntries = month => ccView.plans
+            .filter(plan => plan.byMonth.has(month))
+            .map(plan => {
+                const index = plan.dues.findIndex(due => due.month === month);
+                return { plan, index, due: plan.dues[index], state: ccDueState(plan.dues[index]) };
+            })
+            .sort((a, b) => a.due.date - b.due.date || a.plan.item.name.localeCompare(b.plan.item.name));
+
+        const ccStateChipsHtml = entries => ['paid', 'due', 'upcoming']
+            .map(state => [state, entries.filter(entry => entry.state === state).length])
+            .filter(([, count]) => count)
+            .map(([state, count]) => ccStateChip(state, tf(`cc_chip_${state}`, { count })))
+            .join('');
+
+        const ccEntryHtml = ({ plan, index, due, state }) => {
+            const { item } = plan;
+            const tags = [
+                index === 0 && `<span class="cc-tag is-first">${escapeHtml(t('cc_tag_first'))}</span>`,
+                index === item.tenure - 1 && `<span class="cc-tag is-final">${escapeHtml(t('cc_tag_final'))}</span>`
+            ].filter(Boolean).join('');
+            const details = [tf('cc_bd_instalment', { number: index + 1, total: item.tenure }), tf('cc_bd_due', { date: formatShortDate(due.date) }), item.card].filter(Boolean);
+            return `<li class="cc-bd-item is-${state}">
+                <span class="expense-swatch" style="background: ${ccView.colorMap.colors.get(item.id)}"></span>
+                <div class="cc-bd-main">
+                    <strong>${escapeHtml(item.name)}</strong>
+                    <span>${escapeHtml(details.join(' · '))}</span>
+                    ${tags ? `<div class="cc-bd-tags">${tags}</div>` : ''}
+                </div>
+                <div class="cc-bd-side"><strong>${formatRM2(due.sen / 100)}</strong>${ccStateChip(state, ccDueStateText(due))}</div>
+            </li>`;
+        };
+
+        const renderCcBreakdown = () => {
+            const { plans } = ccView;
+            document.getElementById('ccBreakdown').hidden = !plans.length;
+            if (!plans.length) return;
+            const entries = ccMonthEntries(ccMonth);
+            const totalSen = entries.reduce((total, entry) => total + entry.due.sen, 0);
+            const previous = shiftMonthKey(ccMonth, -1);
+            const changeSen = totalSen - ccMonthTotalSen(plans, previous);
+            const previousName = formatMonthKeyShort(previous);
+
+            document.getElementById('ccBdTotal').textContent = formatRM2(totalSen / 100);
+            document.getElementById('ccBdCount').textContent = entries.length
+                ? (entries.length === 1 ? t('cc_bd_count_one') : tf('cc_bd_count_many', { count: entries.length }))
+                : '';
+            const change = document.getElementById('ccBdChange');
+            change.className = `cc-bd-change${changeSen > 0 ? ' cc-change-up' : changeSen < 0 ? ' cc-change-down' : ''}`;
+            change.textContent = changeSen === 0
+                ? tf('cc_bd_change_same', { month: previousName })
+                : tf(changeSen > 0 ? 'cc_bd_change_up' : 'cc_bd_change_down', { amount: formatRM2(Math.abs(changeSen) / 100), month: previousName });
+            document.getElementById('ccBdChips').innerHTML = ccStateChipsHtml(entries);
+            document.getElementById('ccBdList').innerHTML = entries.map(ccEntryHtml).join('');
+            const empty = document.getElementById('ccBdEmpty');
+            empty.hidden = entries.length > 0;
+            empty.textContent = tf('cc_bd_empty', { month: formatMonthKey(ccMonth) });
+        };
+
+        // --- "This month" card: the total by default; selecting it opens this month's payments in a panel under it ---
+        const ccMonthPopover = () => document.getElementById('ccMonthPopover');
+        const isCcMonthPopoverOpen = () => !ccMonthPopover().hidden;
+
+        const renderCcMonthPopover = () => {
+            if (!ccView) return;
+            const month = ccView.currentMonth;
+            const entries = ccMonthEntries(month);
+            const totalSen = entries.reduce((total, entry) => total + entry.due.sen, 0);
+            const next = shiftMonthKey(month, 1);
+            const nextSen = ccMonthTotalSen(ccView.plans, next);
+            document.getElementById('ccPopMonth').textContent = formatMonthKey(month);
+            document.getElementById('ccPopTotal').textContent = formatRM2(totalSen / 100);
+            document.getElementById('ccPopChips').innerHTML = ccStateChipsHtml(entries);
+            document.getElementById('ccPopList').innerHTML = entries.map(ccEntryHtml).join('');
+            const empty = document.getElementById('ccPopEmpty');
+            empty.hidden = entries.length > 0;
+            empty.textContent = tf('cc_bd_empty', { month: formatMonthKey(month) });
+            document.getElementById('ccPopNext').textContent = tf('cc_pop_next', { month: formatMonthKeyShort(next), amount: formatRM2(nextSen / 100) });
+            const close = document.getElementById('btnCcPopClose');
+            close.title = t('cc_pop_close');
+            close.setAttribute('aria-label', close.title);
+        };
+
+        // Under the card and lined up with it, kept on screen; it follows the card as the page scrolls
+        const positionCcMonthPopover = () => {
+            if (!isCcMonthPopoverOpen()) return;
+            const card = document.getElementById('ccMonthCard').getBoundingClientRect();
+            const popover = ccMonthPopover();
+            const gap = 8;
+            // Fixed positions start where the page's area does, which a reserved scrollbar gutter moves in from
+            // the window edge; measure that origin so the panel lines up with the card either way
+            popover.style.left = '0px';
+            popover.style.top = '0px';
+            const origin = popover.getBoundingClientRect();
+            const areaWidth = document.documentElement.clientWidth;
+            const width = Math.min(Math.max(card.width, 420), areaWidth - 16);
+            const left = Math.max(8, Math.min(card.left - origin.left, areaWidth - width - 8));
+            popover.style.width = `${width}px`;
+            popover.style.left = `${left}px`;
+            popover.style.top = `${card.bottom + gap - origin.top}px`;
+            popover.style.maxHeight = `${Math.max(200, window.innerHeight - card.bottom - gap - 8)}px`;
+        };
+
+        const setCcMonthPopover = open => {
+            const popover = ccMonthPopover();
+            const card = document.getElementById('ccMonthCard');
+            if (open === isCcMonthPopoverOpen()) return;
+            card.setAttribute('aria-expanded', String(open));
+            if (open) {
+                renderCcMonthPopover();
+                popover.hidden = false;
+                // In the top layer where supported, so no card or chart can paint over it
+                if (popover.showPopover) popover.showPopover();
+                positionCcMonthPopover();
+                // Always opens at the top, with the month and total in view
+                popover.scrollTop = 0;
+            } else {
+                if (popover.hidePopover && popover.matches(':popover-open')) popover.hidePopover();
+                popover.hidden = true;
+            }
+        };
+
+        const updateCcTableSelection = () => {
+            document.querySelectorAll('#ccOverviewBody tr[data-cc-month]').forEach(row => {
+                const isSelected = row.dataset.ccMonth === ccMonth;
+                row.classList.toggle('is-selected', isSelected);
+                row.querySelector('.cc-month-btn').setAttribute('aria-pressed', String(isSelected));
+            });
+        };
+
+        // Picks a month (kept within the years that have instalments) and brings every view to it
+        const selectCcMonth = month => {
+            if (!ccView) return;
+            const next = clampCcMonth(month);
+            const yearChanged = next.slice(0, 4) !== ccMonth.slice(0, 4);
+            ccMonth = next;
+            if (yearChanged || !chartCcOverview) drawCcOverviewChart();
+            else updateCcOverviewSelection();
+            renderCcNav();
+            renderCcBreakdown();
+            renderCcTimeline();
+            updateCcTableSelection();
+        };
+
+        const drawCcSplitChart = (plans, colorMap, theme) => {
+            if (chartCcSplit) chartCcSplit.destroy();
+            chartCcSplit = null;
+            const owing = plans.filter(plan => plan.owedSen > 0).sort((a, b) => a.start - b.start);
+            ccEmptyState('ccSplitChartWrap', 'ccSplitEmpty', !owing.length);
+            if (!owing.length) return;
+            const named = owing.filter(plan => colorMap.named.has(plan.item.id));
+            const otherSen = owing.filter(plan => !colorMap.named.has(plan.item.id)).reduce((total, plan) => total + plan.owedSen, 0);
+            const segments = named.map(plan => ({ label: plan.item.name, sen: plan.owedSen, color: colorMap.colors.get(plan.item.id) }));
+            if (otherSen > 0) segments.push({ label: t('cc_other'), sen: otherSen, color: theme.other });
+            const totalSen = segments.reduce((total, segment) => total + segment.sen, 0);
+            const canvas = document.getElementById('ccSplitChart');
+            canvas.setAttribute('aria-label', t('cc_chart_split_title'));
+            chartCcSplit = new Chart(canvas, {
+                type: 'doughnut',
+                data: {
+                    labels: segments.map(segment => segment.label),
+                    datasets: [{
+                        data: segments.map(segment => segment.sen / 100),
+                        backgroundColor: segments.map(segment => segment.color),
+                        borderColor: theme.surface,
+                        borderWidth: 2,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '62%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: theme.text } },
+                        tooltip: {
+                            callbacks: {
+                                label: context => ` ${context.label}: ${formatRM2(context.parsed)} (${Math.round(context.parsed * 100 / (totalSen / 100))}%)`
+                            }
+                        }
+                    }
+                }
+            });
+        };
+
+        const drawCcBalanceChart = (plans, months, theme) => {
+            if (chartCcBalance) chartCcBalance.destroy();
+            chartCcBalance = null;
+            const nowSen = plans.reduce((total, plan) => total + plan.owedSen, 0);
+            ccEmptyState('ccBalanceChartWrap', 'ccBalanceEmpty', !months.length || nowSen === 0);
+            if (!months.length || nowSen === 0) return;
+            // Owed after each month's instalments: the whole plan less every instalment due up to that month
+            const owedAfter = month => plans.reduce((total, plan) => total + plan.totalSen
+                - plan.dues.reduce((paid, due) => paid + (due.month <= month ? due.sen : 0), 0), 0);
+            const labels = [t('cc_today'), ...months.map(formatMonthKeyShort)];
+            const data = [nowSen, ...months.map(owedAfter)].map(sen => Math.max(0, sen) / 100);
+            const canvas = document.getElementById('ccBalanceChart');
+            canvas.setAttribute('aria-label', t('cc_chart_balance_title'));
+            chartCcBalance = new Chart(canvas, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: t('cc_chart_balance_series'),
+                        data,
+                        borderColor: theme.primary,
+                        backgroundColor: theme.primaryFill,
+                        fill: true,
+                        stepped: 'after',
+                        pointRadius: 0,
+                        pointHitRadius: 12
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: items => items[0].dataIndex === 0 ? t('cc_today') : tf('cc_chart_owed_after', { month: formatMonthKey(months[items[0].dataIndex - 1]) }),
+                                label: context => ` ${context.dataset.label}: ${formatRM2(context.parsed.y)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: theme.grid }, ticks: { color: theme.text, callback: value => formatRM(value) } },
+                        x: { grid: { display: false }, ticks: { color: theme.text, maxRotation: 0, autoSkip: true, autoSkipPadding: 12 } }
+                    }
+                }
+            });
+        };
+
+        const ccFilteredPlans = plans => sortCcPlans(ccFilter === 'all' ? plans : plans.filter(plan => plan.status === ccFilter));
+
+        // The year of the picked month: a column per month and a row per plan running that year. Each instalment
+        // is one segment, solid once paid, ringed while due this month and light while still to come.
+        const renderCcTimeline = () => {
+            const { plans, colorMap } = ccView;
+            const year = ccMonth.slice(0, 4);
+            const months = ccYearMonths(year);
+            const container = document.getElementById('ccTimeline');
+            // The month buttons are rebuilt, so one picked from the keyboard keeps its focus
+            const hadFocus = document.activeElement instanceof Element && Boolean(document.activeElement.closest('#ccTimeline'));
+            const shown = ccFilteredPlans(plans).filter(plan => plan.firstMonth <= months[11] && plan.lastMonth >= months[0]);
+            document.getElementById('ccTimelineSub').textContent = tf('cc_timeline_sub', { year });
+            const empty = document.getElementById('ccTimelineEmpty');
+            empty.hidden = shown.length > 0;
+            empty.textContent = plans.length ? tf('cc_tl_empty_year', { year }) : t('cc_list_empty');
+            container.hidden = !shown.length;
+            document.getElementById('ccTimelineLegend').hidden = !shown.length;
+            if (!shown.length) {
+                container.innerHTML = '';
+                return;
+            }
+            const columnClasses = (base, month) => [base, month === ccMonth && 'is-selected', month === ccView.currentMonth && 'is-now'].filter(Boolean).join(' ');
+            const head = `<div class="cc-yt-row cc-yt-head">
+                <span class="cc-yt-corner">${year}</span>
+                ${months.map(month => `<button type="button" class="${columnClasses('cc-yt-month', month)}" data-cc-month="${month}" aria-pressed="${month === ccMonth}" aria-label="${escapeHtml(formatMonthKey(month))}">${escapeHtml(formatMonthName(month))}</button>`).join('')}
+            </div>`;
+            const rows = shown.map(plan => {
+                const { item } = plan;
+                const color = colorMap.colors.get(item.id);
+                const cells = months.map(month => {
+                    const index = plan.dues.findIndex(due => due.month === month);
+                    if (index < 0) return `<div class="${columnClasses('cc-yt-cell', month)}" data-cc-month="${month}"></div>`;
+                    const due = plan.dues[index];
+                    const state = ccDueState(due);
+                    const title = tf('cc_cell_title', {
+                        name: item.name, number: index + 1, total: item.tenure,
+                        amount: formatRM2(due.sen / 100), date: formatShortDate(due.date), state: ccDueStateText(due)
+                    });
+                    const segment = ['cc-yt-seg', `is-${state}`, index === 0 && 'is-first', index === item.tenure - 1 && 'is-last'].filter(Boolean).join(' ');
+                    return `<div class="${columnClasses('cc-yt-cell', month)}" data-cc-month="${month}"><span class="${segment}" style="--cc-c: ${color}" title="${escapeHtml(title)}"></span></div>`;
+                }).join('');
+                return `<div class="cc-yt-row">
+                    <div class="cc-tl-label"><strong title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</strong><span>${plan.paid}/${item.tenure} · ${escapeHtml(formatMonthYear(plan.end))}</span></div>
+                    ${cells}
+                </div>`;
+            }).join('');
+            container.innerHTML = `<div class="cc-timeline-inner">${head}${rows}</div>`;
+            if (hadFocus) container.querySelector(`button[data-cc-month="${ccMonth}"]`)?.focus();
+        };
+
+        const renderCcList = () => {
+            if (!ccView) return;
+            const { plans, colorMap } = ccView;
+            const shown = ccFilteredPlans(plans);
+            document.querySelectorAll('[data-cc-filter]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.ccFilter === ccFilter)));
+            document.getElementById('ccFilterGroup').setAttribute('aria-label', t('cc_list_title'));
+            document.getElementById('ccListWrap').hidden = !shown.length;
+            const empty = document.getElementById('ccListEmpty');
+            empty.hidden = shown.length > 0;
+            empty.textContent = plans.length ? t('cc_list_empty_filter') : t('cc_list_empty');
+            document.getElementById('ccListBody').innerHTML = shown.map(plan => {
+                const { item } = plan;
+                const name = escapeHtml(item.name);
+                return `<tr data-cc-id="${item.id}" class="is-${plan.status}${item.id === ccEditingId ? ' is-editing' : ''}">
+                    <td>
+                        <div class="cc-item-name"><span class="expense-swatch" style="background: ${colorMap.colors.get(item.id)}"></span><span>${name}</span></div>
+                        <div class="cc-item-meta"><span class="cc-type">${item.type.toUpperCase()}</span>${item.card ? `<span>${escapeHtml(item.card)}</span>` : ''}<span class="cc-status is-${plan.status}">${escapeHtml(ccStatusText(plan))}</span></div>
+                    </td>
+                    <td class="is-num is-strong">${formatRM2(item.monthly)}</td>
+                    <td>
+                        <div class="cc-progress">
+                            <div class="cc-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="${item.tenure}" aria-valuenow="${plan.paid}" aria-label="${name}"><div class="cc-progress-fill" style="width: ${(plan.paid / item.tenure * 100).toFixed(2)}%"></div></div>
+                            <span class="cc-progress-label">${escapeHtml(tf('cc_progress', { paid: plan.paid, total: item.tenure, left: plan.left }))}</span>
+                        </div>
+                    </td>
+                    <td class="is-num">${formatRM2(plan.owedSen / 100)}</td>
+                    <td>${escapeHtml(formatMonthYear(plan.end))}</td>
+                    <td>
+                        <div class="cc-actions">
+                            <button type="button" class="icon-btn is-square" data-cc-action="edit" title="${escapeHtml(tf('cc_edit', { name: item.name }))}" aria-label="${escapeHtml(tf('cc_edit', { name: item.name }))}"><i class="fa-solid fa-pen" aria-hidden="true"></i></button>
+                            <button type="button" class="icon-btn is-square is-danger" data-cc-action="delete" title="${escapeHtml(tf('cc_delete', { name: item.name }))}" aria-label="${escapeHtml(tf('cc_delete', { name: item.name }))}"><i class="fa-solid fa-trash-can" aria-hidden="true"></i></button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+            renderCcTimeline();
+        };
+
+        const renderCommitments = () => {
+            const today = ccToday();
+            const currentMonth = toMonthKey(today);
+            const theme = chartTheme();
+            const plans = accessibleCommitments().map(item => ccPlan(item, today));
+            const colorMap = ccColorMap(plans, theme);
+            const { months } = ccMonthWindow(plans, currentMonth);
+            ccView = { today, currentMonth, theme, plans, colorMap };
+            // Opens on this month; a month already picked stays picked, within the years that still have plans
+            ccMonth = clampCcMonth(ccMonth || currentMonth);
+
+            document.getElementById('inpCcName').placeholder = t('cc_name_placeholder');
+            if (!document.getElementById('inpCcStart').value) document.getElementById('inpCcStart').value = toIsoDate(today);
+            // Rebuilt so the tenure labels follow the language, keeping what is picked
+            renderCcSelects();
+            // A purchase being edited may have been deleted in another tab
+            if (ccEditingId && !accessibleCommitments().some(item => item.id === ccEditingId)) resetCommitmentForm();
+            applyCcType();
+            renderCcFormMode();
+
+            renderCcKpis(plans, currentMonth);
+            const monthCard = document.getElementById('ccMonthCard');
+            monthCard.title = t('cc_pop_hint');
+            monthCard.setAttribute('aria-label', `${t('cc_kpi_month')}: ${document.getElementById('resCcMonth').textContent}. ${t('cc_pop_hint')}`);
+            // An open panel follows new data and a change of language
+            if (isCcMonthPopoverOpen()) {
+                renderCcMonthPopover();
+                positionCcMonthPopover();
+            }
+            drawCcOverviewChart();
+            renderCcNav();
+            renderCcBreakdown();
+            renderCcList();
+            drawCcSplitChart(plans, colorMap, theme);
+            drawCcBalanceChart(plans, months, theme);
+            renderCcOverviewTable(plans, months, currentMonth);
+        };
+
+        const initCommitments = () => {
+            ccItems = loadCommitments();
+            document.getElementById('ccForm').addEventListener('submit', submitCommitment);
+            ['inpCcAmount', 'inpCcTenure', 'inpCcRate'].forEach(id => document.getElementById(id).addEventListener('input', syncCcMonthly));
+            document.getElementById('inpCcMonthly').addEventListener('input', () => {
+                ccMonthlyManual = true;
+                syncCcMonthly();
+            });
+            document.getElementById('btnCcMonthlyReset').addEventListener('click', () => {
+                ccMonthlyManual = false;
+                syncCcMonthly();
+                document.getElementById('inpCcMonthly').focus();
+            });
+            document.querySelectorAll('[data-cc-type]').forEach(button => button.addEventListener('click', () => {
+                ccType = button.dataset.ccType;
+                applyCcType();
+            }));
+            document.getElementById('btnCcCancel').addEventListener('click', () => {
+                resetCommitmentForm();
+                renderCcList();
+            });
+            document.querySelectorAll('[data-cc-filter]').forEach(button => button.addEventListener('click', () => {
+                ccFilter = button.dataset.ccFilter;
+                renderCcList();
+            }));
+
+            // Year and month navigation, the timeline's months and the month-by-month rows all pick a month
+            document.getElementById('tab14').addEventListener('click', event => {
+                const target = event.target instanceof Element ? event.target : null;
+                if (!target || !ccView) return;
+                const yearStep = target.closest('[data-cc-year-step]');
+                if (yearStep) {
+                    selectCcMonth(`${Number(ccMonth.slice(0, 4)) + Number(yearStep.dataset.ccYearStep)}${ccMonth.slice(4)}`);
+                    return;
+                }
+                const monthStep = target.closest('[data-cc-month-step]');
+                if (monthStep) {
+                    selectCcMonth(shiftMonthKey(ccMonth, Number(monthStep.dataset.ccMonthStep)));
+                    return;
+                }
+                const monthTarget = target.closest('[data-cc-month]');
+                if (monthTarget) selectCcMonth(monthTarget.dataset.ccMonth);
+            });
+            document.getElementById('btnCcThisMonth').addEventListener('click', () => selectCcMonth(ccView.currentMonth));
+
+            // "This month" card: click, Enter or Space opens this month's payments; outside, Escape or the card closes them
+            const monthCard = document.getElementById('ccMonthCard');
+            monthCard.addEventListener('click', () => setCcMonthPopover(!isCcMonthPopoverOpen()));
+            monthCard.addEventListener('keydown', event => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                event.preventDefault();
+                setCcMonthPopover(!isCcMonthPopoverOpen());
+                if (isCcMonthPopoverOpen()) document.getElementById('btnCcPopClose').focus();
+            });
+            document.getElementById('btnCcPopClose').addEventListener('click', () => {
+                setCcMonthPopover(false);
+                monthCard.focus();
+            });
+            // The full month view: the breakdown under the overview chart, on this month
+            document.getElementById('btnCcPopOpen').addEventListener('click', () => {
+                setCcMonthPopover(false);
+                selectCcMonth(ccView.currentMonth);
+                document.getElementById('ccBreakdown').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+            document.addEventListener('click', event => {
+                if (!isCcMonthPopoverOpen() || !(event.target instanceof Element)) return;
+                if (event.target.closest('#ccMonthPopover, #ccMonthCard')) return;
+                setCcMonthPopover(false);
+            });
+            document.addEventListener('keydown', event => {
+                if (event.key !== 'Escape' || !isCcMonthPopoverOpen()) return;
+                setCcMonthPopover(false);
+                monthCard.focus();
+            });
+            window.addEventListener('scroll', positionCcMonthPopover, { passive: true, capture: true });
+            window.addEventListener('resize', positionCcMonthPopover);
+            // Left and right arrows step through the months from the timeline's month buttons
+            document.getElementById('ccTimeline').addEventListener('keydown', event => {
+                if (!(event.target instanceof Element) || !event.target.matches('button[data-cc-month]')) return;
+                if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+                event.preventDefault();
+                selectCcMonth(shiftMonthKey(ccMonth, event.key === 'ArrowLeft' ? -1 : 1));
+            });
+
+            // Deleting always asks first: a removed purchase cannot be brought back
+            const confirmDialog = document.getElementById('ccConfirmDialog');
+            document.getElementById('ccListBody').addEventListener('click', event => {
+                const button = event.target instanceof Element && event.target.closest('[data-cc-action]');
+                if (!button) return;
+                const id = button.closest('tr[data-cc-id]').dataset.ccId;
+                if (button.dataset.ccAction === 'edit') {
+                    editCommitment(id);
+                    return;
+                }
+                const item = ccItems.find(entry => entry.id === id);
+                if (!item) return;
+                ccConfirmId = id;
+                document.getElementById('ccConfirmMessage').textContent = tf('cc_confirm_message', { name: item.name });
+                confirmDialog.showModal();
+            });
+            document.getElementById('ccConfirmForm').addEventListener('submit', event => {
+                event.preventDefault();
+                const id = ccConfirmId;
+                ccConfirmId = null;
+                if (!confirmDialog.open || !id) return;
+                ccItems = ccItems.filter(item => item.id !== id);
+                saveCommitments();
+                if (ccEditingId === id) resetCommitmentForm();
+                confirmDialog.close();
+                renderCommitments();
+            });
+            document.getElementById('btnCcConfirmCancel').addEventListener('click', () => confirmDialog.close());
+            confirmDialog.addEventListener('click', event => {
+                if (event.target === confirmDialog) confirmDialog.close();
+            });
+            confirmDialog.addEventListener('close', () => { ccConfirmId = null; });
+
+            // Keeps other open tabs of the site on the same list
+            window.addEventListener('storage', event => {
+                if (event.key !== CC_KEY && event.key !== null) return;
+                ccItems = loadCommitments();
+                if (activeTabId === CC_TAB_ID) renderCommitments();
+            });
+            resetCommitmentForm();
+        };
+
         window.onload = () => {
             const startMonthInput = document.getElementById('inpDivStartMonth');
             const now = new Date();
@@ -11906,6 +13573,7 @@
             initInstalmentPlans();
             initCarLoan();
             initHomestay();
+            initCommitments();
             renderLanguage();
             calcSalary(); 
             calcRetirement();
