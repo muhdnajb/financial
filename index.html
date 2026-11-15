@@ -712,6 +712,27 @@
         .app-shell .chart-panel > h2.mb-6,
         .app-shell .chart-panel > .flex.mb-6 { margin-bottom: 1.25rem; }
 
+        .installment-controls { display: grid; gap: 1.5rem; }
+        .installment-amount-row { display: grid; grid-template-columns: minmax(0, 1fr) 9rem; align-items: end; gap: 1rem; }
+        .installment-amount-row input { width: 100%; }
+        .installment-rate-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+        .installment-rate-grid label { display: block; margin-bottom: 0.4rem; }
+        .installment-rate-grid input { width: 100%; }
+        .installment-assumption { margin: 0; padding: 0.8rem 0.9rem; border-left: 2px solid var(--c-amber); background: var(--surface-2); color: var(--muted); font-size: 0.75rem; line-height: 1.5; }
+        .installment-table-wrap { overflow-x: auto; }
+        .installment-table { min-width: 700px; }
+        .installment-table tbody tr td:first-child { color: var(--ink); font-weight: 600; }
+        .installment-table tbody tr[data-plan="FPP"] td:first-child { color: var(--c-amber); }
+        .installment-chart-wrap { position: relative; height: 16rem; }
+        .installment-chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--stack); margin-top: var(--stack); }
+
+        @media (max-width: 640px) {
+            .installment-amount-row { grid-template-columns: minmax(0, 1fr); }
+            .installment-rate-grid { gap: 0.75rem; }
+            .installment-chart-grid { grid-template-columns: minmax(0, 1fr); }
+            .installment-chart-wrap { height: 14rem; }
+        }
+
         /* Wedding expense breakdown */
         .app-shell .glass-card label.inline-check {
             display: inline-flex;
